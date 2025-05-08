@@ -13,9 +13,9 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isConfirmTouched, setIsConfirmTouched] = useState(false);
 
   const {
-    error,
     isTouched,
     isPasswordValid,
     setIsTouched,
@@ -40,7 +40,7 @@ export default function Signup() {
     email.trim() !== "" &&
     passwordIsValid &&
     confirmPassword.trim() !== "" &&
-    password === confirmPassword; // Confirma se as senhas são iguais
+    password === confirmPassword;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
@@ -72,7 +72,9 @@ export default function Signup() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               hasError={isSubmitted && !email}
             />
-            <p className="text-start text-xs mt-2 text-gray-500">Iremos enviar um email de confirmação</p>
+            <p className="text-start text-xs mt-2 text-gray-500">
+              Iremos enviar um email de confirmação
+            </p>
           </div>
 
           <div className="mb-4">
@@ -106,17 +108,16 @@ export default function Signup() {
               label=""
               type="password"
               placeholder="Confirmar senha"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setConfirmPassword(e.target.value)
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setConfirmPassword(e.target.value);
+                setIsConfirmTouched(true);
+              }}
               hasError={isSubmitted && !confirmPassword}
             />
-            {isSubmitted && password !== confirmPassword && (
+            {isConfirmTouched && confirmPassword && password !== confirmPassword && (
               <ErrorMessage message="As senhas não são iguais." />
             )}
           </div>
-
-          {error && <ErrorMessage message={error} />}
 
           <div className="pt-14">
             <Button type="submit" full disabled={!isFormValid}>
