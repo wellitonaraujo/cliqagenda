@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from "react";
 import Input from "@/componentes/Input";
 import Button from "@/componentes/Button";
 import Link from "next/link";
 import ErrorMessage from "@/componentes/ErrorMessage";
 import { usePasswordValidation } from "@/hooks/usePasswordValidation";
+import { useState } from "react";
 
 export default function Signup() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {
     error,
@@ -21,13 +24,23 @@ export default function Signup() {
 
   const handleSignup = (event: React.FormEvent) => {
     event.preventDefault();
+    setIsSubmitted(true);
+
+    // Valida as senhas
     const isValid = validatePasswords(password, confirmPassword);
-    if (!isValid) return;
+    if (!name || !email || !password || !confirmPassword || !isValid) return;
 
     console.log("Cadastro enviado");
   };
 
   const passwordIsValid = isPasswordValid(password);
+
+  const isFormValid =
+    name.trim() !== "" &&
+    email.trim() !== "" &&
+    passwordIsValid &&
+    confirmPassword.trim() !== "" &&
+    password === confirmPassword; // Confirma se as senhas são iguais
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
@@ -41,12 +54,24 @@ export default function Signup() {
 
         <form onSubmit={handleSignup}>
           <div className="mb-4">
-            <Input label="" type="text" placeholder="Nome completo" />
+            <Input
+              label=""
+              type="text"
+              placeholder="Nome completo"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+              hasError={isSubmitted && !name}
+            />
             <p className="text-start text-xs mt-2 text-gray-500">Nome e sobrenome</p>
           </div>
 
           <div className="mb-4">
-            <Input label="" type="email" placeholder="Email" />
+            <Input
+              label=""
+              type="email"
+              placeholder="Email"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              hasError={isSubmitted && !email}
+            />
             <p className="text-start text-xs mt-2 text-gray-500">Iremos enviar um email de confirmação</p>
           </div>
 
@@ -59,6 +84,7 @@ export default function Signup() {
                 setPassword(e.target.value);
                 setIsTouched(true);
               }}
+              hasError={isSubmitted && !password}
             />
             <p
               className={`text-xs mt-2 ${
@@ -83,17 +109,22 @@ export default function Signup() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setConfirmPassword(e.target.value)
               }
+              hasError={isSubmitted && !confirmPassword}
             />
+            {isSubmitted && password !== confirmPassword && (
+              <ErrorMessage message="As senhas não são iguais." />
+            )}
           </div>
 
-            {error && <ErrorMessage message={error} />}
+          {error && <ErrorMessage message={error} />}
 
           <div className="pt-14">
-            <Button type="submit" full>
+            <Button type="submit" full disabled={!isFormValid}>
               Criar Conta
             </Button>
           </div>
         </form>
+
         <p className="text-center text-sm text-gray-500">
           Já tem uma conta? <Link href="/login" className="text-primary">Entrar</Link>
         </p>

@@ -1,22 +1,15 @@
 import { useState } from "react";
 
-export const usePasswordValidation = () => {
+export function usePasswordValidation() {
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
 
-  const isPasswordValid = (password: string): boolean => {
-    const passwordRegex = /^(?=.*\d).{8,}$/;
-    return passwordRegex.test(password);
+  const isPasswordValid = (password: string) => {
+    const isValid = password.length >= 8 && /\d/.test(password);
+    return isValid;
   };
 
-  const validatePasswords = (password: string, confirmPassword: string): boolean => {
-    setIsTouched(true);
-
-    if (!isPasswordValid(password)) {
-      setError("A senha deve ter no mínimo 8 caracteres e conter ao menos um número.");
-      return false;
-    }
-
+  const validatePasswords = (password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
       setError("As senhas não são iguais.");
       return false;
@@ -33,4 +26,4 @@ export const usePasswordValidation = () => {
     setIsTouched,
     validatePasswords,
   };
-};
+}

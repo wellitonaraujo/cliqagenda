@@ -4,9 +4,10 @@ interface ButtonProps {
   children: ReactNode;
   type?: 'button' | 'submit';
   full?: boolean;
+  disabled?: boolean;
 }
 
-export default function Button({ children, type = 'button', full }: ButtonProps) {
+export default function Button({ children, type = 'button', full, disabled }: ButtonProps) {
   return (
     <button
       type={type}
