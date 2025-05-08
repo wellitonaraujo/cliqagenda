@@ -58,27 +58,29 @@ export default function Home() {
           <Button>+ Agendar</Button>
         </div>
 
-        {/* Grade de horários com separação clara entre labels e grade */}
         <div className="flex-1 overflow-y-auto p-4">
-        <div className="flex">
-            {/* Coluna de horários (sem nenhuma borda) */}
-            <div className="flex flex-col w-14 pr-2">
-            {times.map(({ id, label }) => (
-                <div key={id} className="h-10 flex items-center justify-end">
-                <span className="text-sm text-gray-500">{label}</span>
+            <div className="flex">
+                {/* Coluna de horários, alinhando o texto na borda inferior */}
+                <div className="flex flex-col w-14 pr-2">
+                    {times.map(({ id, label }) => (
+                        <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
+                        {label && (
+                            <span className="text-sm text-gray-500 leading-none translate-y-1/2">
+                            {label}
+                            </span>
+                        )}
+                        </div>
+                    ))}
                 </div>
-            ))}
-            </div>
 
-            {/* Grade com bordas e divisões */}
-            <div className="flex-1 border border-gray-300 rounded-md overflow-hidden">
-            {times.map(({ id }) => (
-                <div key={id} className="h-10 border-b last:border-b-0 border-gray-300" />
-            ))}
+                {/* Grade com borda e divisões internas */}
+                <div className="flex-1 border border-gray-300 rounded-md overflow-hidden">
+                    {times.map(({ id }) => (
+                    <div key={id} className="h-10 border-b last:border-b-0 border-gray-300" />
+                ))}
+            </div>
             </div>
         </div>
-        </div>
-
       </div>
     </div>
   );
