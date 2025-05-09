@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
+import { HiChevronRight, HiMenu } from 'react-icons/hi';
+import { HiChevronLeft } from 'react-icons/hi';
 
 const menuItems = [
   { label: 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
@@ -24,10 +26,7 @@ export default function Sidebar() {
   return (
     <>
       {!isCollapsed && (
-        <div
-          className="fixed inset-0 z-40 md:hidden"
-          onClick={toggleSidebar}
-        />
+        <div className="fixed inset-0 z-70 md:hidden" onClick={toggleSidebar} />
       )}
       <div
         className={clsx(
@@ -37,6 +36,7 @@ export default function Sidebar() {
             'translate-x-0': !isCollapsed,
             '-translate-x-full': isCollapsed,
             'md:translate-x-0': true,
+            'w-64': !isCollapsed,
             'md:w-64': !isCollapsed,
             'md:w-20': isCollapsed,
             'md:relative': true,
@@ -46,27 +46,39 @@ export default function Sidebar() {
         )}
       >
         <div>
-          {/* Close button (only mobile) */}
-          <button
-            onClick={toggleSidebar}
-            className="p-3 text-xl text-gray-700 md:hidden"
-          >
-            X
-          </button>
+          <div className="px-6 py-5 flex items-center justify-between">
+            {isCollapsed ? (
+              <button
+                onClick={toggleSidebar}
+                className="text-2xl font-bold text-[#7567E4]"
+              >
+                <HiMenu />
+              </button>
+            ) : (
+              <div className="flex items-center justify-between w-full">
+                <h1 className="text-2xl font-bold text-[#7567E4]">
+                  agendei99
+                </h1>
 
-          {/* Logo/title */}
-          <h1
-            className={clsx(
-              'text-2xl font-bold text-[#7567E4] px-6 py-5 transition-opacity duration-300',
-              {
-                'opacity-0 w-0 overflow-hidden': isCollapsed,
-                'opacity-100 w-auto': !isCollapsed,
-              }
+                {/* Ícone para fechar no desktop */}
+                <button
+                  onClick={toggleSidebar}
+                  className="text-gray-700 text-xl md:block hidden"
+                >
+                  <HiChevronLeft />
+                </button>
+
+                {/* Ícone para abrir/fechar no mobile */}
+                <button
+                  onClick={toggleSidebar}
+                  className="absolute right-4 text-gray-700 text-xl md:hidden block"
+                >
+                  {isCollapsed ? <HiChevronRight /> : <HiChevronLeft />}
+                </button>
+
+              </div>
             )}
-          >
-            agendei99
-          </h1>
-
+          </div>
           {/* Menu */}
           <nav className="flex flex-col gap-1">
             {menuItems.map(({ label, icon, path }) => {
@@ -90,7 +102,9 @@ export default function Sidebar() {
                   }}
                 >
                   <Image src={icon} alt={label} width={20} height={20} />
-                  {!isCollapsed && <span className="whitespace-nowrap">{label}</span>}
+                  {!isCollapsed && (
+                    <span className="whitespace-nowrap">{label}</span>
+                  )}
                 </Link>
               );
             })}
