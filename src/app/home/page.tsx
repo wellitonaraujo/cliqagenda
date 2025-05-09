@@ -8,6 +8,7 @@ import Image from "next/image";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState("Seg. 5 de mai.");
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   // Gera 15min de intervalo, das 9:00 às 18:45 (40 blocos)
   const times = Array.from({ length: 40 }, (_, i) => {
@@ -17,7 +18,7 @@ export default function Home() {
     const label = minute % 30 === 0 ? `${hour}:${paddedMinute}` : ''; // mostra só a cada 30min
     return { id: i, label };
   });
-
+  
   return (
     <div className="min-h-screen bg-black text-white flex">
       {/* Sidebar fechado (simulado) */}
@@ -55,43 +56,59 @@ export default function Home() {
             </button>
           </div>
 
-          <Button>+ Agendar</Button>
+          <Button>Novo agendamento</Button>
         </div>
-
-        <div className="flex-1 overflow-y-auto p-4">
-        <div className="flex">
-            {/* Coluna de horários, alinhando o texto na borda inferior */}
+    
+        <div className="flex-1 overflow-y-auto p-2">
+          <div className="flex">
+            {/* Coluna de horários */}
             <div className="flex flex-col w-10 pr-2">
-            {times.map(({ id, label }, index) => (
+              {times.map(({ id, label }, index) => (
+                  <div
+                  key={id}
+                  className={`${
+                      index === 0 ? 'h-3' : 'h-8'
+                  } flex items-end justify-end pb-[1px]`}
+                  >
+                  {label && (
+                      <span className="text-xs text-gray-500 leading-none translate-y-1/2">
+                      {label}
+                      </span>
+                  )}
+                  </div>
+              ))}
+            </div>
+
+            {/* Grade com hover completo e horário em todas as linhas */}
+            <div className="flex-1">
+              {times.map((_, index) => {
+              const hour = 9 + Math.floor(index / 4);
+              const minute = (index % 4) * 15;
+              const formatted = `${hour}:${minute.toString().padStart(2, '0')}`;
+              const isSelected = selectedIndex === index;
+
+              return (
                 <div
-                key={id}
-                className={`${
+                  key={index}
+                  onClick={() => setSelectedIndex(index)}
+                  className={`relative ${
                     index === 0 ? 'h-3' : 'h-8'
-                } flex items-end justify-end pb-[1px]`}
+                  } border group flex items-center justify-center cursor-pointer
+                    ${isSelected ? 'border-[#7567E4]' : 'border-gray-200'}
+                    hover:border-[#7567E4]`}
                 >
-                {label && (
-                    <span className="text-xs text-gray-500 leading-none translate-y-1/2">
-                    {label}
-                    </span>
-                )}
+                  <span
+                    className={`text-xs text-[#7567E4] ${
+                    isSelected ? 'block' : 'hidden group-hover:block'
+                  }`}>
+                  {formatted}
+                  </span>
                 </div>
-            ))}
+              );
+              })}
             </div>
-
-            {/* Grade com borda e divisões internas */}
-            <div className="flex-1 border border-gray-300 rounded-md overflow-hidden">
-            {times.map((_, index) => (
-                <div
-                key={index}
-                className={`${
-                    index === 0 ? 'h-3' : 'h-8'
-                } border-b last:border-b-0 border-gray-300 ${index === 0 ? 'bg-gray-100' : ''}`}
-                />
-            ))}
-            </div>
+          </div>
         </div>
-        </div>
-
       </div>
     </div>
   );
