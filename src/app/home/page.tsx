@@ -35,8 +35,8 @@ export default function Home() {
 
           <div className="w-8 h-8 rounded-full overflow-hidden">
             <Image
-              src="/avatar.jpg"
-              alt="Avatar"
+              src="/eu.svg"
+              alt="Perfil"
               width={32}
               height={32}
             />
@@ -59,28 +59,39 @@ export default function Home() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
-            <div className="flex">
-                {/* Coluna de horários, alinhando o texto na borda inferior */}
-                <div className="flex flex-col w-14 pr-2">
-                    {times.map(({ id, label }) => (
-                        <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
-                        {label && (
-                            <span className="text-sm text-gray-500 leading-none translate-y-1/2">
-                            {label}
-                            </span>
-                        )}
-                        </div>
-                    ))}
+        <div className="flex">
+            {/* Coluna de horários, alinhando o texto na borda inferior */}
+            <div className="flex flex-col w-10 pr-2">
+            {times.map(({ id, label }, index) => (
+                <div
+                key={id}
+                className={`${
+                    index === 0 ? 'h-3' : 'h-8'
+                } flex items-end justify-end pb-[1px]`}
+                >
+                {label && (
+                    <span className="text-xs text-gray-500 leading-none translate-y-1/2">
+                    {label}
+                    </span>
+                )}
                 </div>
-
-                {/* Grade com borda e divisões internas */}
-                <div className="flex-1 border border-gray-300 rounded-md overflow-hidden">
-                    {times.map(({ id }) => (
-                    <div key={id} className="h-10 border-b last:border-b-0 border-gray-300" />
-                ))}
+            ))}
             </div>
+
+            {/* Grade com borda e divisões internas */}
+            <div className="flex-1 border border-gray-300 rounded-md overflow-hidden">
+            {times.map((_, index) => (
+                <div
+                key={index}
+                className={`${
+                    index === 0 ? 'h-3' : 'h-8'
+                } border-b last:border-b-0 border-gray-300 ${index === 0 ? 'bg-gray-100' : ''}`}
+                />
+            ))}
             </div>
         </div>
+        </div>
+
       </div>
     </div>
   );
