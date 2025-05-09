@@ -13,6 +13,13 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
+      transitionProperty: {
+        'width': 'width',
+        'transform': 'transform',
+      },
+      transitionDuration: {
+        '300': '300ms',
+      },
     }
   },
   plugins: [],
