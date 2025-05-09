@@ -7,14 +7,14 @@ import Link from 'next/link';
 import clsx from 'clsx';
 
 const menuItems = [
-  { label: 'Meu Negócio', icon: 'office.svg', path: '/meu-negocio' },
+  { label: 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
   { label: 'Atendimentos', icon: 'date-fill.svg', path: '/home' },
-  { label: 'Serviços', icon: 'list-filled.svg', path: '/servicos' },
+  { label: 'Serviços', icon: 'list-filled.svg', path: '/services' },
   { label: 'Combos', icon: 'package-open.svg', path: '/combos' },
   { label: 'Clientes', icon: 'users-solid.svg', path: '/customers' },
-  { label: 'Colaboradores', icon: 'users-config.svg', path: '/colaboradores' },
-  { label: 'Fluxo de caixa', icon: 'payment.svg', path: '/fluxo' },
-  { label: 'Meu Plano', icon: 'wallet-money.svg', path: '/plano' },
+  { label: 'Colaboradores', icon: 'users-config.svg', path: '/collaborators' },
+  { label: 'Fluxo de caixa', icon: 'payment.svg', path: '/cash-flow' },
+  { label: 'Meu Plano', icon: 'wallet-money.svg', path: '/my-plan' },
 ];
 
 export default function Sidebar() {

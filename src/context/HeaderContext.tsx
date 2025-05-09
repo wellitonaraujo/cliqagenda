@@ -7,14 +7,14 @@ import { createContext, useContext, useEffect, useState } from 'react';
 const HeaderContext = createContext<{ headerTitle: string }>({ headerTitle: '' });
 
 const menuItems = [
-  { label: 'Meu Negócio', path: '/meu-negocio' },
+  { label: 'Meu Negócio', path: '/my-business' },
   { label: 'Atendimentos', path: '/home' },
-  { label: 'Serviços', path: '/servicos' },
+  { label: 'Serviços', path: '/services' },
   { label: 'Combos', path: '/combos' },
-  { label: 'Clientes', path: '/clientes' },
-  { label: 'Colaboradores', path: '/colaboradores' },
-  { label: 'Fluxo de caixa', path: '/fluxo' },
-  { label: 'Meu Plano', path: '/plano' },
+  { label: 'Clientes', path: '/customers' },
+  { label: 'Colaboradores', path: '/collaborators' },
+  { label: 'Fluxo de caixa', path: '/cash-flow' },
+  { label: 'Meu Plano', path: '/my-plan' },
 ];
 
 export function HeaderProvider({ children }: { children: React.ReactNode }) {
