@@ -4,7 +4,9 @@ import Button from "@/componentes/Button";
 import Checkbox from "@/componentes/Checkbox";
 import ErrorMessage from "@/componentes/ErrorMessage";
 import Input from "@/componentes/Input";
+import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Login() {
@@ -12,15 +14,21 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const { login } = useAuth();
+  const router = useRouter(); 
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsSubmitted(true);
-
+  
     if (!email || !password) return;
+  
+    await login();
+    console.log('Redirecionando para /home');
 
-    console.log("Formulário enviado");
+    router.push('/home');
   };
-
+  
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
       <div className="w-full max-w-sm space-y-6">
@@ -67,9 +75,9 @@ export default function Login() {
           </div>
         </form>
 
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-md text-gray-500">
           Não possui uma conta?{" "}
-          <Link href="/home" className="text-primary">Criar conta</Link>
+          <Link href="/signup" className="text-[#7567E4] font-bold">Criar conta</Link>
         </p>
       </div>
     </div>

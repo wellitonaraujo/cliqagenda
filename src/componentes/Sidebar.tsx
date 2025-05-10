@@ -101,9 +101,10 @@ export default function Sidebar() {
                     if (window.innerWidth < 768) toggleSidebar();
                   }}
                 >
-                  <Image src={icon} alt={label} width={20} height={20} />
+                 <Image src={icon} alt={label} width={24} height={24} />
+
                   {!isCollapsed && (
-                    <span className="whitespace-nowrap">{label}</span>
+                  <span className="text-base font-medium whitespace-nowrap">{label}</span>
                   )}
                 </Link>
               );

@@ -1,9 +1,10 @@
 'use client';
 
+// src/app/(private)/home/page.tsx
+
 import Button from "@/componentes/Button";
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useSidebar } from "@/context/SidebarContext";
 import Header from "@/componentes/Header";
 
 export default function Home() {
