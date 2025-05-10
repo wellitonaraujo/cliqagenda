@@ -26,7 +26,7 @@ export default function Sidebar() {
   return (
     <>
       {!isCollapsed && (
-        <div className="fixed inset-0 z-70 md:hidden" onClick={toggleSidebar} />
+        <div className="fixed inset-0 z-50 md:hidden" onClick={toggleSidebar} />
       )}
       <div
         className={clsx(
