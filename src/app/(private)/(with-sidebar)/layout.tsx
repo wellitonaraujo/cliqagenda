@@ -1,7 +1,5 @@
 'use client';
 
-// src/app/(private)/layout.tsx
-
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SidebarProvider } from '@/context/SidebarContext';
@@ -26,7 +24,7 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
     <SidebarProvider>
       <HeaderProvider>
         <div className="flex h-full">
-          <Sidebar />
+        <Sidebar />
           <div className="flex flex-col flex-1 overflow-y-auto">
             <main>{children}</main>
           </div>

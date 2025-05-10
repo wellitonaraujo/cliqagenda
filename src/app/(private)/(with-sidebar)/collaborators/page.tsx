@@ -2,10 +2,12 @@
 
 import Button from "@/componentes/Button";
 import Header from "@/componentes/Header";
+import { useRouter } from "next/navigation";
 
 export default function Collaborators() {
     // Verificar se há colaboradores cadastrados
     const hasCollaborators = false;
+    const router = useRouter();
 
   return (
       <div className="flex flex-col h-screen bg-white">
@@ -26,8 +28,8 @@ export default function Collaborators() {
             </div>
           )}
     
-          <div className="mt-auto p-20">
-            <Button full>Novo colaborador</Button>
+          <div className="mt-auto p-20" onClick={() => router.push('/new-collaborator')}>
+            <Button full >Novo colaborador</Button>
           </div>
         </div>
   );

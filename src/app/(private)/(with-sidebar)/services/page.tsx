@@ -16,7 +16,7 @@ export default function Services() {
       {!hasServices ? (
         // Quando não há serviços cadastrados
         <div className="flex flex-col justify-center items-center flex-1 text-center">
-          <p className="text-lg font-semibold text-gray-700">Sem serviço cadastrado</p>
+          <p className="text-lg font-semibold text-gray-700">Sem serviços cadastrados</p>
           <p className="mt-2 text-md text-gray-500">Cadastre um novo serviço</p>
         </div>
       ) : (
