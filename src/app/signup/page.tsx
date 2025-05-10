@@ -126,8 +126,8 @@ export default function Signup() {
           </div>
         </form>
 
-        <p className="text-center text-sm text-gray-500">
-          Já tem uma conta? <Link href="/login" className="text-primary">Entrar</Link>
+        <p className="text-center text-md text-gray-500">
+          Já tem uma conta? <Link href="/login" className="text-[#7567E4] font-bold">Entrar</Link>
         </p>
       </div>
     </div>

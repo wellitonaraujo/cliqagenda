@@ -8,7 +8,6 @@ import { SidebarProvider } from '@/context/SidebarContext';
 import { HeaderProvider } from '@/context/HeaderContext';
 import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/componentes/Sidebar';
-import Header from '@/componentes/Header';
 
 export default function PrivateLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();

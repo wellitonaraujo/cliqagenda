@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async () => {
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 100));
-    localStorage.setItem('token', 'xxxxx');
+    localStorage.setItem('token', 'DDDDD');
     setIsAuthenticated(true);
     setIsLoading(false);
   };

@@ -75,9 +75,9 @@ export default function Login() {
           </div>
         </form>
 
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-md text-gray-500">
           Não possui uma conta?{" "}
-          <Link href="/signup" className="text-primary">Criar conta</Link>
+          <Link href="/signup" className="text-[#7567E4] font-bold">Criar conta</Link>
         </p>
       </div>
     </div>
