@@ -17,26 +17,24 @@ export default function Input({ label, type = 'text', placeholder, onChange, has
   const { visible, toggle } = usePasswordToggle();
   const [isFocused, setIsFocused] = useState(false);
 
-
   return (
     <div>
       <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
       <div className="relative">
-      <input
-  type={isPassword ? (visible ? 'text' : 'password') : type}
-  placeholder={placeholder}
-  onChange={onChange}
-  onFocus={() => setIsFocused(true)}
-  onBlur={() => setIsFocused(false)}
-  className={`w-full border rounded-md px-3 py-3 ${
-    isPassword ? 'pr-10' : ''
-  } focus:outline-none focus:ring-2 ${
-    hasError && !isFocused
-      ? 'border-red-500 focus:ring-red-500'
-      : 'border-gray-500 focus:ring-primary'
-  }`}
-/>
-
+        <input
+          type={isPassword ? (visible ? 'text' : 'password') : type}
+          placeholder={placeholder}
+          onChange={onChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className={`w-full border rounded-md px-3 py-3 ${
+            isPassword ? 'pr-10' : ''
+          } focus:outline-none focus:ring-2 ${
+            hasError && !isFocused
+              ? 'border-red-500 focus:ring-red-500'
+              : 'border-gray-500 focus:ring-primary'
+          }`}
+        />
         {isPassword && (
           <span
             onClick={toggle}
@@ -50,7 +48,6 @@ export default function Input({ label, type = 'text', placeholder, onChange, has
             />
           </span>
         )}
-        
       </div>
     </div>
   );
