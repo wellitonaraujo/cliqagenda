@@ -8,13 +8,15 @@ import Sidebar from '@/componentes/Sidebar';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" >
-      <body>
+    <html lang="pt-BR" className="h-full">
+      <body className="h-full overflow-hidden">
         <SidebarProvider>
           <HeaderProvider>
-            <div className="flex">
+            <div className="flex h-full">
               <Sidebar />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 overflow-y-auto">
+                {children}
+              </main>
             </div>
           </HeaderProvider>
         </SidebarProvider>
