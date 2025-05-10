@@ -1,8 +1,7 @@
-// src/context/HeaderContext.tsx
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 const HeaderContext = createContext<{ headerTitle: string }>({ headerTitle: '' });
 
