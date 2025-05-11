@@ -25,7 +25,7 @@ export default function Collaborators() {
         {collaborators.map((colab, index) => (
           <div
             key={index}
-            className="flex items-center gap-4 border p-4 rounded-lg shadow-sm border-gray-300"
+            className="flex items-center gap-4 border p-4 rounded-lg border-gray-300"
           >
             <div className="flex items-center justify-center w-16 h-16 border-1 border-[#DEDEDE] rounded-full">
               <Image

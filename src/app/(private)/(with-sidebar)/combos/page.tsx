@@ -27,7 +27,7 @@ export default function Combos() {
           {combos.map((combo) => (
             <div
               key={combo.id}
-              className="border border-gray-200 rounded-lg p-4 shadow-sm max-w-xl mx-auto"
+              className="border border-gray-200 rounded-lg p-4 max-w-xl mx-auto"
             >
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold text-gray-800">{combo.name}</h3>

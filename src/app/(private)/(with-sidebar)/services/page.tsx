@@ -25,7 +25,7 @@ export default function Services() {
         {services.map((service) => (
           <div
             key={service.id}
-            className="w-full max-w-xl border border-gray-200 rounded-lg p-4 shadow-sm"
+            className="w-full max-w-xl border border-gray-200 rounded-lg p-4"
           >
             <div className="grid grid-cols-3 text-md font-medium text-gray-500 mb-1">
               <span>Serviço</span>
