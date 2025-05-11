@@ -86,8 +86,8 @@ export default function NewService() {
             className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700"
           >
             <option value="">Selecione um colaborador</option>
-            {collaborators.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+            {collaborators.map((c, index) => (
+              <option key={c.id ?? index} value={c.id}>{c.name}</option>
             ))}
           </select>
         </div>
