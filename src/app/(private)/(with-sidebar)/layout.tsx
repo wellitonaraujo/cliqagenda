@@ -6,7 +6,6 @@ import { SidebarProvider } from '@/context/SidebarContext';
 import { HeaderProvider } from '@/context/HeaderContext';
 import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/componentes/Sidebar';
-import { CollaboratorProvider } from '@/context/CollaboratorContext';
 
 export default function PrivateLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -20,9 +19,8 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
 
   if (isLoading) return <div>Carregando...</div>;
   if (!isAuthenticated) return null;
-  
+
   return (
-    <CollaboratorProvider>
       <SidebarProvider>
         <HeaderProvider>
           <div className="flex h-full">
@@ -33,7 +31,5 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
           </div>
         </HeaderProvider>
       </SidebarProvider>
-    </CollaboratorProvider>
   );
-  
 }
