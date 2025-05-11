@@ -5,6 +5,7 @@ import { CustomerProvider } from '@/context/CustomersContext';
 import { ServiceProvider } from '@/context/ServiceContext';
 import { AuthProvider } from '@/context/AuthContext';
 import './globals.css';
+import { ComboProvider } from '@/context/ComboContext';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,9 +14,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <ServiceProvider>
             <CustomerProvider>
-            <CollaboratorProvider>
-              {children}
-            </CollaboratorProvider>
+              <ComboProvider>
+              <CollaboratorProvider>
+                {children}
+              </CollaboratorProvider>
+              </ComboProvider>
             </CustomerProvider>
           </ServiceProvider>
         </AuthProvider>
