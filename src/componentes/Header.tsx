@@ -13,7 +13,7 @@ export default function Header() {
       <div className="flex items-center gap-2">
         {/* Exibe o botão de toggle apenas em telas pequenas */}
         <button
-           className="text-3xl text-gray-700 md:hidden"
+          className="text-3xl text-gray-700 md:hidden"
           onClick={toggleSidebar}
         >
           <HiMenu />

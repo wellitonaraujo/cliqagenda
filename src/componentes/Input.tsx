@@ -5,14 +5,15 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 type InputProps = {
-  label: string;
+  label?: string;
   type?: string;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   hasError?: boolean;
+  value?: string;
 };
 
-export default function Input({ label, type = 'text', placeholder, onChange, hasError }: InputProps) {
+export default function Input({ label, type = 'text', placeholder, onChange, hasError, value }: InputProps) {
   const isPassword = type === 'password';
   const { visible, toggle } = usePasswordToggle();
   const [isFocused, setIsFocused] = useState(false);
@@ -27,12 +28,13 @@ export default function Input({ label, type = 'text', placeholder, onChange, has
           onChange={onChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          {...(value !== undefined && { value })}
           className={`w-full border rounded-md px-3 py-3 ${
             isPassword ? 'pr-10' : ''
           } focus:outline-none focus:ring-2 ${
             hasError && !isFocused
               ? 'border-red-500 focus:ring-red-500'
-              : 'border-gray-500 focus:ring-primary'
+              : 'border-gray-400 focus:ring-primary'
           }`}
         />
         {isPassword && (

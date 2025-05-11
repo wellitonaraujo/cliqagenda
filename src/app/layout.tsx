@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthProvider } from '@/context/AuthContext';
+import { CollaboratorProvider } from '@/context/CollaboratorContext';
 import './globals.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -8,7 +9,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR" className="h-full">
       <body className="h-full overflow-hidden">
         <AuthProvider>
-          {children}
+          <CollaboratorProvider>
+            {children}
+          </CollaboratorProvider>
         </AuthProvider>
       </body>
     </html>
