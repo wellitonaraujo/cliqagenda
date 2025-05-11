@@ -1,9 +1,8 @@
 "use client";
 
-import { FiArrowLeft, FiEdit2, FiLink, FiTrash } from 'react-icons/fi';
+import { FiPlus, FiEdit2, FiLink, FiTrash } from 'react-icons/fi';
 import { Switch } from '@headlessui/react';
 import { useState } from 'react';
-import { FiPlus } from 'react-icons/fi';
 import Image from 'next/image';
 import Header from '@/componentes/Header';
 

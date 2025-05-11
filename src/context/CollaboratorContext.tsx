@@ -3,7 +3,7 @@ import { createContext, useContext, useState, ReactNode, useEffect } from 'react
 type Collaborator = {
   id: string;
   name: string;
-  nickname: string;
+  email: string;
   phone: string;
   address: {
     street: string;

@@ -38,9 +38,9 @@ export default function Collaborators() {
             </div>
             <div>
               <p className="font-semibold text-md">
-                {colab.name} ({colab.nickname})
+                {colab.name}
               </p>
-              <p className="text-sm text-gray-600">{colab.phone}</p>
+              <p className="text-md text-gray-600">{colab.phone}</p>
             </div>
           </div>
         ))}
