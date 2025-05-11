@@ -5,6 +5,7 @@ import { Switch } from '@headlessui/react';
 import { useState } from 'react';
 import Image from 'next/image';
 import Header from '@/componentes/Header';
+import { useHorarios } from '@/context/HoursProvider';
 
 const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
@@ -13,19 +14,10 @@ type TimeRange = {
   end: string;
 };
 
+
+
 export default function MeuNegocioPage() {
-  const [hours, setHours] = useState<Record<string, { open: boolean; ranges: TimeRange[] }>>(
-    () =>
-      Object.fromEntries(
-        daysOfWeek.map((day) => [
-          day,
-          {
-            open: day !== 'Domingo',
-            ranges: [{ start: '09:00', end: '21:00' }],
-          },
-        ])
-      )
-  );
+  const { hours, setHours } = useHorarios();
 
   const handleToggle = (day: string) => {
     setHours((prev) => ({
@@ -59,6 +51,7 @@ export default function MeuNegocioPage() {
       },
     }));
   };
+
 
   return (
     <div className="bg-white min-h-screen">
@@ -162,7 +155,7 @@ export default function MeuNegocioPage() {
                     </div>
   
                     {/* Ações à direita */}
-                    <div className="flex items-center gap-2 justify-end">
+                    <div className="flex items-center gap-2 justify-end ml-2">
                       {index > 0 && (
                         <button
                           onClick={() => handleDeleteRange(day, index)}

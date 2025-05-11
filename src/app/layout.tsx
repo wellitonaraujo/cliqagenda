@@ -6,12 +6,14 @@ import { ServiceProvider } from '@/context/ServiceContext';
 import { AuthProvider } from '@/context/AuthContext';
 import './globals.css';
 import { ComboProvider } from '@/context/ComboContext';
+import { HorariosProvider } from '@/context/HoursProvider';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="h-full">
       <body className="h-full overflow-hidden">
         <AuthProvider>
+          <HorariosProvider>
           <ServiceProvider>
             <CustomerProvider>
               <ComboProvider>
@@ -21,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </ComboProvider>
             </CustomerProvider>
           </ServiceProvider>
+          </HorariosProvider>
         </AuthProvider>
       </body>
     </html>
