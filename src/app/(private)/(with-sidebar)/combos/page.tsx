@@ -27,7 +27,7 @@ export default function Combos() {
           {combos.map((combo) => (
             <div
               key={combo.id}
-              className="border border-gray-200 rounded-lg p-4 shadow-sm max-w-xl mx-auto"
+              className="border border-gray-200 hover:shadow-md transition-shadow duration-200 rounded-lg p-4 max-w-xl mx-auto cursor-pointer"
             >
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold text-gray-800">{combo.name}</h3>
@@ -50,7 +50,7 @@ export default function Combos() {
         </div>
       )}
 
-      <div className="mt-auto p-6 mb-20" onClick={() => router.push('/new-combo')}>
+      <div className="mt-auto p-6 mb-20 w-full max-w-xl mx-auto" onClick={() => router.push('/new-combo')}>
         <Button full>Novo Combo</Button>
       </div>
     </div>

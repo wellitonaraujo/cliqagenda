@@ -21,27 +21,37 @@ export default function Services() {
           <p className="mt-2 text-md text-gray-500">Cadastre um novo serviço</p>
         </div>
       ) : (
-        <div className="p-4 flex flex-col gap-4 overflow-auto flex-1">
-          {services.map((service) => (
-            <div
-              key={service.id}
-              className="border border-gray-200 rounded-lg p-4 shadow-sm"
-            >
-              <p className="font-semibold text-lg text-gray-800">{service.name}</p>
-              <div className="flex justify-between text-sm text-gray-600 mt-1">
-                <span>Duração: {service.duration}</span>
-                <span>Valor: R$ {service.price}</span>
-              </div>
+        <div className="p-4 flex flex-col gap-4 overflow-auto flex-1 items-center">
+        {services.map((service) => (
+          <div
+            key={service.id}
+            className="w-full max-w-xl rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 bg-white cursor-pointer"
+          >
+            <div className="grid grid-cols-3 text-md font-medium text-gray-500 mb-1">
+              <span>Serviço</span>
+              <span>Duração</span>
+              <span>Preço</span>
             </div>
-          ))}
-        </div>
+      
+            <div className="grid grid-cols-3 text-base font-semibold text-gray-800">
+              <span>{service.name}</span>
+              <span>{service.duration}</span>
+              <span>R$ {service.price}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      
       )}
-
-      <div className="mt-auto p-6 mb-20" onClick={() => {
-        router.push('/new-service');
-      }}>
+      <div
+        className="mt-auto p-6 mb-20 w-full max-w-xl mx-auto"
+        onClick={() => {
+          router.push('/new-service');
+        }}
+      >
         <Button full> Novo serviço </Button>
       </div>
+
     </div>
   );
 }

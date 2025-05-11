@@ -13,7 +13,7 @@ export default function NewCollaborator() {
   const { addCollaborator } = useCollaborators();
 
   const [name, setName] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
   // Estados de endereço
@@ -24,7 +24,7 @@ export default function NewCollaborator() {
   const [state, setState] = useState('');
 
   const handleSave = () => {
-    if (!name || !nickname || !phone || !street || !number || !district || !city || !state) {
+    if (!name || !email || !phone || !street || !number || !district || !city || !state) {
       alert('Preencha todos os campos.');
       return;
     }
@@ -32,7 +32,7 @@ export default function NewCollaborator() {
     addCollaborator({
       id: uuidv4(),
       name,
-      nickname,
+      email,
       phone,
       address: {
         street,
@@ -70,7 +70,15 @@ export default function NewCollaborator() {
           </div>
   
           <div className="mb-6">
-            <Input placeholder="Como prefere ser chamado" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+          <div className="mb-6">
+            <Input
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <p className="text-sm text-gray-500 mt-1">Será usado para entrar no sistema</p>
+          </div>
+
           </div>
   
           <div className="mb-6">
