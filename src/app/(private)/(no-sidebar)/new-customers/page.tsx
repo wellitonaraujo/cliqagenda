@@ -5,15 +5,15 @@ import { HiCamera, HiArrowLeft } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
 import Button from '@/componentes/Button';
 import Input from '@/componentes/Input';
-import { useCollaborators } from '@/context/CollaboratorContext';
 import { v4 as uuidv4 } from 'uuid';
+import { useCustomers } from '@/context/CustomersContext';
 
-export default function NewCollaborator() {
+export default function NewCustomer() {
   const router = useRouter();
-  const { addCollaborator } = useCollaborators();
+  const { addCustomer } = useCustomers(); // Usando o contexto para adicionar clientes
 
   const [name, setName] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
   // Estados de endereço
@@ -24,15 +24,16 @@ export default function NewCollaborator() {
   const [state, setState] = useState('');
 
   const handleSave = () => {
-    if (!name || !nickname || !phone || !street || !number || !district || !city || !state) {
+    if (!name || !email || !phone || !street || !number || !district || !city || !state) {
       alert('Preencha todos os campos.');
       return;
     }
 
-    addCollaborator({
+    // Adicionando o cliente ao contexto
+    addCustomer({
       id: uuidv4(),
       name,
-      nickname,
+      email,
       phone,
       address: {
         street,
@@ -43,7 +44,7 @@ export default function NewCollaborator() {
       },
     });
 
-    router.push('/collaborators');
+    router.push('/customers'); // Redireciona para a lista de clientes
   };
 
   return (
@@ -53,50 +54,49 @@ export default function NewCollaborator() {
           <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
           </button>
-          <h1 className="text-xl font-semibold mx-auto">Novo colaborador</h1>
+          <h1 className="text-xl font-semibold mx-auto">Novo Cliente</h1>
         </div>
-  
+
         <div className="flex justify-end mb-4">
           <button className="bg-purple-500 p-2 rounded-full text-white">
             <HiCamera size={20} />
           </button>
         </div>
-  
+
         <section className="mb-6">
           <h2 className="text-lg font-semibold mb-2">Informações pessoais</h2>
-  
+
           <div className="mb-6">
             <Input placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
-  
+
           <div className="mb-6">
-            <Input placeholder="Como prefere ser chamado" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+            <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
-  
+
           <div className="mb-6">
             <Input placeholder="Telefone" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </div>
         </section>
-  
-        {/* Empurrando a seção Endereço para baixo */}
-        <section className="mt-28 mb-6"> {/* Adicionando mt-8 */}
+
+        <section className="mt-28 mb-6">
           <h2 className="text-lg font-semibold mb-2">Endereço</h2>
-  
+
           <div className="mb-6">
             <Input placeholder="Logradouro" value={street} onChange={(e) => setStreet(e.target.value)} />
           </div>
-  
+
           <div className="grid grid-cols-2 gap-2 mb-4">
             <Input placeholder="Número" value={number} onChange={(e) => setNumber(e.target.value)} />
             <Input placeholder="Bairro" value={district} onChange={(e) => setDistrict(e.target.value)} />
           </div>
-  
+
           <div className="grid grid-cols-2 gap-2 mb-4">
             <Input placeholder="Cidade" value={city} onChange={(e) => setCity(e.target.value)} />
             <Input placeholder="Estado" value={state} onChange={(e) => setState(e.target.value)} />
           </div>
         </section>
-  
+
         <div className="flex justify-end gap-4">
           <button
             onClick={() => router.back()}
@@ -111,5 +111,5 @@ export default function NewCollaborator() {
         </div>
       </div>
     </div>
-  );  
+  );
 }

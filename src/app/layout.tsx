@@ -1,9 +1,11 @@
 'use client';
 
-import { AuthProvider } from '@/context/AuthContext';
 import { CollaboratorProvider } from '@/context/CollaboratorContext';
-import './globals.css';
+import { CustomerProvider } from '@/context/CustomersContext';
 import { ServiceProvider } from '@/context/ServiceContext';
+import { AuthProvider } from '@/context/AuthContext';
+import './globals.css';
+import { ComboProvider } from '@/context/ComboContext';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,9 +13,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="h-full overflow-hidden">
         <AuthProvider>
           <ServiceProvider>
-            <CollaboratorProvider>
-              {children}
-            </CollaboratorProvider>
+            <CustomerProvider>
+              <ComboProvider>
+              <CollaboratorProvider>
+                {children}
+              </CollaboratorProvider>
+              </ComboProvider>
+            </CustomerProvider>
           </ServiceProvider>
         </AuthProvider>
       </body>
