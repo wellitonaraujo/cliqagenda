@@ -64,6 +64,9 @@ export default function NewCombo() {
 
           {/* Select de Serviços */}
           <div className="mb-6">
+            <label htmlFor="services" className="block text-md font-medium text-gray-700 mb-2">
+              Serviços
+            </label>
             <select
               id="services"
               multiple
@@ -79,7 +82,9 @@ export default function NewCombo() {
               }}
               className="w-full p-3 border border-gray-300 rounded-lg text-gray-700"
             >
-              <option value="" disabled>Selecione os serviços</option>
+              <option key="placeholder-service" value="" disabled>
+                Selecione os serviços
+              </option>
               {availableServices.map((service) => (
                 <option key={service.id} value={service.id}>
                   {service.name}
@@ -87,7 +92,6 @@ export default function NewCombo() {
               ))}
             </select>
           </div>
-
           <div className="mb-6 flex gap-4">
             <div className="w-1/2">
               <Input
@@ -108,6 +112,9 @@ export default function NewCombo() {
 
           {/* Select de Profissionais */}
           <div className="mb-2">
+            <label htmlFor="professionals" className="block text-md font-medium text-gray-700 mb-2">
+              Profissionais
+            </label>
             <select
               id="professionals"
               multiple
@@ -118,7 +125,9 @@ export default function NewCombo() {
               }}
               className="w-full p-3 border border-gray-300 rounded-lg text-gray-700"
             >
-              <option value="" disabled>Selecione os profissionais</option>
+              <option key="placeholder-prof" value="" disabled>
+                Selecione os profissionais
+              </option>
               {collaborators.map((colab) => (
                 <option key={colab.id} value={colab.id}>
                   {colab.name}
@@ -126,7 +135,6 @@ export default function NewCombo() {
               ))}
             </select>
           </div>
-
           <p className="text-sm text-gray-500 mb-6">Profissionais que realizam esse combo</p>
         </section>
 
