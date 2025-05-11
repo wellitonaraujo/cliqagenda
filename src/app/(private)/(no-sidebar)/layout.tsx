@@ -1,3 +1,5 @@
+'use client';
+
 export default function NoSidebarLayout({ children }: { children: React.ReactNode }) {
     return (
        <div className="flex h-full">

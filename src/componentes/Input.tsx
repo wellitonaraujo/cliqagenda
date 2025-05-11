@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 type InputProps = {
-  label: string;
+  label?: string;
   type?: string;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
