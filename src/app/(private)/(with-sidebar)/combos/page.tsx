@@ -50,7 +50,7 @@ export default function Combos() {
         </div>
       )}
 
-      <div className="mt-auto p-6 mb-20" onClick={() => router.push('/new-combo')}>
+      <div className="mt-auto p-6 mb-20 w-full max-w-xl mx-auto" onClick={() => router.push('/new-combo')}>
         <Button full>Novo Combo</Button>
       </div>
     </div>

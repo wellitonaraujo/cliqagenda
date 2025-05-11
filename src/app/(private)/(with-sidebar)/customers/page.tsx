@@ -25,7 +25,7 @@ export default function Customers() {
       ) : (
         <div className="px-6 py-4">
           {customers.map((customer) => (
-            <div key={customer.id} className="border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div key={customer.id} className="border border-gray-200 rounded-lg p-4 shadow-sm max-w-xl mx-auto">
               <h3 className="text-xl font-semibold text-gray-800">{customer.name}</h3>
               <p className="text-md text-gray-600">{customer.email}</p>
               <p className="text-sm text-gray-500">{customer.phone}</p>
@@ -39,7 +39,7 @@ export default function Customers() {
         </div>
       )}
 
-      <div className="mt-auto p-6 mb-20" onClick={() => {
+      <div className="mt-auto p-6 mb-20 w-full max-w-xl mx-auto" onClick={() => {
         router.push('/new-customers');
       }}>
         <Button full>
