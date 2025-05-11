@@ -154,25 +154,6 @@ export default function MeuNegocioPage() {
                       />
                     </div>
   
-                    {/* Ações à direita */}
-                    <div className="flex items-center gap-2 justify-end ml-2">
-                      {index > 0 && (
-                        <button
-                          onClick={() => handleDeleteRange(day, index)}
-                          className="text-red-500 hover:text-red-700 ml-4"
-                        >
-                          <FiTrash />
-                        </button>
-                      )}
-                      {index === hours[day].ranges.length - 1 && (
-                        <button
-                          onClick={() => handleAddRange(day)}
-                          className="text-purple-600 hover:text-purple-800 ml-2"
-                        >
-                          <FiPlus />
-                        </button>
-                      )}
-                    </div>
                   </div>
                 ))
               ) : (

@@ -4,32 +4,67 @@ import Button from "@/componentes/Button";
 import { useEffect, useState, useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Header from "@/componentes/Header";
+import { useHorarios } from "@/context/HoursProvider";
 
 export default function Home() {
+  const { hours } = useHorarios(); // acesso ao contexto
   const [selectedDate, setSelectedDate] = useState("Seg. 5 de mai.");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const times = Array.from({ length: 96 }, (_, i) => {
-    const hour = Math.floor(i / 4);
-    const minute = (i % 4) * 15;
-    const paddedHour = hour.toString().padStart(2, '0');
-    const paddedMinute = minute.toString().padStart(2, '0');
-    const label = minute % 30 === 0 ? `${paddedHour}:${paddedMinute}` : '';
-    return { id: i, label };
-  });
+  // 🔁 Mapeia o nome do dia para o nome usado no objeto `hours`
+  const getDayName = (dateString: string) => {
+    if (dateString.startsWith("Seg")) return "Segunda";
+    if (dateString.startsWith("Ter")) return "Terça";
+    if (dateString.startsWith("Qua")) return "Quarta";
+    if (dateString.startsWith("Qui")) return "Quinta";
+    if (dateString.startsWith("Sex")) return "Sexta";
+    if (dateString.startsWith("Sáb")) return "Sábado";
+    if (dateString.startsWith("Dom")) return "Domingo";
+    return "";
+  };
+
+  // 🔁 Gera os horários apenas com base no dia e intervalo definidos
+  const generateTimeSlots = (day: string) => {
+    const config = hours[day];
+    if (!config || !config.open) return [];
+
+    const slots = config.ranges.flatMap((range) => {
+      const start = convertToMinutes(range.start);
+      const end = convertToMinutes(range.end);
+      const times = [];
+
+      for (let t = start; t < end; t += 15) {
+        const hour = Math.floor(t / 60);
+        const minute = t % 60;
+        const label = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        times.push({ id: t, label });
+      }
+
+      return times;
+    });
+
+    return slots;
+  };
+
+  const convertToMinutes = (time: string) => {
+    const [hour, minute] = time.split(":").map(Number);
+    return hour * 60 + minute;
+  };
+
+  const dayName = getDayName(selectedDate);
+  const timeSlots = generateTimeSlots(dayName);
 
   useEffect(() => {
-    // Scroll até o índice correspondente a 09:00 (9*4 = 36)
-    if (scrollRef.current) {
-      const itemHeight = 40; // altura em px por bloco (h-10 = 2.5rem = 40px)
-      scrollRef.current.scrollTop = 36 * itemHeight;
+    if (scrollRef.current && timeSlots.length > 0) {
+      const itemHeight = 40;
+      scrollRef.current.scrollTop = 4 * itemHeight;
     }
-  }, []);
+  }, [timeSlots]);
 
   return (
-    <div className="flex flex-col h-full bg-white">
+<div className="flex flex-col min-h-screen bg-white">
+
       {/* Header (fixado no topo) */}
       <div className="sticky top-0 z-10 bg-white">
         <div className="flex items-center justify-between">
@@ -55,15 +90,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Conteúdo principal */}
-      <div className="flex-1 overflow-y-auto p-2 flex">
+   {/* Conteúdo principal */}
+   <div className="flex-1 overflow-y-auto p-2 flex">
         {/* Coluna de horários */}
         <div className="flex flex-col w-10 pr-2">
-          {times.map(({ id, label }, index) => (
-            <div
-              key={id}
-              className={`${index === 0 ? 'h-3' : 'h-8'} flex items-end justify-end pb-[1px]`}
-            >
+          {timeSlots.map(({ id, label }, index) => (
+            <div key={id} className="h-8 flex items-end justify-end pb-[1px]">
               {label && (
                 <span className="text-xs text-gray-500 leading-none translate-y-1/2">
                   {label}
@@ -74,27 +106,22 @@ export default function Home() {
         </div>
 
         <div className="flex-1">
-          {times.map((_, index) => {
-            const hour = Math.floor(index / 4);
-            const minute = (index % 4) * 15;
-            const formatted = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+          {timeSlots.map(({ label }, index) => {
             const isSelected = selectedIndex === index;
-
             return (
               <div
                 key={index}
                 onClick={() => setSelectedIndex(index)}
-                className={`rrelative ${index === 0 ? 'h-3' : 'h-8'} border group flex items-center justify-center cursor-pointer
+                className={`relative h-8 border group flex items-center justify-center cursor-pointer
                   ${isSelected ? 'border-[#7567E4]' : 'border-gray-200'} hover:border-[#7567E4]`}
               >
                 <span className={`text-xs text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
-                  {formatted}
+                  {label}
                 </span>
               </div>
             );
           })}
         </div>
-
       </div>
     </div>
   );
