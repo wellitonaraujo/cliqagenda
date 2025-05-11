@@ -1,74 +1,113 @@
 'use client';
 
+import { useState } from 'react';
 import { HiCamera, HiArrowLeft } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
 import Button from '@/componentes/Button';
 import Input from '@/componentes/Input';
+import { useCollaborators } from '@/context/CollaboratorContext';
 
 export default function NewCollaborator() {
   const router = useRouter();
+  const { addCollaborator } = useCollaborators();
+
+  const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [phone, setPhone] = useState('');
+
+  // Estados de endereço
+  const [street, setStreet] = useState('');
+  const [number, setNumber] = useState('');
+  const [district, setDistrict] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+
+  const handleSave = () => {
+    if (!name || !nickname || !phone || !street || !number || !district || !city || !state) {
+      alert('Preencha todos os campos.');
+      return;
+    }
+
+    addCollaborator({
+      name,
+      nickname,
+      phone,
+      address: {
+        street,
+        number,
+        district,
+        city,
+        state,
+      },
+    });
+
+    router.push('/collaborators');
+  };
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
-      <div className="w-full max-w-2xl bg-white rounded-lg shadow-md p-6 relative">
+      <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
         <div className="flex justify-between items-center mb-8">
-          {/* Botão de Voltar */}
-          <button
-            onClick={() => router.back()}
-            className="text-gray-600 hover:text-gray-800"
-          >
+          <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
           </button>
-
-          {/* Título centralizado */}
           <h1 className="text-xl font-semibold mx-auto">Novo colaborador</h1>
         </div>
-
+  
         <div className="flex justify-end mb-4">
           <button className="bg-purple-500 p-2 rounded-full text-white">
             <HiCamera size={20} />
           </button>
         </div>
-
+  
         <section className="mb-6">
           <h2 className="text-lg font-semibold mb-2">Informações pessoais</h2>
+  
           <div className="mb-6">
-          <Input placeholder="Nome" />
+            <Input placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
+  
           <div className="mb-6">
-          <Input placeholder="Como prefere ser chamado" />
+            <Input placeholder="Como prefere ser chamado" value={nickname} onChange={(e) => setNickname(e.target.value)} />
           </div>
-          <div className="mb-2">
-          <Input placeholder="Email do colaborador" />
-          </div>
+  
           <div className="mb-6">
-          <p className="text-sm text-gray-500 mb-2">Será usado para entrar no sistema</p>
+            <Input placeholder="Telefone" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </div>
-          <div className="mb-6">
-          <Input placeholder="Telefone" />
-          </div>
-         
         </section>
-
-        <section className="mb-6">
+  
+        {/* Empurrando a seção Endereço para baixo */}
+        <section className="mt-28 mb-6"> {/* Adicionando mt-8 */}
           <h2 className="text-lg font-semibold mb-2">Endereço</h2>
-          
+  
           <div className="mb-6">
-            <Input placeholder="Logradouro" />
+            <Input placeholder="Logradouro" value={street} onChange={(e) => setStreet(e.target.value)} />
           </div>
-        
+  
           <div className="grid grid-cols-2 gap-2 mb-4">
-            <Input placeholder="Número" />
-            <Input placeholder="Bairro" />
+            <Input placeholder="Número" value={number} onChange={(e) => setNumber(e.target.value)} />
+            <Input placeholder="Bairro" value={district} onChange={(e) => setDistrict(e.target.value)} />
           </div>
+  
           <div className="grid grid-cols-2 gap-2 mb-4">
-            <Input placeholder="Cidade" />
-            <Input placeholder="Estado" />
+            <Input placeholder="Cidade" value={city} onChange={(e) => setCity(e.target.value)} />
+            <Input placeholder="Estado" value={state} onChange={(e) => setState(e.target.value)} />
           </div>
         </section>
+  
+        <div className="flex justify-end gap-4">
+          <button
+            onClick={() => router.back()}
+            className="text-gray-600 font-medium hover:underline"
+          >
+            Cancelar
+          </button>
 
-        <Button full>Salvar</Button>
+          <div onClick={handleSave}>
+            <Button>Salvar</Button>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  );  
 }
