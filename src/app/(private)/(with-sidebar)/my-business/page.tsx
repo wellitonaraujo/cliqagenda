@@ -1,8 +1,7 @@
 "use client";
 
-import { FiPlus, FiEdit2, FiLink, FiTrash } from 'react-icons/fi';
+import { FiEdit2, FiLink } from 'react-icons/fi';
 import { Switch } from '@headlessui/react';
-import { useState } from 'react';
 import Image from 'next/image';
 import Header from '@/componentes/Header';
 import { useHorarios } from '@/context/HoursProvider';
@@ -13,8 +12,6 @@ type TimeRange = {
   start: string;
   end: string;
 };
-
-
 
 export default function MeuNegocioPage() {
   const { hours, setHours } = useHorarios();
