@@ -1,10 +1,10 @@
 "use client";
 
-import { FiPlus, FiEdit2, FiLink, FiTrash } from 'react-icons/fi';
+import { FiEdit2, FiLink } from 'react-icons/fi';
 import { Switch } from '@headlessui/react';
-import { useState } from 'react';
 import Image from 'next/image';
 import Header from '@/componentes/Header';
+import { useHorarios } from '@/context/HoursProvider';
 
 const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
@@ -14,18 +14,7 @@ type TimeRange = {
 };
 
 export default function MeuNegocioPage() {
-  const [hours, setHours] = useState<Record<string, { open: boolean; ranges: TimeRange[] }>>(
-    () =>
-      Object.fromEntries(
-        daysOfWeek.map((day) => [
-          day,
-          {
-            open: day !== 'Domingo',
-            ranges: [{ start: '09:00', end: '21:00' }],
-          },
-        ])
-      )
-  );
+  const { hours, setHours } = useHorarios();
 
   const handleToggle = (day: string) => {
     setHours((prev) => ({
@@ -161,25 +150,6 @@ export default function MeuNegocioPage() {
                       />
                     </div>
   
-                    {/* Ações à direita */}
-                    <div className="flex items-center gap-2 justify-end">
-                      {index > 0 && (
-                        <button
-                          onClick={() => handleDeleteRange(day, index)}
-                          className="text-red-500 hover:text-red-700 ml-4"
-                        >
-                          <FiTrash />
-                        </button>
-                      )}
-                      {index === hours[day].ranges.length - 1 && (
-                        <button
-                          onClick={() => handleAddRange(day)}
-                          className="text-purple-600 hover:text-purple-800 ml-2"
-                        >
-                          <FiPlus />
-                        </button>
-                      )}
-                    </div>
                   </div>
                 ))
               ) : (
