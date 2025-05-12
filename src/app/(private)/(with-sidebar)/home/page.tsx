@@ -12,7 +12,7 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     const dayName = today.toLocaleDateString('pt-BR', { weekday: 'long' });
-    return capitalizeFirstLetter(dayName); // Ex: "Segunda", "Terça"
+    return capitalizeFirstLetter(dayName);
   });
   
   function capitalizeFirstLetter(str: string) {

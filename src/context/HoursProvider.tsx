@@ -14,34 +14,34 @@ type HorariosContextType = {
 const HorariosContext = createContext<HorariosContextType | undefined>(undefined);
 
 export const HorariosProvider = ({ children }: { children: React.ReactNode }) => {
-  const [hours, setHours] = useState<HoursType>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
+
+const [hours, setHours] = useState<HoursType>(() => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
         const parsedHours = JSON.parse(stored);
-        // Se algum dia estiver com `open: false`, ele vai forçar todos os dias a estarem abertos
-        const allOpen = Object.keys(parsedHours).every(day => parsedHours[day].open === true);
-        if (allOpen) {
-          return parsedHours;
-        }
+        return parsedHours;
+      } catch (error) {
+        console.error('Erro ao fazer parse dos horários:', error);
       }
     }
+  }
 
-    // Inicializa todos os dias como abertos por padrão
-    return Object.fromEntries(
-      daysOfWeek.map((day) => [
-        day,
-        {
-          open: true, // Todos os dias começam abertos
-          ranges: [{ start: '08:00', end: '20:00' }],
-        },
-      ])
-    );
+  return Object.fromEntries(
+    daysOfWeek.map((day) => [
+      day,
+      {
+        open: true,
+        ranges: [{ start: '08:00', end: '20:00' }],
+      },
+    ])
+  );
   });
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(hours));
-  }, [hours]);
+useEffect(() => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(hours));
+}, [hours]);
 
   return (
     <HorariosContext.Provider value={{ hours, setHours }}>
@@ -49,7 +49,6 @@ export const HorariosProvider = ({ children }: { children: React.ReactNode }) =>
     </HorariosContext.Provider>
   );
 };
-
 
 export const useHorarios = () => {
   const context = useContext(HorariosContext);

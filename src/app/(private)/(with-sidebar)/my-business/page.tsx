@@ -49,7 +49,6 @@ export default function MeuNegocioPage() {
     }));
   };
 
-
   return (
     <div className="bg-white min-h-screen">
       <div className="flex items-center gap-2">
