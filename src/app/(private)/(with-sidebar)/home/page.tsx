@@ -35,7 +35,10 @@ export default function Home() {
 
   const generateTimeSlots = (day: string) => {
     const config = hours[day];
-    if (!config || !config.open) return [];
+    if (!config) return [];
+
+    const isOpen = config.open;
+    
 
     const slots = config.ranges.flatMap((range) => {
       const start = convertToMinutes(range.start);
@@ -76,7 +79,6 @@ export default function Home() {
     // Encontra o índice do dia atual
     const currentIndex = daysOfWeek.indexOf(getDayName(selectedDate));
 
-    // Calcula o novo índice com base na direção (1 = próximo, -1 = anterior)
     let newIndex = currentIndex + direction;
 
     // Se o novo índice for menor que 0, volta para o último dia
@@ -110,14 +112,14 @@ export default function Home() {
         <div className="flex items-center gap-2 text-primary font-medium">
           <button 
             className="text-gray-700" 
-            onClick={() => handleDayChange(-1)}  // Vai para o dia anterior
+            onClick={() => handleDayChange(-1)}
           >
             <FiChevronLeft size={20} />
           </button>
           <span className="text-gray-700">{selectedDate}</span>
           <button 
             className="text-gray-700" 
-            onClick={() => handleDayChange(1)}  // Vai para o próximo dia
+            onClick={() => handleDayChange(1)}
           >
             <FiChevronRight size={20} />
           </button>
@@ -127,53 +129,44 @@ export default function Home() {
         </div>
       </div>
 
-    {/* Conteúdo principal */}
-    <div className="flex-1 overflow-y-auto p-6 flex">
-      {/* Coluna de horários */}
-      <div className="flex flex-col w-10 pr-2">
-        {timeSlots.length > 0 ? (
-          timeSlots.map(({ id, label }, index) => (
-            <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
-              {/* Exibe a label apenas de 30 em 30 minutos */}
-              {index % 2 === 0 && label && (
-                <span className="text-sm text-gray-800 leading-none translate-y-1/2">
-                  {label}
-                </span>
-              )}
-            </div>
-          ))
-        ) : (
-          <div className="flex justify-center items-center h-8">
-            <span className="text-xs text-gray-500">Fechado</span>
-          </div>
-        )}
-      </div>
-
-      {/* Coluna dos horários clicáveis */}
-      <div className="flex-1">
-        {timeSlots.length > 0 ? (
-          timeSlots.map(({ label }, index) => {
-            const isSelected = selectedIndex === index;
-            return (
-              <div
-                key={index}
-                onClick={() => setSelectedIndex(index)}
-                className={`relative h-10 border group flex items-center justify-center cursor-pointer
-                  ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
-              >
-                <span className={`text-xd font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
-                  {label}
-                </span>
+      {/* Conteúdo principal */}
+      <div className="flex-1 overflow-y-auto p-6 flex">
+        {/* Coluna de horários */}
+        <div className="flex flex-col w-10 pr-2">
+          {
+            timeSlots.map(({ id, label }, index) => (
+              <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
+                {/* Exibe a label apenas de 30 em 30 minutos */}
+                {index % 2 === 0 && label && (
+                  <span className="text-sm text-gray-800 leading-none translate-y-1/2">
+                    {label}
+                  </span>
+                )}
               </div>
-            );
-          })
-        ) : (
-          <div className="h-8 flex items-center justify-center">
-            <span className="text-xs text-gray-500">Fechado</span>
-          </div>
-        )}
+            ))
+          }
+        </div>
+        {/* Coluna dos horários clicáveis */}
+        <div className="flex-1">
+          {
+            timeSlots.map(({ label }, index) => {
+              const isSelected = selectedIndex === index;
+              return (
+                <div
+                  key={index}
+                  onClick={() => setSelectedIndex(index)}
+                  className={`relative h-10 border group flex items-center justify-center cursor-pointer
+                    ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
+                >
+                  <span className={`text-xd font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+                    {label}
+                  </span>
+                </div>
+              );
+            })
+          }
+        </div>
       </div>
-    </div>
 
     </div>
   );
