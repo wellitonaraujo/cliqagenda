@@ -128,14 +128,14 @@ export default function Home() {
       </div>
 
       {/* Conteúdo principal */}
-      <div className="flex-1 overflow-y-auto p-2 flex">
+      <div className="flex-1 overflow-y-auto p-6 flex">
         {/* Coluna de horários */}
         <div className="flex flex-col w-10 pr-2">
           {timeSlots.length > 0 ? (
             timeSlots.map(({ id, label }, index) => (
-              <div key={id} className="h-8 flex items-end justify-end pb-[1px]">
+              <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
                 {label && (
-                  <span className="text-xs text-gray-500 leading-none translate-y-1/2">
+                  <span className="text-sm text-gray-800 leading-none translate-y-1/2">
                     {label}
                   </span>
                 )}
@@ -156,7 +156,7 @@ export default function Home() {
                 <div
                   key={index}
                   onClick={() => setSelectedIndex(index)}
-                  className={`relative h-8 border group flex items-center justify-center cursor-pointer
+                  className={`relative h-10 border group flex items-center justify-center cursor-pointer
                     ${isSelected ? 'border-[#7567E4]' : 'border-gray-200'} hover:border-[#7567E4]`}
                 >
                   <span className={`text-xs text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
