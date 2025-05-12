@@ -127,51 +127,54 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Conteúdo principal */}
-      <div className="flex-1 overflow-y-auto p-6 flex">
-        {/* Coluna de horários */}
-        <div className="flex flex-col w-10 pr-2">
-          {timeSlots.length > 0 ? (
-            timeSlots.map(({ id, label }, index) => (
-              <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
-                {label && (
-                  <span className="text-sm text-gray-800 leading-none translate-y-1/2">
-                    {label}
-                  </span>
-                )}
-              </div>
-            ))
-          ) : (
-            <div className="flex justify-center items-center h-8">
-              <span className="text-xs text-gray-500">Fechado</span>
+    {/* Conteúdo principal */}
+    <div className="flex-1 overflow-y-auto p-6 flex">
+      {/* Coluna de horários */}
+      <div className="flex flex-col w-10 pr-2">
+        {timeSlots.length > 0 ? (
+          timeSlots.map(({ id, label }, index) => (
+            <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
+              {/* Exibe a label apenas de 30 em 30 minutos */}
+              {index % 2 === 0 && label && (
+                <span className="text-sm text-gray-800 leading-none translate-y-1/2">
+                  {label}
+                </span>
+              )}
             </div>
-          )}
-        </div>
-
-        <div className="flex-1">
-          {timeSlots.length > 0 ? (
-            timeSlots.map(({ label }, index) => {
-              const isSelected = selectedIndex === index;
-              return (
-                <div
-                  key={index}
-                  onClick={() => setSelectedIndex(index)}
-                  className={`relative h-10 border group flex items-center justify-center cursor-pointer
-                    ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
-                >
-                  <span className={`text-xd font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
-                    {label}
-                  </span>
-                </div>
-              );
-            })
-          ) : (
-            <div className="h-8 flex items-center justify-center">
-              <span className="text-xs text-gray-500">Fechado</span>
-            </div>
-          )}
-        </div>
+          ))
+        ) : (
+          <div className="flex justify-center items-center h-8">
+            <span className="text-xs text-gray-500">Fechado</span>
+          </div>
+        )}
       </div>
+
+      {/* Coluna dos horários clicáveis */}
+      <div className="flex-1">
+        {timeSlots.length > 0 ? (
+          timeSlots.map(({ label }, index) => {
+            const isSelected = selectedIndex === index;
+            return (
+              <div
+                key={index}
+                onClick={() => setSelectedIndex(index)}
+                className={`relative h-10 border group flex items-center justify-center cursor-pointer
+                  ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
+              >
+                <span className={`text-xd font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+                  {label}
+                </span>
+              </div>
+            );
+          })
+        ) : (
+          <div className="h-8 flex items-center justify-center">
+            <span className="text-xs text-gray-500">Fechado</span>
+          </div>
+        )}
+      </div>
+    </div>
+
     </div>
   );
 }
