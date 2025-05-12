@@ -157,9 +157,9 @@ export default function Home() {
                   key={index}
                   onClick={() => setSelectedIndex(index)}
                   className={`relative h-10 border group flex items-center justify-center cursor-pointer
-                    ${isSelected ? 'border-[#7567E4]' : 'border-gray-200'} hover:border-[#7567E4]`}
+                    ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
                 >
-                  <span className={`text-xs text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+                  <span className={`text-xd font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
                     {label}
                   </span>
                 </div>
