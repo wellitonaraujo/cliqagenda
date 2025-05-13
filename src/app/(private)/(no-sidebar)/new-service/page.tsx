@@ -8,19 +8,46 @@ import { useCollaborators } from '@/context/CollaboratorContext';
 import { useServices } from '@/context/ServiceContext';
 import { v4 as uuidv4 } from 'uuid';
 import { HiArrowLeft } from 'react-icons/hi';
+import { formatCurrency } from '../../../../../utils/formatCurrency';
 
 export default function NewService() {
   const router = useRouter();
   const { collaborators } = useCollaborators();
+  const { addService } = useServices();
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
   const [collaboratorId, setCollaboratorId] = useState('');
+  
+  const generateDurations = (): string[] => {
+    const durations: string[] = [];
+    const startMinutes = 5;
+    const endMinutes = 8 * 60;
+  
+    for (let minutes = startMinutes; minutes <= endMinutes; minutes += 15) {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+  
+      let label = '';
+      if (hours > 0) {
+        label += `${hours} ${hours === 1 ? 'hora' : 'horas'}`;
+        if (remainingMinutes > 0) {
+          label += ` e ${remainingMinutes} minutos`;
+        }
+      } else {
+        label = `${remainingMinutes} minutos`;
+      }
+  
+      durations.push(label);
+    }
+  
+    return durations;
+  };
+  
+  const durations = generateDurations();
 
-  const durations = ['15min', '30min', '1:00h', '1:30h', '2:00h'];
 
-  const { addService } = useServices();
 
   const handleSave = () => {
     if (!name || !price || !duration || !collaboratorId) {
@@ -38,6 +65,13 @@ export default function NewService() {
     router.push('/services');
   };
 
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    const numeric = rawValue.replace(/\D/g, '');
+    setPrice(formatCurrency(numeric));
+  };
+  
+
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
@@ -49,7 +83,6 @@ export default function NewService() {
           <h1 className="text-xl font-semibold mx-auto">Novo serviço</h1>
         </div>
   
-        {/* Formulário */}
         <div className="mb-4">
           <Input
             placeholder="Nome do serviço"
@@ -62,10 +95,10 @@ export default function NewService() {
           <Input
             placeholder="Valor"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={handlePriceChange}
           />
         </div>
-  
+
         <div className="mb-4">
           <select
             value={duration}
@@ -92,7 +125,6 @@ export default function NewService() {
           </select>
         </div>
   
-        {/* Botões de ação */}
         <div className="flex justify-end gap-4 mt-auto mb-20">
           <button
             onClick={() => router.back()}

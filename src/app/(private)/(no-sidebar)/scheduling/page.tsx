@@ -168,11 +168,18 @@ export default function AgendamentoForm() {
             </div>
           </div>
         )}
-
-        <div onClick={handleSubmit}>
-          <Button className="w-full py-3 text-white bg-violet-600 hover:bg-violet-700 transition rounded-lg">
-            Confirmar Agendamento
-          </Button>
+        <div className="flex justify-end gap-4 mt-auto mb-20">
+          <button
+            onClick={() => router.back()}
+            className="text-purple-500 font-medium hover:underline"
+          >
+            Cancelar
+          </button>
+          <div onClick={handleSubmit}>
+            <Button>
+              Confirmar Agendamento
+            </Button>
+        </div>
         </div>
       </div>
     </div>
