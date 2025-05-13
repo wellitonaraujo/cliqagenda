@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -22,7 +22,7 @@ export default function NewService() {
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
   const [selectedCollaboratorIds, setSelectedCollaboratorIds] = useState<string[]>([]);
-  
+
   const durations = generateDurations();
 
   const collaboratorOptions = collaborators.map((c) => ({
@@ -33,14 +33,14 @@ export default function NewService() {
   const durationOptions = durations.map((d) => ({
     value: d,
     label: d,
-  }));  
+  }));
 
   const handleSave = () => {
     if (!name || !price || !duration || selectedCollaboratorIds.length === 0) {
       alert('Preencha todos os campos');
       return;
     }
-  
+
     const newService = {
       id: uuidv4(),
       name,
@@ -48,19 +48,29 @@ export default function NewService() {
       duration,
       collaboratorIds: selectedCollaboratorIds,
     };
-  
+
     console.log('Serviço criado:', newService);
-  
+
     addService(newService);
     router.push('/services');
   };
-  
+
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const numeric = rawValue.replace(/\D/g, '');
     setPrice(formatCurrency(numeric));
   };
+
+  const handleCollaboratorChange = (selectedOptions: any) => {
+    if (!selectedOptions) return;
     
+    // Quando 'isMulti' está ativo, selectedOptions será um array de objetos
+    const selectedValues = selectedOptions.map((opt: any) => opt.value);
+    console.log("Selected collaborators:", selectedValues); // Log para depurar
+
+    setSelectedCollaboratorIds(selectedValues); // Atualiza o estado com os IDs selecionados
+  };
+
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
@@ -70,7 +80,7 @@ export default function NewService() {
           </button>
           <h1 className="text-xl font-semibold mx-auto">Novo serviço</h1>
         </div>
-  
+
         <div className="mb-4">
           <Input
             placeholder="Nome do serviço"
@@ -78,7 +88,7 @@ export default function NewService() {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-  
+
         <div className="mb-4">
           <Input
             placeholder="Valor"
@@ -104,9 +114,7 @@ export default function NewService() {
             value={collaboratorOptions.filter((opt) =>
               selectedCollaboratorIds.includes(opt.value)
             )}
-            onChange={(selectedOptions) =>
-              setSelectedCollaboratorIds(selectedOptions.map((opt) => opt.value))
-            }
+            onChange={handleCollaboratorChange}
             placeholder="Selecione os colaboradores"
             classNames={customSelectStyles.classNames}
           />
@@ -117,12 +125,12 @@ export default function NewService() {
           <button
             onClick={() => router.back()}
             className="text-gray-700 font-medium hover:underline"
-            >
-              Cancelar
-            </button>
-            <div onClick={handleSave}>
-              <Button>Salvar</Button>
-            </div>
+          >
+            Cancelar
+          </button>
+          <div onClick={handleSave}>
+            <Button>Salvar</Button>
+          </div>
         </div>
       </div>
     </div>

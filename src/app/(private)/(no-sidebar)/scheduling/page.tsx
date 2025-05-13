@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -32,7 +32,6 @@ export default function AgendamentoForm() {
   const [selectedTime, setSelectedTime] = useState('');
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   
-
   const generateTimeSlots = (start: string, end: string): string[] => {
     const times: string[] = [];
     const [startHour, startMinute] = start.split(':').map(Number);
@@ -54,7 +53,6 @@ export default function AgendamentoForm() {
     return times;
   };
   
-
   const [duration, setDuration] = useState('');
   const [price, setPrice] = useState('');
 
@@ -108,23 +106,25 @@ export default function AgendamentoForm() {
 
   useEffect(() => {
     if (selectedCollaboratorId && selectedDate) {
-      const dayName = getDayName(selectedDate);
-      const dayHours = hours[dayName];
+      const dayName = getDayName(selectedDate);  // Pega o nome do dia da semana
+      const dayHours = hours[dayName];  // Pega os horários do colaborador para o dia escolhido
+      
       console.log("dayHours:", dayHours);
-  
+      
       if (
-        dayHours &&
-        dayHours.open &&
-        Array.isArray(dayHours.ranges) &&
+        dayHours &&  // Se o colaborador trabalha neste dia
+        dayHours.open &&  // Se o colaborador está disponível neste dia
+        Array.isArray(dayHours.ranges) &&  // Se os intervalos de horário estão configurados corretamente
         dayHours.ranges.every(range => typeof range.start === 'string' && typeof range.end === 'string')
       ) {
+        // Gera os horários disponíveis com base nos intervalos configurados
         const slots = dayHours.ranges.flatMap(range => generateTimeSlots(range.start, range.end));
-        setAvailableTimes(slots);
+        setAvailableTimes(slots);  // Atualiza os horários disponíveis
       } else {
-        setAvailableTimes([]);
+        setAvailableTimes([]);  // Se não houver horários válidos, define a lista como vazia
       }
     }
-  }, [selectedCollaboratorId, selectedDate, hours]);
+  }, [selectedCollaboratorId, selectedDate]);  // Executa sempre que o colaborador ou a data forem alterados
   
 
   return (
