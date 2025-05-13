@@ -9,6 +9,7 @@ import { useCollaborators } from '@/context/CollaboratorContext';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { TimeRange } from '@/types/collaborator';
+import { Switch } from '@headlessui/react';
 
 type BusinessHours = {
   [day: string]: {
@@ -93,7 +94,6 @@ export default function NewCollaborator() {
     };
     
     console.log(JSON.stringify(newCollaborator, null, 2));
-
     
     addCollaborator(newCollaborator);
 
@@ -168,17 +168,27 @@ export default function NewCollaborator() {
                     <div key={index} className="flex items-center justify-between mb-2">
                       {index === 0 ? (
                         <div className="flex items-center gap-2 w-36">
-                          <input
-                            type="checkbox"
+                          {/* Switch e Nome do dia à esquerda */}
+                          <Switch
                             checked={hours[day].open}
                             onChange={() => handleToggle(day)}
-                          />
+                            className={`${
+                              hours[day].open ? 'bg-[#7567E4]' : 'bg-gray-300'
+                            } relative inline-flex h-5 w-10 items-center rounded-full`}
+                          >
+                            <span
+                              className={`${
+                                hours[day].open ? 'translate-x-5' : 'translate-x-1'
+                              } inline-block h-3.5 w-3.5 transform bg-white rounded-full transition-transform`}
+                            />
+                          </Switch>
                           <span className="text-sm">{day}</span>
                         </div>
                       ) : (
                         <div className="w-36" />
                       )}
 
+                      {/* Horários à direita */}
                       <div className="flex items-center gap-2 justify-end w-full">
                         <input
                           type="time"
@@ -203,11 +213,20 @@ export default function NewCollaborator() {
                 ) : (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 w-36">
-                      <input
-                        type="checkbox"
+                      {/* Switch e Nome do dia à esquerda */}
+                      <Switch
                         checked={hours[day].open}
                         onChange={() => handleToggle(day)}
-                      />
+                        className={`${
+                          hours[day].open ? 'bg-purple-500' : 'bg-gray-300'
+                        } relative inline-flex h-5 w-10 items-center rounded-full`}
+                      >
+                        <span
+                          className={`${
+                            hours[day].open ? 'translate-x-5' : 'translate-x-1'
+                          } inline-block h-3.5 w-3.5 transform bg-white rounded-full transition-transform`}
+                        />
+                      </Switch>
                       <span className="text-sm">{day}</span>
                     </div>
                     <span className="text-sm text-gray-400">Fechado</span>
