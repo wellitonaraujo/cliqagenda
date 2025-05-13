@@ -7,6 +7,7 @@ type Service = {
   name: string;
   price: string;
   duration: string;
+  collaboratorIds: string[];
 };
 
 type ServiceContextType = {
@@ -34,7 +35,7 @@ export function ServiceProvider({ children }: { children: ReactNode }) {
 
   const addService = (service: Service) => {
     setServices((prev) => [...prev, service]);
-  };
+  };  
 
   return (
     <ServiceContext.Provider value={{ services, addService }}>

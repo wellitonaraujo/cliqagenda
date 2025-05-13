@@ -4,44 +4,62 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Input from '@/componentes/Input';
 import Button from '@/componentes/Button';
+import { useCollaborators } from '@/context/CollaboratorContext';
 import { useServices } from '@/context/ServiceContext';
 import { v4 as uuidv4 } from 'uuid';
 import { HiArrowLeft } from 'react-icons/hi';
 import { formatCurrency } from '../../../../../utils/formatCurrency';
 import { generateDurations } from '../../../../../utils/generateDurations';
+import Select from 'react-select';
 
 export default function NewService() {
   const router = useRouter();
+  const { collaborators } = useCollaborators();
   const { addService } = useServices();
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
+  const [selectedCollaboratorIds, setSelectedCollaboratorIds] = useState<string[]>([]);
   
   const durations = generateDurations();
 
+  const collaboratorOptions = collaborators.map((c) => ({
+    value: c.id,
+    label: c.name,
+  }));
+
+  const durationOptions = durations.map((d) => ({
+    value: d,
+    label: d,
+  }));  
+
   const handleSave = () => {
-    if (!name || !price || !duration) {
+    if (!name || !price || !duration || selectedCollaboratorIds.length === 0) {
       alert('Preencha todos os campos');
       return;
     }
   
-    addService({
+    const newService = {
       id: uuidv4(),
       name,
       price,
       duration,
-    });
+      collaboratorIds: selectedCollaboratorIds,
+    };
   
+    console.log('Serviço criado:', newService);
+  
+    addService(newService);
     router.push('/services');
   };
-
+  
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
     const numeric = rawValue.replace(/\D/g, '');
     setPrice(formatCurrency(numeric));
   };
-       
+    
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
@@ -69,29 +87,42 @@ export default function NewService() {
         </div>
 
         <div className="mb-4">
-          <select
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700"
-          >
-            <option value="">Selecione a duração</option>
-            {durations.map((d) => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
+          <Select
+            options={durationOptions}
+            value={durationOptions.find((opt) => opt.value === duration) || null}
+            onChange={(selectedOption) => setDuration(selectedOption?.value ?? '')}
+            placeholder="Selecione a duração"
+            className="text-sm"
+          />
         </div>
-  
-        <div className="flex justify-end gap-4 mt-auto mb-20">
-          <button
-            onClick={() => router.back()}
-            className="text-purple-500 font-medium hover:underline"
-          >
-            Cancelar
-          </button>
-          <div onClick={handleSave}>
-            <Button>Salvar</Button>
+
+        <div className="mb-6">
+          <Select
+            isMulti
+            options={collaboratorOptions}
+            value={collaboratorOptions.filter((opt) =>
+              selectedCollaboratorIds.includes(opt.value)
+            )}
+            onChange={(selectedOptions) =>
+               setSelectedCollaboratorIds(selectedOptions.map((opt) => opt.value))
+            }
+            placeholder="Selecione os colaboradores"
+            className="text-sm"
+          />
+          <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
           </div>
-        </div>
+
+          <div className="flex justify-end gap-4 mt-auto mb-20">
+            <button
+              onClick={() => router.back()}
+              className="text-gray-700 font-medium hover:underline"
+            >
+              Cancelar
+            </button>
+            <div onClick={handleSave}>
+              <Button>Salvar</Button>
+            </div>
+          </div>
       </div>
     </div>
   );
