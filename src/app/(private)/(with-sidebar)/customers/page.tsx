@@ -28,7 +28,7 @@ export default function Customers() {
           {customers.map((customer) => (
             <div
               key={customer.id}
-              className="border border-gray-200 hover:shadow-md transition-shadow duration-200 rounded-lg p-4 max-w-xl mx-auto cursor-pointer"
+              className="border border-gray-200 hover:shadow-md transition-shadow duration-200 rounded-lg p-4 max-w-xl mx-auto cursor-pointer mb-5"
             >
               <div className="flex items-center gap-2 text-base text-gray-800 font-medium">
                 <FiUser />

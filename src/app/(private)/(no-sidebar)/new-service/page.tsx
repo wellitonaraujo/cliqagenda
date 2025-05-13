@@ -9,6 +9,7 @@ import { useServices } from '@/context/ServiceContext';
 import { v4 as uuidv4 } from 'uuid';
 import { HiArrowLeft } from 'react-icons/hi';
 import { formatCurrency } from '../../../../../utils/formatCurrency';
+import { generateDurations } from '../../../../../utils/generateDurations';
 
 export default function NewService() {
   const router = useRouter();
@@ -20,34 +21,7 @@ export default function NewService() {
   const [duration, setDuration] = useState('');
   const [collaboratorId, setCollaboratorId] = useState('');
   
-  const generateDurations = (): string[] => {
-    const durations: string[] = [];
-    const startMinutes = 5;
-    const endMinutes = 8 * 60;
-  
-    for (let minutes = startMinutes; minutes <= endMinutes; minutes += 15) {
-      const hours = Math.floor(minutes / 60);
-      const remainingMinutes = minutes % 60;
-  
-      let label = '';
-      if (hours > 0) {
-        label += `${hours} ${hours === 1 ? 'hora' : 'horas'}`;
-        if (remainingMinutes > 0) {
-          label += ` e ${remainingMinutes} minutos`;
-        }
-      } else {
-        label = `${remainingMinutes} minutos`;
-      }
-  
-      durations.push(label);
-    }
-  
-    return durations;
-  };
-  
   const durations = generateDurations();
-
-
 
   const handleSave = () => {
     if (!name || !price || !duration || !collaboratorId) {
@@ -60,6 +34,7 @@ export default function NewService() {
       name,
       price,
       duration,
+      collaboratorId,
     });
   
     router.push('/services');
@@ -70,12 +45,10 @@ export default function NewService() {
     const numeric = rawValue.replace(/\D/g, '');
     setPrice(formatCurrency(numeric));
   };
-  
-
+       
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
-        {/* Cabeçalho com botão voltar e título */}
         <div className="flex justify-between items-center mb-8">
           <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
@@ -139,5 +112,4 @@ export default function NewService() {
       </div>
     </div>
   );
-  
 }

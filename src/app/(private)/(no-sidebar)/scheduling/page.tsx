@@ -10,45 +10,30 @@ import { HiArrowLeft } from 'react-icons/hi';
 import { useAppointments } from '@/context/AppointmentsProvider';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { formatCurrency } from '../../../../../utils/formatCurrency';
+import { generateDurations } from '../../../../../utils/generateDurations';
+import { useCollaborators } from '@/context/CollaboratorContext';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function AgendamentoForm() {
   const router = useRouter();
   const { hours } = useHorarios();
   const { customers } = useCustomers();
+  const { collaborators } = useCollaborators();
   const { services } = useServices();
 
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedServiceId, setSelectedServiceId] = useState('');
+  const [selectedCollaboratorId, setSelectedCollaboratorId] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState('');
+
+  const [duration, setDuration] = useState('');
+  const [price, setPrice] = useState('');
 
   const formattedDay = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
+  const durations = generateDurations();
 
   const { addAppointment } = useAppointments();
-
-  const convertToMinutes = (time: string) => {
-    const [h, m] = time.split(':').map(Number);
-    return h * 60 + m;
-  };
-
-  const getAvailableTimes = (day: string) => {
-    const config = hours[day];
-    if (!config || !config.open) return [];
-
-    return config.ranges.flatMap(({ start, end }) => {
-      const startMin = convertToMinutes(start);
-      const endMin = convertToMinutes(end);
-      const slots = [];
-
-      for (let t = startMin; t < endMin; t += 60) {
-        const hour = Math.floor(t / 60);
-        const minute = t % 60;
-        slots.push(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
-      }
-
-      return slots;
-    });
-  };
 
   const getDayName = (date: Date) => {
     const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -61,24 +46,32 @@ export default function AgendamentoForm() {
   };
 
   const handleSubmit = () => {
-    if (!selectedCustomerId || !selectedServiceId || !selectedDate || !selectedTime) {
+    if (!selectedCustomerId || !selectedServiceId || !selectedCollaboratorId || !selectedDate) {
       alert('Preencha todos os campos!');
       return;
     }
 
     const customer = customers.find(c => c.id === selectedCustomerId);
     const service = services.find(s => s.id === selectedServiceId);
+    const collaborator = collaborators.find(c => c.id === selectedCollaboratorId);
 
-    if (!customer || !service) return;
+    if (!customer || !service || !collaborator) return;
 
-    addAppointment({
-      id: Date.now().toString(),
+    const appointmentData = {
+      id: uuidv4(),
       customerName: customer.name,
+      serviceId: service.id,
       serviceName: service.name,
+      collaboratorId: collaborator.id,
+      collaboratorName: collaborator.name,
       day: formattedDay,
-      time: selectedTime,
-      duration: service.duration
-    });
+      duration: service.duration,
+      price,
+    };
+
+    console.log('Agendamento confirmado:', appointmentData);
+
+    addAppointment(appointmentData);
 
     alert('Agendamento realizado com sucesso!');
     router.push('/home');
@@ -91,7 +84,7 @@ export default function AgendamentoForm() {
           <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
           </button>
-          <h1 className="text-xl font-semibold mx-auto">Novo colaborador</h1>
+          <h1 className="text-xl font-semibold mx-auto">Agendamento</h1>
         </div>
   
         {/* Cliente */}
@@ -114,64 +107,92 @@ export default function AgendamentoForm() {
           <label className="block text-sm font-medium mb-2">Serviço</label>
           <select
             value={selectedServiceId}
-            onChange={e => setSelectedServiceId(e.target.value)}
+            onChange={e => {
+              const id = e.target.value;
+              setSelectedServiceId(id);
+
+              const selectedService = services.find(s => s.id === id);
+              if (selectedService) {
+                setDuration(selectedService.duration);
+                setPrice(selectedService.price.toString());
+              } else {
+                setDuration('');
+                setPrice('');
+              }
+            }}
             className="w-full p-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-500"
           >
             <option value="">Selecione um serviço</option>
             {services.map(service => (
               <option key={service.id} value={service.id}>
-                {service.name} - {service.duration} - R${service.price}
+                {service.name}
               </option>
             ))}
           </select>
-        </div>
 
-        {/* Data */}
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2">Duração</label>
+          <select
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700"
+          >
+            <option value="">Selecione a duração</option>
+            {durations.map((d) => (
+              <option key={d} value={d}>{d}</option>
+            ))}
+          </select>
+        </div>
+       {/* Colaborador */}
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Selecione um dia</label>
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => {
-              setSelectedDate(date);
-              setSelectedTime('');
-            }}
-            dateFormat="dd/MM/yyyy"
-            minDate={new Date()}
-            filterDate={isDateAvailable}
-            placeholderText="Escolha um dia disponível"
-            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
-          />
+            <label className="block text-sm font-medium mb-2">Colaborador</label>
+            <select
+              value={selectedCollaboratorId}
+              onChange={e => setSelectedCollaboratorId(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            >
+              <option value="">Selecione um colaborador</option>
+              {collaborators.map(colab => (
+                <option key={colab.id} value={colab.id}>{colab.name}</option>
+              ))}
+            </select>
+        </div>
+        {/* Preço e Data na mesma linha */}
+        <div className="mb-6 flex flex-col md:flex-row md:items-end md:gap-4">
+          {/* Preço */}
+          <div className="w-full md:w-1/2">
+            <label className="block text-sm font-medium mb-2">Preço</label>
+            <input
+              type="text"
+              value={price}
+              onChange={e => setPrice(formatCurrency(e.target.value))}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+              placeholder="R$ 0,00"
+            />
+          </div>
+
+          {/* Data */}
+          <div className="w-full md:w-1/2 mt-4 md:mt-0">
+            <label className="block text-sm font-medium mb-2">Selecione um dia</label>
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => {
+                setSelectedDate(date);
+              }}
+              dateFormat="dd/MM/yyyy"
+              minDate={new Date()}
+              filterDate={isDateAvailable}
+              placeholderText="Escolha um dia disponível"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+            />
+          </div>
         </div>
 
-        {/* Horários */}
-        {selectedDate && (
-          <div className="mb-6">
-            <label className="block text-sm font-medium mb-2">Horários disponíveis</label>
-            <div className="flex flex-wrap gap-3">
-              {getAvailableTimes(getDayName(selectedDate)).length === 0 ? (
-                <p className="text-red-500 text-sm">Nenhum horário disponível para este dia.</p>
-              ) : (
-                getAvailableTimes(getDayName(selectedDate)).map(time => (
-                  <button
-                    key={time}
-                    onClick={() => setSelectedTime(time)}
-                    className={`px-4 py-2 rounded-lg text-sm border transition font-medium ${
-                      selectedTime === time
-                        ? 'bg-violet-600 text-white border-violet-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                    }`}
-                  >
-                    {time}
-                  </button>
-                ))
-              )}
-            </div>
-          </div>
-        )}
         <div className="flex justify-end gap-4 mt-auto mb-20">
           <button
             onClick={() => router.back()}
-            className="text-purple-500 font-medium hover:underline"
+            className="text-gray-600 font-medium hover:underline"
           >
             Cancelar
           </button>

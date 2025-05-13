@@ -2,13 +2,20 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-interface Appointment {
-  id: string;
+// Para criação
+interface AppointmentInput {
   customerName: string;
-  serviceName: string;
+  serviceId: string;
+  collaboratorId: string;
   day: string;
-  time: string;
-  duration: number | any;
+}
+
+// Para exibição no front
+interface Appointment extends AppointmentInput {
+  id: string;
+  serviceName: string;
+  duration: string;
+  price: string;
 }
 
 interface AppointmentsContextData {
