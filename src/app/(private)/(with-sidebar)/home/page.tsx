@@ -5,22 +5,25 @@ import Button from "@/componentes/Button";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Header from "@/componentes/Header";
 import { useHorarios } from "@/context/HoursProvider";
+import { useRouter } from "next/navigation";
+import { useAppointments } from "@/context/AppointmentsProvider";
 
 export default function Home() {
+  const { appointments } = useAppointments();
   const { hours } = useHorarios();
+  const router = useRouter();
 
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     const dayName = today.toLocaleDateString('pt-BR', { weekday: 'long' });
     return capitalizeFirstLetter(dayName);
   });
-  
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   function capitalizeFirstLetter(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
-  
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const getDayName = (dateString: string) => {
     if (dateString.startsWith("Seg")) return "Segunda";
@@ -32,13 +35,12 @@ export default function Home() {
     if (dateString.startsWith("Dom")) return "Domingo";
     return "";
   };
+  
+  const dayName = getDayName(selectedDate);
 
   const generateTimeSlots = (day: string) => {
     const config = hours[day];
-    if (!config) return [];
-
-    const isOpen = config.open;
-    
+    if (!config) return [];    
 
     const slots = config.ranges.flatMap((range) => {
       const start = convertToMinutes(range.start);
@@ -59,11 +61,10 @@ export default function Home() {
   };
 
   const convertToMinutes = (time: string) => {
-    const [hour, minute] = time.split(":").map(Number);
-    return hour * 60 + minute;
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
   };
 
-  const dayName = getDayName(selectedDate);
   const timeSlots = generateTimeSlots(dayName);
 
   useEffect(() => {
@@ -76,30 +77,22 @@ export default function Home() {
   const handleDayChange = (direction: number) => {
     const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
-    // Encontra o índice do dia atual
     const currentIndex = daysOfWeek.indexOf(getDayName(selectedDate));
 
     let newIndex = currentIndex + direction;
 
-    // Se o novo índice for menor que 0, volta para o último dia
     if (newIndex < 0) newIndex = daysOfWeek.length - 1;
 
-    // Se o novo índice for maior que o número de dias, volta para o primeiro dia
     if (newIndex >= daysOfWeek.length) newIndex = 0;
 
-    // Atualiza o dia selecionado com o novo dia
     const newSelectedDate = daysOfWeek[newIndex];
 
-    
-    setSelectedDate(newSelectedDate); // Atualiza a data
-
-    // Reinicia a seleção de horários
-    setSelectedIndex(null); // Reinicia a seleção de horários quando a data mudar
+    setSelectedDate(newSelectedDate);
+    setSelectedIndex(null);
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Header (fixado no topo) */}
       <div className="sticky top-0 z-10 bg-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -124,19 +117,16 @@ export default function Home() {
             <FiChevronRight size={20} />
           </button>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto" onClick={() => router.push('/scheduling')}>
           <Button>Agendar</Button>
         </div>
       </div>
 
-      {/* Conteúdo principal */}
       <div className="flex-1 overflow-y-auto p-6 flex">
-        {/* Coluna de horários */}
         <div className="flex flex-col w-10 pr-2">
           {
             timeSlots.map(({ id, label }, index) => (
               <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
-                {/* Exibe a label apenas de 30 em 30 minutos */}
                 {index % 2 === 0 && label && (
                   <span className="text-sm text-gray-800 leading-none translate-y-1/2">
                     {label}
@@ -146,25 +136,22 @@ export default function Home() {
             ))
           }
         </div>
-        {/* Coluna dos horários clicáveis */}
-        <div className="flex-1">
-          {
-            timeSlots.map(({ label }, index) => {
-              const isSelected = selectedIndex === index;
-              return (
-                <div
-                  key={index}
-                  onClick={() => setSelectedIndex(index)}
-                  className={`relative h-10 border group flex items-center justify-center cursor-pointer
-                    ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
-                >
-                  <span className={`text-xd font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
-                    {label}
-                  </span>
-                </div>
-              );
-            })
-          }
+        <div className="flex-1 relative">
+          {timeSlots.map(({ label }, index) => {
+            const isSelected = selectedIndex === index;
+            return (
+              <div
+                key={index}
+                onClick={() => setSelectedIndex(index)}
+                className={`h-10 border group flex items-center justify-center cursor-pointer
+                  ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
+              >
+                <span className={`text-xs font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+                  {label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

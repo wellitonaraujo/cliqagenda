@@ -7,12 +7,14 @@ import { AuthProvider } from '@/context/AuthContext';
 import './globals.css';
 import { ComboProvider } from '@/context/ComboContext';
 import { HorariosProvider } from '@/context/HoursProvider';
+import { AppointmentsProvider } from '@/context/AppointmentsProvider';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="h-full">
       <body className="h-full overflow-hidden">
         <AuthProvider>
+          <AppointmentsProvider>
           <HorariosProvider>
           <ServiceProvider>
             <CustomerProvider>
@@ -24,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </CustomerProvider>
           </ServiceProvider>
           </HorariosProvider>
+          </AppointmentsProvider>
         </AuthProvider>
       </body>
     </html>
