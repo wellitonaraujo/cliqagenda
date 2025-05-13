@@ -106,25 +106,31 @@ export default function AgendamentoForm() {
 
   useEffect(() => {
     if (selectedCollaboratorId && selectedDate) {
-      const dayName = getDayName(selectedDate);  // Pega o nome do dia da semana
-      const dayHours = hours[dayName];  // Pega os horários do colaborador para o dia escolhido
-      
-      console.log("dayHours:", dayHours);
-      
+      const collaborator = collaborators.find(c => c.id === selectedCollaboratorId);
+  
+      if (!collaborator) return;
+  
+      const dayName = getDayName(selectedDate); // Ex: "monday", "tuesday"...
+      const daySchedule = collaborator.schedule?.[dayName];
+  
+      console.log("daySchedule:", daySchedule);
+  
       if (
-        dayHours &&  // Se o colaborador trabalha neste dia
-        dayHours.open &&  // Se o colaborador está disponível neste dia
-        Array.isArray(dayHours.ranges) &&  // Se os intervalos de horário estão configurados corretamente
-        dayHours.ranges.every(range => typeof range.start === 'string' && typeof range.end === 'string')
+        daySchedule &&
+        daySchedule.open &&
+        Array.isArray(daySchedule.ranges) &&
+        daySchedule.ranges.every(range => typeof range.start === 'string' && typeof range.end === 'string')
       ) {
-        // Gera os horários disponíveis com base nos intervalos configurados
-        const slots = dayHours.ranges.flatMap(range => generateTimeSlots(range.start, range.end));
-        setAvailableTimes(slots);  // Atualiza os horários disponíveis
+        const slots = daySchedule.ranges.flatMap(range =>
+          generateTimeSlots(range.start, range.end)
+        );
+        setAvailableTimes(slots);
       } else {
-        setAvailableTimes([]);  // Se não houver horários válidos, define a lista como vazia
+        setAvailableTimes([]);
       }
     }
-  }, [selectedCollaboratorId, selectedDate]);  // Executa sempre que o colaborador ou a data forem alterados
+  }, [selectedCollaboratorId, selectedDate, collaborators]);
+  
   
 
   return (
