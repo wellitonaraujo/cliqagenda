@@ -11,6 +11,7 @@ import { HiArrowLeft } from 'react-icons/hi';
 import { formatCurrency } from '../../../../../utils/formatCurrency';
 import { generateDurations } from '../../../../../utils/generateDurations';
 import Select from 'react-select';
+import { customSelectStyles } from '../../../../../utils/customSelectStyles';
 
 export default function NewService() {
   const router = useRouter();
@@ -92,7 +93,7 @@ export default function NewService() {
             value={durationOptions.find((opt) => opt.value === duration) || null}
             onChange={(selectedOption) => setDuration(selectedOption?.value ?? '')}
             placeholder="Selecione a duração"
-            className="text-sm"
+            classNames={customSelectStyles.classNames}
           />
         </div>
 
@@ -104,25 +105,25 @@ export default function NewService() {
               selectedCollaboratorIds.includes(opt.value)
             )}
             onChange={(selectedOptions) =>
-               setSelectedCollaboratorIds(selectedOptions.map((opt) => opt.value))
+              setSelectedCollaboratorIds(selectedOptions.map((opt) => opt.value))
             }
             placeholder="Selecione os colaboradores"
-            className="text-sm"
+            classNames={customSelectStyles.classNames}
           />
           <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
-          </div>
+        </div>
 
-          <div className="flex justify-end gap-4 mt-auto mb-20">
-            <button
-              onClick={() => router.back()}
-              className="text-gray-700 font-medium hover:underline"
+        <div className="flex justify-end gap-4 mt-auto mb-20">
+          <button
+            onClick={() => router.back()}
+            className="text-gray-700 font-medium hover:underline"
             >
               Cancelar
             </button>
             <div onClick={handleSave}>
               <Button>Salvar</Button>
             </div>
-          </div>
+        </div>
       </div>
     </div>
   );

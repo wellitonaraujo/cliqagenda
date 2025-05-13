@@ -14,6 +14,9 @@ import { formatCurrency } from '../../../../../utils/formatCurrency';
 import { generateDurations } from '../../../../../utils/generateDurations';
 import { useCollaborators } from '@/context/CollaboratorContext';
 import { v4 as uuidv4 } from 'uuid';
+import Select from 'react-select';
+import { customSelectStyles } from '../../../../../utils/customSelectStyles';
+
 
 export default function AgendamentoForm() {
   const router = useRouter();
@@ -87,30 +90,29 @@ export default function AgendamentoForm() {
           <h1 className="text-xl font-semibold mx-auto">Agendamento</h1>
         </div>
   
-        {/* Cliente */}
         <div className="mb-6">
           <label className="block text-sm font-medium mb-2">Cliente</label>
-          <select
-            value={selectedCustomerId}
-            onChange={e => setSelectedCustomerId(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-500"
-          >
-            <option value="">Selecione um cliente</option>
-            {customers.map(customer => (
-              <option key={customer.id} value={customer.id}>{customer.name}</option>
-            ))}
-          </select>
+          <Select
+            options={customers.map(c => ({ value: c.id, label: c.name }))}
+            value={customers
+              .map(c => ({ value: c.id, label: c.name }))
+              .find(opt => opt.value === selectedCustomerId) || null}
+            onChange={opt => setSelectedCustomerId(opt?.value || '')}
+            placeholder="Selecione um cliente"
+            classNames={customSelectStyles.classNames}
+          />
         </div>
 
-        {/* Serviço */}
         <div className="mb-6">
           <label className="block text-sm font-medium mb-2">Serviço</label>
-          <select
-            value={selectedServiceId}
-            onChange={e => {
-              const id = e.target.value;
+          <Select
+            options={services.map(s => ({ value: s.id, label: s.name }))}
+            value={services
+              .map(s => ({ value: s.id, label: s.name }))
+              .find(opt => opt.value === selectedServiceId) || null}
+            onChange={opt => {
+              const id = opt?.value || '';
               setSelectedServiceId(id);
-
               const selectedService = services.find(s => s.id === id);
               if (selectedService) {
                 setDuration(selectedService.duration);
@@ -120,44 +122,35 @@ export default function AgendamentoForm() {
                 setPrice('');
               }
             }}
-            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-500"
-          >
-            <option value="">Selecione um serviço</option>
-            {services.map(service => (
-              <option key={service.id} value={service.id}>
-                {service.name}
-              </option>
-            ))}
-          </select>
-
+            placeholder="Selecione um serviço"
+            classNames={customSelectStyles.classNames}
+          />
         </div>
+
         <div className="mb-4">
           <label className="block text-sm font-medium mb-2">Duração</label>
-          <select
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700"
-          >
-            <option value="">Selecione a duração</option>
-            {durations.map((d) => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
+          <Select
+            options={durations.map(d => ({ value: d, label: d }))}
+            value={durations.map(d => ({ value: d, label: d })).find(opt => opt.value === duration) || null}
+            onChange={opt => setDuration(opt?.value || '')}
+            placeholder="Selecione a duração"
+            classNames={customSelectStyles.classNames}
+          />
         </div>
-       {/* Colaborador */}
+
         <div className="mb-6">
-            <label className="block text-sm font-medium mb-2">Colaborador</label>
-            <select
-              value={selectedCollaboratorId}
-              onChange={e => setSelectedCollaboratorId(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-500"
-            >
-              <option value="">Selecione um colaborador</option>
-              {collaborators.map(colab => (
-                <option key={colab.id} value={colab.id}>{colab.name}</option>
-              ))}
-            </select>
+          <label className="block text-sm font-medium mb-2">Colaborador</label>
+          <Select
+            options={collaborators.map(c => ({ value: c.id, label: c.name }))}
+            value={collaborators
+              .map(c => ({ value: c.id, label: c.name }))
+              .find(opt => opt.value === selectedCollaboratorId) || null}
+            onChange={opt => setSelectedCollaboratorId(opt?.value || '')}
+            placeholder="Selecione um colaborador"
+            classNames={customSelectStyles.classNames}
+          />
         </div>
+
         {/* Preço e Data na mesma linha */}
         <div className="mb-6 flex flex-col md:flex-row md:items-end md:gap-4">
           {/* Preço */}
