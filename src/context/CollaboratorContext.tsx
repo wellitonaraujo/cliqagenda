@@ -1,18 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-
-type Collaborator = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: {
-    street: string;
-    number: string;
-    district: string;
-    city: string;
-    state: string;
-  };
-};
+import { Collaborator } from '@/types/collaborator';
 
 type CollaboratorContextType = {
   collaborators: Collaborator[];
@@ -24,7 +11,6 @@ const CollaboratorContext = createContext<CollaboratorContextType | undefined>(u
 export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
 
-  // Carregar colaboradores do localStorage quando o componente é montado
   useEffect(() => {
     const storedCollaborators = localStorage.getItem('collaborators');
     if (storedCollaborators) {
@@ -35,7 +21,6 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
   const addCollaborator = (c: Collaborator) => {
     setCollaborators((prev) => {
       const updated = [...prev, c];
-      // Salvar os colaboradores no localStorage
       localStorage.setItem('collaborators', JSON.stringify(updated));
       return updated;
     });

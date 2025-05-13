@@ -8,6 +8,15 @@ import Input from '@/componentes/Input';
 import { useCollaborators } from '@/context/CollaboratorContext';
 import { v4 as uuidv4 } from 'uuid';
 
+import type { TimeRange } from '@/types/collaborator';
+
+type BusinessHours = {
+  [day: string]: {
+    open: boolean;
+    ranges: TimeRange[];
+  };
+};
+
 export default function NewCollaborator() {
   const router = useRouter();
   const { addCollaborator } = useCollaborators();
@@ -23,13 +32,52 @@ export default function NewCollaborator() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
 
+  const daysOfWeek = [
+    'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo',
+  ];
+  
+  const initialHours = daysOfWeek.reduce((acc, day) => {
+    acc[day] = { open: true, ranges: [{ start: '08:00', end: '18:00' }] };
+    return acc;
+  }, {} as BusinessHours);
+  
+  const [hours, setHours] = useState<BusinessHours>(initialHours);
+  
+  const handleToggle = (day: string) => {
+    setHours((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        open: !prev[day].open,
+      },
+    }));
+  };
+  
+  const handleTimeChange = (
+    day: string,
+    index: number,
+    type: 'start' | 'end',
+    value: string
+  ) => {
+    const updatedRanges = [...hours[day].ranges];
+    updatedRanges[index][type] = value;
+  
+    setHours((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        ranges: updatedRanges,
+      },
+    }));
+  };
+  
   const handleSave = () => {
     if (!name || !email || !phone || !street || !number || !district || !city || !state) {
       alert('Preencha todos os campos.');
       return;
     }
 
-    addCollaborator({
+    const newCollaborator = {
       id: uuidv4(),
       name,
       email,
@@ -41,7 +89,13 @@ export default function NewCollaborator() {
         city,
         state,
       },
-    });
+      schedule: hours,
+    };
+    
+    console.log(JSON.stringify(newCollaborator, null, 2));
+
+    
+    addCollaborator(newCollaborator);
 
     router.push('/collaborators');
   };
@@ -87,7 +141,7 @@ export default function NewCollaborator() {
         </section>
   
         {/* Empurrando a seção Endereço para baixo */}
-        <section className="mt-28 mb-6"> {/* Adicionando mt-8 */}
+        <section className="mt-10 mb-6"> {/* Adicionando mt-8 */}
           <h2 className="text-lg font-semibold mb-2">Endereço</h2>
   
           <div className="mb-6">
@@ -104,7 +158,66 @@ export default function NewCollaborator() {
             <Input placeholder="Estado" value={state} onChange={(e) => setState(e.target.value)} />
           </div>
         </section>
-  
+        <section className="mt-8 mb-6">
+          <h2 className="text-lg font-semibold mb-2">Horário de trabalho</h2>
+          <div className="border border-[#DEDEDE] rounded-md p-4">
+            {daysOfWeek.map((day) => (
+              <div key={day} className="border-t border-gray-200 pt-4 mb-4">
+                {hours[day].open ? (
+                  hours[day].ranges.map((range, index) => (
+                    <div key={index} className="flex items-center justify-between mb-2">
+                      {index === 0 ? (
+                        <div className="flex items-center gap-2 w-36">
+                          <input
+                            type="checkbox"
+                            checked={hours[day].open}
+                            onChange={() => handleToggle(day)}
+                          />
+                          <span className="text-sm">{day}</span>
+                        </div>
+                      ) : (
+                        <div className="w-36" />
+                      )}
+
+                      <div className="flex items-center gap-2 justify-end w-full">
+                        <input
+                          type="time"
+                          value={range.start}
+                          onChange={(e) =>
+                            handleTimeChange(day, index, 'start', e.target.value)
+                          }
+                          className="border border-gray-300 rounded px-2 py-2 text-md w-24"
+                        />
+                        <span className="text-sm">às</span>
+                        <input
+                          type="time"
+                          value={range.end}
+                          onChange={(e) =>
+                            handleTimeChange(day, index, 'end', e.target.value)
+                          }
+                          className="border border-gray-300 rounded px-2 py-2 text-md w-24"
+                        />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 w-36">
+                      <input
+                        type="checkbox"
+                        checked={hours[day].open}
+                        onChange={() => handleToggle(day)}
+                      />
+                      <span className="text-sm">{day}</span>
+                    </div>
+                    <span className="text-sm text-gray-400">Fechado</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
         <div className="flex justify-end gap-4">
           <button
             onClick={() => router.back()}
