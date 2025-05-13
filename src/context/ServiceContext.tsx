@@ -7,7 +7,6 @@ type Service = {
   name: string;
   price: string;
   duration: string;
-  collaboratorId: string;
 };
 
 type ServiceContextType = {

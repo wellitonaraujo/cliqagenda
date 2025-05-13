@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Input from '@/componentes/Input';
 import Button from '@/componentes/Button';
-import { useCollaborators } from '@/context/CollaboratorContext';
 import { useServices } from '@/context/ServiceContext';
 import { v4 as uuidv4 } from 'uuid';
 import { HiArrowLeft } from 'react-icons/hi';
@@ -13,18 +12,16 @@ import { generateDurations } from '../../../../../utils/generateDurations';
 
 export default function NewService() {
   const router = useRouter();
-  const { collaborators } = useCollaborators();
   const { addService } = useServices();
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
-  const [collaboratorId, setCollaboratorId] = useState('');
   
   const durations = generateDurations();
 
   const handleSave = () => {
-    if (!name || !price || !duration || !collaboratorId) {
+    if (!name || !price || !duration) {
       alert('Preencha todos os campos');
       return;
     }
@@ -34,7 +31,6 @@ export default function NewService() {
       name,
       price,
       duration,
-      collaboratorId,
     });
   
     router.push('/services');
@@ -81,19 +77,6 @@ export default function NewService() {
             <option value="">Selecione a duração</option>
             {durations.map((d) => (
               <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
-        </div>
-  
-        <div className="mb-6">
-          <select
-            value={collaboratorId}
-            onChange={(e) => setCollaboratorId(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-700"
-          >
-            <option value="">Selecione um colaborador</option>
-            {collaborators.map((c, index) => (
-              <option key={c.id ?? index} value={c.id}>{c.name}</option>
             ))}
           </select>
         </div>
