@@ -131,7 +131,6 @@ export default function AgendamentoForm() {
     }
   }, [selectedCollaboratorId, selectedDate, collaborators]);
   
-  
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
@@ -211,28 +210,34 @@ export default function AgendamentoForm() {
         </div>
         
         {availableTimes.length > 0 && (
-          <div className="mb-6 mt-6">
-            <label className="block text-sm font-medium mb-2">Horário</label>
-            <Select
-              options={availableTimes.map(time => ({ value: time, label: time }))}
-              value={selectedTime ? { value: selectedTime, label: selectedTime } : null}
-              onChange={opt => setSelectedTime(opt?.value || '')}
-              placeholder="Selecione um horário"
-              classNames={customSelectStyles.classNames}
-           />
-          </div>
-        )}
+  <div className="mb-6 mt-6">
+    <div className="flex flex-col md:flex-row gap-4">
+      {/* Horário */}
+      <div className="flex-1">
+        <label className="block text-sm font-medium mb-2">Horário</label>
+        <Select
+          options={availableTimes.map(time => ({ value: time, label: time }))}
+          value={selectedTime ? { value: selectedTime, label: selectedTime } : null}
+          onChange={opt => setSelectedTime(opt?.value || '')}
+          placeholder="Selecione um horário"
+          classNames={customSelectStyles.classNames}
+        />
+      </div>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Duração</label>
-          <Select
-            options={durations.map(d => ({ value: d, label: d }))}
-            value={durations.map(d => ({ value: d, label: d })).find(opt => opt.value === duration) || null}
-            onChange={opt => setDuration(opt?.value || '')}
-            placeholder="Selecione a duração"
-            classNames={customSelectStyles.classNames}
-          />
-        </div>
+      {/* Duração */}
+      <div className="flex-1">
+        <label className="block text-sm font-medium mb-2">Duração</label>
+        <Select
+          options={durations.map(d => ({ value: d, label: d }))}
+          value={durations.map(d => ({ value: d, label: d })).find(opt => opt.value === duration) || null}
+          onChange={opt => setDuration(opt?.value || '')}
+          placeholder="Selecione a duração"
+          classNames={customSelectStyles.classNames}
+        />
+      </div>
+    </div>
+  </div>
+)}
 
         {/* Preço*/}
         <div className="mb-6 flex flex-col md:flex-row md:items-end md:gap-4">
