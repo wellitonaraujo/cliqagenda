@@ -78,11 +78,15 @@ export default function Home() {
   useEffect(() => {
     console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
   }, [appointmentsOfTheDay]);
-  
+
   useEffect(() => {
     console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
   }, [appointmentsOfTheDay]);
 
+  const getSlotIndex = (time: string) => {
+    return timeSlots.findIndex((slot) => slot.label === time);
+  };
+  
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="sticky top-0 z-10 bg-white">
@@ -108,46 +112,52 @@ export default function Home() {
 
       <div className="flex-1 overflow-y-auto p-6 flex">
         <div className="flex flex-col w-10 pr-2">
-          {
-            timeSlots.map(({ id, label }, index) => (
-              <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
-                {index % 2 === 0 && label && (
-                  <span className="text-sm text-gray-800 leading-none translate-y-1/2">
-                    {label}
-                  </span>
-                )}
-              </div>
-            ))
-          }
-        </div>
-        <div className="flex-1 relative">
-          {timeSlots.map(({ label }, index) => {
-            const isSelected = selectedIndex === index;
-            return (
-              <div
-                key={index}
-                onClick={() => setSelectedIndex(index)}
-                className={`h-10 border group flex items-center justify-center cursor-pointer
-                  ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
-              >
-                <span className={`text-xs font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+          {timeSlots.map(({ id, label }, index) => (
+            <div key={id} className="h-10 flex justify-end">
+              {index % 2 === 0 && label && (
+                <span className="text-sm text-gray-800 leading-none -translate-y-[10px]">
                   {label}
                 </span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        
+        <div className="flex-1 relative">
+        {/* Grade de horários */}
+        {timeSlots.map(({ label }, index) => {
+          const isSelected = selectedIndex === index;
+          return (
+            <div
+              key={index}
+              onClick={() => setSelectedIndex(index)}
+              className={`h-10 border group flex items-center justify-center cursor-pointer
+                ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
+            >
+              <span className={`text-xs font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+                {label}
+              </span>
+            </div>
+          );
+        })}
+
+        {appointmentsOfTheDay.map((a) => {
+          const index = getSlotIndex(a.time);
+          const top = index * 40; 
+            return (
+              <div
+                key={a.id}
+                className="absolute left-0 right-0 mx-2 bg-white border border-gray-300 shadow-md rounded p-2 z-10"
+                style={{ top }}
+              >
+                <p className="font-bold">{a.customerName}</p>
+                <p className="text-sm">{a.serviceName} às {a.time}</p>
+                <p className="text-sm">R$ {a.price}</p>
               </div>
             );
           })}
         </div>
-        <ul className="mt-4">
-      {appointmentsOfTheDay.map((a) => (
-        <li key={a.id} className="border p-2 rounded mb-2">
-          <p>Cliente: {a.customerName}</p>
-          <p>Serviço: {a.serviceName}</p>
-          <p>Colaborador: {a.customerName}</p>
-          <p>Horário: {a.time}</p>
-          <p>Preço: R$ {a.price}</p>
-        </li>
-      ))}
-     </ul>
 
       </div>
 
