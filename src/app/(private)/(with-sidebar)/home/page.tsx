@@ -18,10 +18,6 @@ export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  function capitalizeFirstLetter(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
   const shortDayName = selectedDate.toLocaleDateString('pt-BR', { weekday: 'short' });
 
   const convertToMinutes = (time: string) => {
@@ -157,21 +153,20 @@ export default function Home() {
 
             const durationInMinutes = parseDurationToMinutes(a.duration);
             const height = (durationInMinutes / 30) * 40;
-
+            console.log(a.duration)
             return (
               <div
                 key={a.id}
-                className="absolute left-0 right-0 mx-2 border border-gray-300 shadow-md rounded z-10 overflow-hidden bg-[#7567E4] opacity-80"
-                style={{ top, height }}
+                className="absolute left-0 w-[100%] sm:w-[70%] md:w-[50%] lg:w-[30%] xl:w-[20%] shadow-md rounded z-10 overflow-hidden bg-[#E3E1FA] border-l-4"
+                style={{ top, height, borderLeftColor: '#7567E4' }}
               >
-                <div className="p-2 text-white">
+                <div className="p-2 text-[#1E1E1E]">
                   <p className="font-semibold text-sm">{a.customerName}</p>
                   <p className="text-sm">{a.serviceName} às {a.time}</p>
                   <p className="text-sm">R$ {a.price}</p>
                 </div>
               </div>
             );
-            
           })}
         </div>
       </div>

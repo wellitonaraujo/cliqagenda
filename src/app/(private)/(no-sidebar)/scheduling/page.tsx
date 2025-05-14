@@ -99,7 +99,7 @@ export default function AgendamentoForm() {
       collaboratorId: collaborator.id,
       collaboratorName: collaborator.name,
       day: formattedDay,
-      duration: service.duration,
+      duration,
       time: selectedTime,
       price,
     };
@@ -156,6 +156,8 @@ export default function AgendamentoForm() {
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
+        
+        {/* Cabeçalho */}
         <div className="flex justify-between items-center mb-8">
           <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
@@ -163,20 +165,20 @@ export default function AgendamentoForm() {
           <h1 className="text-xl font-semibold mx-auto">Agendamento</h1>
         </div>
   
+        {/* Cliente */}
         <div className="mb-6">
           <label className="block text-sm font-medium mb-2">Cliente</label>
-            <div className="mb-6">
-            <Select
-              isClearable={false}
-              options={customerOptions}
-              value={selectedCustomer}
-              onChange={opt => setSelectedCustomerId(opt?.value || '')}
-              placeholder="Selecione um cliente"
-              classNames={customSelectStyles.classNames}
-            />
-          </div>
+          <Select
+            isClearable={false}
+            options={customerOptions}
+            value={selectedCustomer}
+            onChange={opt => setSelectedCustomerId(opt?.value || '')}
+            placeholder="Selecione um cliente"
+            classNames={customSelectStyles.classNames}
+          />
         </div>
-
+  
+        {/* Serviço */}
         <div className="mb-6">
           <label className="block text-sm font-medium mb-2">Serviço</label>
           <Select
@@ -187,27 +189,29 @@ export default function AgendamentoForm() {
             classNames={customSelectStyles.classNames}
           />
         </div>
-
+  
+        {/* Colaborador */}
         <div className="mb-6">
           <label className="block text-sm font-medium mb-2">Colaborador</label>
           <Select
             options={collaborators.map(c => ({ value: c.id, label: c.name }))}
-            value={collaborators
-              .map(c => ({ value: c.id, label: c.name }))
-              .find(opt => opt.value === selectedCollaboratorId) || null}
+            value={
+              collaborators
+                .map(c => ({ value: c.id, label: c.name }))
+                .find(opt => opt.value === selectedCollaboratorId) || null
+            }
             onChange={opt => setSelectedCollaboratorId(opt?.value || '')}
             placeholder="Selecione um colaborador"
             classNames={customSelectStyles.classNames}
           />
         </div>
+  
         {/* Data */}
-        <div className="w-full md:w-1/2 mt-6 mb-6 md:mt-0">
+        <div className="w-full md:w-1/2 mt-6 mb-6">
           <label className="block text-sm font-medium mb-2">Selecione um dia</label>
           <DatePicker
             selected={selectedDate}
-            onChange={(date) => {
-              setSelectedDate(date);
-            }}
+            onChange={date => setSelectedDate(date)}
             dateFormat="dd/MM/yyyy"
             minDate={new Date()}
             filterDate={isDateAvailable}
@@ -215,7 +219,8 @@ export default function AgendamentoForm() {
             className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
           />
         </div>
-        
+  
+        {/* Horário e duração */}
         {availableTimes.length > 0 && (
           <div className="mb-6 mt-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -230,13 +235,17 @@ export default function AgendamentoForm() {
                   classNames={customSelectStyles.classNames}
                 />
               </div>
-
+  
               {/* Duração */}
               <div className="flex-1">
                 <label className="block text-sm font-medium mb-2">Duração</label>
                 <Select
                   options={durations.map(d => ({ value: d, label: d }))}
-                  value={durations.map(d => ({ value: d, label: d })).find(opt => opt.value === duration) || null}
+                  value={
+                    durations
+                      .map(d => ({ value: d, label: d }))
+                      .find(opt => opt.value === duration) || null
+                  }
                   onChange={opt => setDuration(opt?.value || '')}
                   placeholder="Selecione a duração"
                   classNames={customSelectStyles.classNames}
@@ -245,8 +254,8 @@ export default function AgendamentoForm() {
             </div>
           </div>
         )}
-
-        {/* Preço*/}
+  
+        {/* Preço */}
         <div className="mb-6 flex flex-col md:flex-row md:items-end md:gap-4">
           <div className="w-full md:w-1/2">
             <label className="block text-sm font-medium mb-2">Preço</label>
@@ -260,7 +269,8 @@ export default function AgendamentoForm() {
             />
           </div>
         </div>
-
+  
+        {/* Botões */}
         <div className="flex justify-end gap-4 mt-auto mb-20">
           <button
             onClick={() => router.back()}
@@ -269,12 +279,11 @@ export default function AgendamentoForm() {
             Cancelar
           </button>
           <div onClick={handleSubmit}>
-            <Button>
-              Confirmar Agendamento
-            </Button>
-        </div>
+            <Button>Confirmar Agendamento</Button>
+          </div>
         </div>
       </div>
     </div>
   );
+  
 }
