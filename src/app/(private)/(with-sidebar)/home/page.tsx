@@ -80,12 +80,21 @@ export default function Home() {
   }, [appointmentsOfTheDay]);
 
   useEffect(() => {
-    console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
   }, [appointmentsOfTheDay]);
 
   const getSlotIndex = (time: string) => {
     return timeSlots.findIndex((slot) => slot.label === time);
   };
+  
+  function parseDurationToMinutes(duration: string): number {
+    const horasMatch = duration.match(/(\d+)\s*hora/);
+    const minutosMatch = duration.match(/(\d+)\s*minuto/);
+  
+    const horas = horasMatch ? parseInt(horasMatch[1], 10) : 0;
+    const minutos = minutosMatch ? parseInt(minutosMatch[1], 10) : 0;
+  
+    return horas * 60 + minutos;
+  }
   
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -125,42 +134,47 @@ export default function Home() {
 
         
         <div className="flex-1 relative">
-        {/* Grade de horários */}
-        {timeSlots.map(({ label }, index) => {
-          const isSelected = selectedIndex === index;
-          return (
-            <div
-              key={index}
-              onClick={() => setSelectedIndex(index)}
-              className={`h-10 border group flex items-center justify-center cursor-pointer
-                ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
-            >
-              <span className={`text-xs font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
-                {label}
-              </span>
-            </div>
-          );
-        })}
-
-        {appointmentsOfTheDay.map((a) => {
-          const index = getSlotIndex(a.time);
-          const top = index * 40; 
+          {/* Grade de horários */}
+          {timeSlots.map(({ label }, index) => {
+            const isSelected = selectedIndex === index;
             return (
               <div
-                key={a.id}
-                className="absolute left-0 right-0 mx-2 bg-white border border-gray-300 shadow-md rounded p-2 z-10"
-                style={{ top }}
+                key={index}
+                onClick={() => setSelectedIndex(index)}
+                className={`h-10 border group flex items-center justify-center cursor-pointer
+                  ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
               >
-                <p className="font-bold">{a.customerName}</p>
-                <p className="text-sm">{a.serviceName} às {a.time}</p>
-                <p className="text-sm">R$ {a.price}</p>
+                <span className={`text-xs font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+                  {label}
+                </span>
               </div>
             );
           })}
+          
+          {appointmentsOfTheDay.map((a) => {
+            const index = getSlotIndex(a.time);
+            const top = index * 40;
+
+            const durationInMinutes = parseDurationToMinutes(a.duration);
+            const height = (durationInMinutes / 30) * 40;
+
+            return (
+              <div
+                key={a.id}
+                className="absolute left-0 right-0 mx-2 border border-gray-300 shadow-md rounded z-10 overflow-hidden bg-[#7567E4] opacity-80"
+                style={{ top, height }}
+              >
+                <div className="p-2 text-white">
+                  <p className="font-semibold text-sm">{a.customerName}</p>
+                  <p className="text-sm">{a.serviceName} às {a.time}</p>
+                  <p className="text-sm">R$ {a.price}</p>
+                </div>
+              </div>
+            );
+            
+          })}
         </div>
-
       </div>
-
     </div>
   );
 }
