@@ -17,6 +17,10 @@ import { v4 as uuidv4 } from 'uuid';
 import Select from 'react-select';
 import { customSelectStyles } from '../../../../../utils/customSelectStyles';
 
+type OptionType = {
+  label: string;
+  value: string;
+};
 
 export default function AgendamentoForm() {
   const router = useRouter();
@@ -32,6 +36,18 @@ export default function AgendamentoForm() {
   const [selectedTime, setSelectedTime] = useState('');
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   
+  const [duration, setDuration] = useState('');
+  const [price, setPrice] = useState('');
+
+  const { addAppointment } = useAppointments();
+  const durations = generateDurations();
+
+  const formattedDay = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
+
+  const customerOptions = customers.map(c => ({ value: c.id, label: c.name }));
+  const selectedCustomer = customerOptions.find(opt => opt.value === selectedCustomerId) || null;
+  const serviceOptions = services.map(s => ({ value: s.id, label: s.name }));
+
   const generateTimeSlots = (start: string, end: string): string[] => {
     const times: string[] = [];
     const [startHour, startMinute] = start.split(':').map(Number);
@@ -53,14 +69,6 @@ export default function AgendamentoForm() {
     return times;
   };
   
-  const [duration, setDuration] = useState('');
-  const [price, setPrice] = useState('');
-
-  const formattedDay = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
-  const durations = generateDurations();
-
-  const { addAppointment } = useAppointments();
-
   const getDayName = (date: Date) => {
     const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
     return daysOfWeek[date.getDay()];
@@ -75,8 +83,8 @@ export default function AgendamentoForm() {
     if (!selectedCustomerId || !selectedServiceId || !selectedCollaboratorId || !selectedDate || !selectedTime) {
       alert('Preencha todos os campos!');
       return;
-    }    
-
+    }
+    
     const customer = customers.find(c => c.id === selectedCustomerId);
     const service = services.find(s => s.id === selectedServiceId);
     const collaborator = collaborators.find(c => c.id === selectedCollaboratorId);
@@ -104,13 +112,27 @@ export default function AgendamentoForm() {
     router.push('/home');
   };
 
+  const handleServiceChange = (opt: OptionType | null) => {
+    const id = opt?.value || '';
+    setSelectedServiceId(id);
+  
+    const selectedService = services.find(s => s.id === id);
+    if (selectedService) {
+      setDuration(selectedService.duration);
+      setPrice(selectedService.price.toString());
+    } else {
+      setDuration('');
+      setPrice('');
+    }
+  };
+
   useEffect(() => {
     if (selectedCollaboratorId && selectedDate) {
       const collaborator = collaborators.find(c => c.id === selectedCollaboratorId);
   
       if (!collaborator) return;
   
-      const dayName = getDayName(selectedDate); // Ex: "monday", "tuesday"...
+      const dayName = getDayName(selectedDate);
       const daySchedule = collaborator.schedule?.[dayName];
   
       console.log("daySchedule:", daySchedule);
@@ -131,7 +153,6 @@ export default function AgendamentoForm() {
     }
   }, [selectedCollaboratorId, selectedDate, collaborators]);
   
-
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
@@ -144,38 +165,24 @@ export default function AgendamentoForm() {
   
         <div className="mb-6">
           <label className="block text-sm font-medium mb-2">Cliente</label>
-          <Select
-            isClearable={false}
-            options={customers.map(c => ({ value: c.id, label: c.name }))}
-            value={customers
-              .map(c => ({ value: c.id, label: c.name }))
-              .find(opt => opt.value === selectedCustomerId) || null}
-            onChange={opt => setSelectedCustomerId(opt?.value || '')}
-            placeholder="Selecione um cliente"
-            classNames={customSelectStyles.classNames}
-          />
-
+            <div className="mb-6">
+            <Select
+              isClearable={false}
+              options={customerOptions}
+              value={selectedCustomer}
+              onChange={opt => setSelectedCustomerId(opt?.value || '')}
+              placeholder="Selecione um cliente"
+              classNames={customSelectStyles.classNames}
+            />
+          </div>
         </div>
 
         <div className="mb-6">
           <label className="block text-sm font-medium mb-2">Serviço</label>
           <Select
-            options={services.map(s => ({ value: s.id, label: s.name }))}
-            value={services
-              .map(s => ({ value: s.id, label: s.name }))
-              .find(opt => opt.value === selectedServiceId) || null}
-            onChange={opt => {
-              const id = opt?.value || '';
-              setSelectedServiceId(id);
-              const selectedService = services.find(s => s.id === id);
-              if (selectedService) {
-                setDuration(selectedService.duration);
-                setPrice(selectedService.price.toString());
-              } else {
-                setDuration('');
-                setPrice('');
-              }
-            }}
+            options={serviceOptions}
+            value={serviceOptions.find(opt => opt.value === selectedServiceId) || null}
+            onChange={handleServiceChange}
             placeholder="Selecione um serviço"
             classNames={customSelectStyles.classNames}
           />
@@ -210,43 +217,43 @@ export default function AgendamentoForm() {
         </div>
         
         {availableTimes.length > 0 && (
-  <div className="mb-6 mt-6">
-    <div className="flex flex-col md:flex-row gap-4">
-      {/* Horário */}
-      <div className="flex-1">
-        <label className="block text-sm font-medium mb-2">Horário</label>
-        <Select
-          options={availableTimes.map(time => ({ value: time, label: time }))}
-          value={selectedTime ? { value: selectedTime, label: selectedTime } : null}
-          onChange={opt => setSelectedTime(opt?.value || '')}
-          placeholder="Selecione um horário"
-          classNames={customSelectStyles.classNames}
-        />
-      </div>
+          <div className="mb-6 mt-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Horário */}
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-2">Horário</label>
+                <Select
+                  options={availableTimes.map(time => ({ value: time, label: time }))}
+                  value={selectedTime ? { value: selectedTime, label: selectedTime } : null}
+                  onChange={opt => setSelectedTime(opt?.value || '')}
+                  placeholder="Selecione um horário"
+                  classNames={customSelectStyles.classNames}
+                />
+              </div>
 
-      {/* Duração */}
-      <div className="flex-1">
-        <label className="block text-sm font-medium mb-2">Duração</label>
-        <Select
-          options={durations.map(d => ({ value: d, label: d }))}
-          value={durations.map(d => ({ value: d, label: d })).find(opt => opt.value === duration) || null}
-          onChange={opt => setDuration(opt?.value || '')}
-          placeholder="Selecione a duração"
-          classNames={customSelectStyles.classNames}
-        />
-      </div>
-    </div>
-  </div>
-)}
+              {/* Duração */}
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-2">Duração</label>
+                <Select
+                  options={durations.map(d => ({ value: d, label: d }))}
+                  value={durations.map(d => ({ value: d, label: d })).find(opt => opt.value === duration) || null}
+                  onChange={opt => setDuration(opt?.value || '')}
+                  placeholder="Selecione a duração"
+                  classNames={customSelectStyles.classNames}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Preço*/}
         <div className="mb-6 flex flex-col md:flex-row md:items-end md:gap-4">
-          {/* Preço */}
           <div className="w-full md:w-1/2">
             <label className="block text-sm font-medium mb-2">Preço</label>
             <input
               type="text"
               value={price}
+              readOnly
               onChange={e => setPrice(formatCurrency(e.target.value))}
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
               placeholder="R$ 0,00"
