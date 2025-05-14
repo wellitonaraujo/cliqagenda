@@ -8,6 +8,7 @@ interface AppointmentInput {
   serviceId: string;
   collaboratorId: string;
   day: string;
+  time: string;
 }
 
 // Para exibição no front
@@ -16,6 +17,7 @@ interface Appointment extends AppointmentInput {
   serviceName: string;
   duration: string;
   price: string;
+  time: string;
 }
 
 interface AppointmentsContextData {

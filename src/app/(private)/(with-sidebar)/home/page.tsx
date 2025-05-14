@@ -13,11 +13,8 @@ export default function Home() {
   const { hours } = useHorarios();
   const router = useRouter();
 
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    const dayName = today.toLocaleDateString('pt-BR', { weekday: 'long' });
-    return capitalizeFirstLetter(dayName);
-  });
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -25,18 +22,19 @@ export default function Home() {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  const getDayName = (dateString: string) => {
-    if (dateString.startsWith("Seg")) return "Segunda";
-    if (dateString.startsWith("Ter")) return "Terça";
-    if (dateString.startsWith("Qua")) return "Quarta";
-    if (dateString.startsWith("Qui")) return "Quinta";
-    if (dateString.startsWith("Sex")) return "Sexta";
-    if (dateString.startsWith("Sáb")) return "Sábado";
-    if (dateString.startsWith("Dom")) return "Domingo";
+  function normalizeDayName(shortName: string) {
+    if (shortName.startsWith("seg")) return "Segunda";
+    if (shortName.startsWith("ter")) return "Terça";
+    if (shortName.startsWith("qua")) return "Quarta";
+    if (shortName.startsWith("qui")) return "Quinta";
+    if (shortName.startsWith("sex")) return "Sexta";
+    if (shortName.startsWith("sáb")) return "Sábado";
+    if (shortName.startsWith("dom")) return "Domingo";
     return "";
-  };
+  }
   
-  const dayName = getDayName(selectedDate);
+  const shortDayName = selectedDate.toLocaleDateString('pt-BR', { weekday: 'short' });
+
 
   const generateTimeSlots = (day: string) => {
     const config = hours[day];
@@ -65,7 +63,9 @@ export default function Home() {
     return hours * 60 + minutes;
   };
 
+  const dayName = normalizeDayName(shortDayName);
   const timeSlots = generateTimeSlots(dayName);
+
 
   useEffect(() => {
     if (scrollRef.current && timeSlots.length > 0) {
@@ -74,22 +74,26 @@ export default function Home() {
     }
   }, [timeSlots]);
 
-  const handleDayChange = (direction: number) => {
-    const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-
-    const currentIndex = daysOfWeek.indexOf(getDayName(selectedDate));
-
-    let newIndex = currentIndex + direction;
-
-    if (newIndex < 0) newIndex = daysOfWeek.length - 1;
-
-    if (newIndex >= daysOfWeek.length) newIndex = 0;
-
-    const newSelectedDate = daysOfWeek[newIndex];
-
-    setSelectedDate(newSelectedDate);
-    setSelectedIndex(null);
+  const handleDayChange = (days: number) => {
+    setSelectedDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setDate(prev.getDate() + days);
+      return newDate;
+    });
   };
+  
+  const formattedSelectedDate = selectedDate.toISOString().split('T')[0];
+  
+  const appointmentsOfTheDay = appointments.filter(
+    (appointment) => appointment.day === formattedSelectedDate
+  );
+  
+  useEffect(() => {
+    console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
+  }, [appointmentsOfTheDay]);
+  useEffect(() => {
+    console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
+  }, [appointmentsOfTheDay]);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -103,19 +107,11 @@ export default function Home() {
 
       <div className="sticky top-16 z-10 bg-white p-4 flex justify-between items-center">
         <div className="flex items-center gap-2 text-primary font-medium">
-          <button 
-            className="text-gray-700" 
-            onClick={() => handleDayChange(-1)}
-          >
-            <FiChevronLeft size={20} />
-          </button>
-          <span className="text-gray-700">{selectedDate}</span>
-          <button 
-            className="text-gray-700" 
-            onClick={() => handleDayChange(1)}
-          >
-            <FiChevronRight size={20} />
-          </button>
+
+        <button onClick={() => handleDayChange(-1)}><FiChevronLeft size={20} /></button>
+        <span>{selectedDate.toLocaleDateString('pt-BR')}</span>
+        <button onClick={() => handleDayChange(1)}><FiChevronRight size={20} /></button>
+
         </div>
         <div className="ml-auto" onClick={() => router.push('/scheduling')}>
           <Button>Agendar</Button>
@@ -153,6 +149,18 @@ export default function Home() {
             );
           })}
         </div>
+        <ul className="mt-4">
+      {appointmentsOfTheDay.map((a) => (
+        <li key={a.id} className="border p-2 rounded mb-2">
+          <p>Cliente: {a.customerName}</p>
+          <p>Serviço: {a.serviceName}</p>
+          <p>Colaborador: {a.customerName}</p>
+          <p>Horário: {a.time}</p>
+          <p>Preço: R$ {a.price}</p>
+        </li>
+      ))}
+     </ul>
+
       </div>
 
     </div>
