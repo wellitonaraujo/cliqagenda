@@ -2,7 +2,7 @@
 
 import { normalizeDayName } from "../../../../../utils/normalizeDayName";
 import { useAppointments } from "@/context/AppointmentsProvider";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiHelpCircle, FiTrash2, FiUserX, FiXCircle } from "react-icons/fi";
 import { useHorarios } from "@/context/HoursProvider";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -95,22 +95,19 @@ export default function Home() {
   
     return horas * 60 + minutos;
   }
-  
-    // Função para abrir o modal e setar o agendamento
+
   const handleCardClick = (appointment: any) => {
     setSelectedAppointment(appointment);
-    setStatus(appointment.status || null); // Define o status atual ou null
+    setStatus(appointment.status || null);
     setModalOpen(true);
   };
   
-    // Função para fechar o modal
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedAppointment(null);
     setStatus(null);
   };
   
-    // Função para atualizar o status do agendamento
   const handleStatusChange = (newStatus: string) => {
     if (selectedAppointment) {
       updateAppointment(selectedAppointment.id, {
@@ -213,34 +210,42 @@ export default function Home() {
             );
           })}
         </div>
+      
         {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/10 z-30">
-          <div className="bg-white w-80 p-5 rounded-xl shadow-xl">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/2 z-30">
+          <div className="bg-white w-80 p-5 rounded-xl shadow-2xl shadow-black/30">
             <h2 className="font-semibold text-lg text-center text-gray-800">Alterar Status</h2>
 
             <div className="mt-4 space-y-2">
               <button
                 onClick={() => handleStatusChange('Em entendimento')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition"
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
               >
+                <FiHelpCircle className="text-gray-500" />
                 Em entendimento
               </button>
+
               <button
                 onClick={() => handleStatusChange('Cliente faltou')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition"
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
               >
+                <FiUserX className="text-gray-500" />
                 Cliente faltou
               </button>
+
               <button
                 onClick={() => handleStatusChange('Cancelado')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition"
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
               >
+                <FiXCircle className="text-gray-500" />
                 Cancelado
               </button>
+
               <button
                 onClick={handleRemoveAppointment}
-                className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md"
+                className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md flex items-center gap-2"
               >
+                <FiTrash2 className="text-red-500" />
                 Remover
               </button>
             </div>
@@ -255,7 +260,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-         )}
+      )}
 
       </div>
     </div>
