@@ -10,13 +10,17 @@ import Button from "@/componentes/Button";
 import Header from "@/componentes/Header";
 
 export default function Home() {
-  const { appointments } = useAppointments();
+  const { appointments, updateAppointment, removeAppointment } = useAppointments();
   const { hours } = useHorarios();
   const router = useRouter();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const [status, setStatus] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
 
   const shortDayName = selectedDate.toLocaleDateString('pt-BR', { weekday: 'short' });
 
@@ -92,6 +96,40 @@ export default function Home() {
     return horas * 60 + minutos;
   }
   
+    // Função para abrir o modal e setar o agendamento
+  const handleCardClick = (appointment: any) => {
+    setSelectedAppointment(appointment);
+    setStatus(appointment.status || null); // Define o status atual ou null
+    setModalOpen(true);
+  };
+  
+    // Função para fechar o modal
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedAppointment(null);
+    setStatus(null);
+  };
+  
+    // Função para atualizar o status do agendamento
+  const handleStatusChange = (newStatus: string) => {
+    if (selectedAppointment) {
+      updateAppointment(selectedAppointment.id, {
+        ...selectedAppointment,
+        status: newStatus,
+      });
+      setStatus(newStatus);
+      handleModalClose();
+    }
+   };
+    
+    // Função para remover o agendamento
+  const handleRemoveAppointment = () => {
+    if (selectedAppointment) {
+      removeAppointment(selectedAppointment.id);
+      handleModalClose();
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="sticky top-0 z-10 bg-white">
@@ -127,8 +165,6 @@ export default function Home() {
             </div>
           ))}
         </div>
-
-        
         <div className="flex-1 relative">
           {/* Grade de horários */}
           {timeSlots.map(({ label }, index) => {
@@ -156,19 +192,71 @@ export default function Home() {
             console.log(a.duration)
             return (
               <div
+              onClick={() => handleCardClick(a)}
                 key={a.id}
                 className="absolute left-0 w-[100%] sm:w-[70%] md:w-[50%] lg:w-[30%] xl:w-[20%] shadow-md rounded z-10 overflow-hidden bg-[#E3E1FA] border-l-4"
                 style={{ top, height, borderLeftColor: '#7567E4' }}
               >
-                <div className="p-2 text-[#1E1E1E]">
-                  <p className="font-semibold text-sm">{a.customerName}</p>
-                  <p className="text-sm">{a.serviceName} às {a.time}</p>
-                  <p className="text-sm">R$ {a.price}</p>
+                <div className="p-2 text-[#1E1E1E] h-full flex flex-col justify-between">
+                  <div>
+                    <p className="font-semibold text-sm">{a.customerName}</p>
+                    <p className="text-sm">{a.serviceName} às {a.time}</p>
+                    <p className="text-sm">R$ {a.price}</p>
+                  </div>
+
+                  {a.status && (
+                    <p className="text-xs text-gray-600 mt-2">{a.status}</p>
+                  )}
                 </div>
+
               </div>
             );
           })}
         </div>
+        {modalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/10 z-30">
+          <div className="bg-white w-80 p-5 rounded-xl shadow-xl">
+            <h2 className="font-semibold text-lg text-center text-gray-800">Alterar Status</h2>
+
+            <div className="mt-4 space-y-2">
+              <button
+                onClick={() => handleStatusChange('Em entendimento')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition"
+              >
+                Em entendimento
+              </button>
+              <button
+                onClick={() => handleStatusChange('Cliente faltou')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition"
+              >
+                Cliente faltou
+              </button>
+              <button
+                onClick={() => handleStatusChange('Cancelado')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition"
+              >
+                Cancelado
+              </button>
+              <button
+                onClick={handleRemoveAppointment}
+                className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md"
+              >
+                Remover
+              </button>
+            </div>
+
+            <div className="mt-6">
+              <button
+                onClick={handleModalClose}
+                className="w-full py-2 bg-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 transition"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+         )}
+
       </div>
     </div>
   );
