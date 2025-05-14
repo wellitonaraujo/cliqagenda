@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
-import Button from "@/componentes/Button";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import Header from "@/componentes/Header";
-import { useHorarios } from "@/context/HoursProvider";
-import { useRouter } from "next/navigation";
+import { normalizeDayName } from "../../../../../utils/normalizeDayName";
 import { useAppointments } from "@/context/AppointmentsProvider";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useHorarios } from "@/context/HoursProvider";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Button from "@/componentes/Button";
+import Header from "@/componentes/Header";
 
 export default function Home() {
   const { appointments } = useAppointments();
@@ -14,7 +15,6 @@ export default function Home() {
   const router = useRouter();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -22,19 +22,12 @@ export default function Home() {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  function normalizeDayName(shortName: string) {
-    if (shortName.startsWith("seg")) return "Segunda";
-    if (shortName.startsWith("ter")) return "Terça";
-    if (shortName.startsWith("qua")) return "Quarta";
-    if (shortName.startsWith("qui")) return "Quinta";
-    if (shortName.startsWith("sex")) return "Sexta";
-    if (shortName.startsWith("sáb")) return "Sábado";
-    if (shortName.startsWith("dom")) return "Domingo";
-    return "";
-  }
-  
   const shortDayName = selectedDate.toLocaleDateString('pt-BR', { weekday: 'short' });
 
+  const convertToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
 
   const generateTimeSlots = (day: string) => {
     const config = hours[day];
@@ -58,14 +51,8 @@ export default function Home() {
     return slots;
   };
 
-  const convertToMinutes = (time: string) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  };
-
   const dayName = normalizeDayName(shortDayName);
   const timeSlots = generateTimeSlots(dayName);
-
 
   useEffect(() => {
     if (scrollRef.current && timeSlots.length > 0) {
@@ -91,6 +78,7 @@ export default function Home() {
   useEffect(() => {
     console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
   }, [appointmentsOfTheDay]);
+  
   useEffect(() => {
     console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
   }, [appointmentsOfTheDay]);
