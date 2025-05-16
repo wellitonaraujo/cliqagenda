@@ -54,12 +54,6 @@ export default function Home() {
   const dayName = normalizeDayName(shortDayName);
   const timeSlots = generateTimeSlots(dayName);
 
-  useEffect(() => {
-    if (scrollRef.current && timeSlots.length > 0) {
-      const itemHeight = 40;
-      scrollRef.current.scrollTop = 4 * itemHeight;
-    }
-  }, [timeSlots]);
 
   const handleDayChange = (days: number) => {
     setSelectedDate(prev => {
@@ -75,6 +69,13 @@ export default function Home() {
     (appointment) => appointment.day === formattedSelectedDate
   );
   
+  useEffect(() => {
+    if (scrollRef.current && timeSlots.length > 0) {
+      const itemHeight = 40;
+      scrollRef.current.scrollTop = 4 * itemHeight;
+    }
+  }, [timeSlots]);
+
   useEffect(() => {
     console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
   }, [appointmentsOfTheDay]);
@@ -119,7 +120,6 @@ export default function Home() {
     }
    };
     
-    // Função para remover o agendamento
   const handleRemoveAppointment = () => {
     if (selectedAppointment) {
       removeAppointment(selectedAppointment.id);
@@ -129,7 +129,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <div className="sticky top-0 z-10 bg-white">
+      <div className="sticky top-0 z-30 bg-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Header />
@@ -137,12 +137,20 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="sticky top-16 z-10 bg-white p-4 flex justify-between items-center">
-        <div className="flex items-center gap-2 text-primary font-medium">
+      <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-center">
 
-        <button onClick={() => handleDayChange(-1)}><FiChevronLeft size={20} /></button>
-        <span>{selectedDate.toLocaleDateString('pt-BR')}</span>
-        <button onClick={() => handleDayChange(1)}><FiChevronRight size={20} /></button>
+        <div className="flex items-center gap-2 text-primary font-medium">
+          <button onClick={() => handleDayChange(-1)}><FiChevronLeft size={20} /></button>
+          <span>{selectedDate.toLocaleDateString('pt-BR')}</span>
+          <button onClick={() => handleDayChange(1)}><FiChevronRight size={20} /></button>
+
+          <span className="text-sm text-gray-500">
+            {appointmentsOfTheDay.length === 0
+              ? 'Nenhum agendamento'
+              : appointmentsOfTheDay.length === 1
+              ? '1 agendamento'
+              : `${appointmentsOfTheDay.length} agendamentos`}
+          </span>
 
         </div>
         <div className="ml-auto" onClick={() => router.push('/scheduling')}>
@@ -162,6 +170,7 @@ export default function Home() {
             </div>
           ))}
         </div>
+
         <div className="flex-1 relative">
           {/* Grade de horários */}
           {timeSlots.map(({ label }, index) => {

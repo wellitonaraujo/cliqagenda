@@ -40,7 +40,7 @@ export default function Login() {
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="mb-8">
+          <div className="mb-10">
             <Input
               label=""
               type="email"
@@ -48,9 +48,12 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               hasError={isSubmitted && !email}
             />
+            {isSubmitted && (!email || !password) && (
+              <ErrorMessage message="Email e senha obrigatórios" />
+            )}
           </div>
 
-          <div className="mb-12 relative">
+          <div className="relative">
             <Input
               label=""
               type="password"
@@ -58,9 +61,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               hasError={isSubmitted && !password}
             />
-            {isSubmitted && (!email || !password) && (
-              <ErrorMessage message="Email e senha obrigatórios" />
-            )}
+
           </div>
 
           <div className="flex items-center justify-between text-sm">
@@ -68,7 +69,7 @@ export default function Login() {
             <Link href="#" className="text-primary">Esqueci a senha</Link>
           </div>
 
-          <div className="pt-10">
+          <div className="pt-5">
             <Button type="submit" full>
               Entrar
             </Button>
