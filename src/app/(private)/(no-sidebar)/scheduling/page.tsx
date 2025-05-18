@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -14,8 +14,10 @@ import { formatCurrency } from '../../../../../utils/formatCurrency';
 import { generateDurations } from '../../../../../utils/generateDurations';
 import { useCollaborators } from '@/context/CollaboratorContext';
 import { v4 as uuidv4 } from 'uuid';
-import Select from 'react-select';
 import { customSelectStyles } from '../../../../../utils/customSelectStyles';
+import Select from '@/componentes/ClientSelect';
+
+import type { SingleValue } from 'react-select';
 
 type OptionType = {
   label: string;
@@ -172,7 +174,7 @@ export default function AgendamentoForm() {
             isClearable={false}
             options={customerOptions}
             value={selectedCustomer}
-            onChange={opt => setSelectedCustomerId(opt?.value || '')}
+            onChange={(opt: SingleValue<OptionType>) => setSelectedCustomerId(opt?.value || '')}
             placeholder="Selecione um cliente"
             classNames={customSelectStyles.classNames}
           />
@@ -245,7 +247,7 @@ export default function AgendamentoForm() {
                 <Select
                   options={availableTimes.map(time => ({ value: time, label: time }))}
                   value={selectedTime ? { value: selectedTime, label: selectedTime } : null}
-                  onChange={opt => setSelectedTime(opt?.value || '')}
+                  onChange={(opt: SingleValue<OptionType>) => setSelectedTime(opt?.value || '')}
                   placeholder="Selecione um horário"
                   classNames={customSelectStyles.classNames}
                 />
@@ -261,7 +263,7 @@ export default function AgendamentoForm() {
                       .map(d => ({ value: d, label: d }))
                       .find(opt => opt.value === duration) || null
                   }
-                  onChange={opt => setDuration(opt?.value || '')}
+                  onChange={(opt: SingleValue<OptionType>) => setDuration(opt?.value || '')}
                   placeholder="Selecione a duração"
                   classNames={customSelectStyles.classNames}
                 />
