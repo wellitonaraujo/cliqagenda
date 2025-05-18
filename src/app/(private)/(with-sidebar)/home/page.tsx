@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/componentes/Button";
 import Header from "@/componentes/Header";
+import { useCollaborators } from "@/context/CollaboratorContext";
 
 export default function Home() {
   const { appointments, updateAppointment, removeAppointment } = useAppointments();
@@ -127,6 +128,8 @@ export default function Home() {
     }
   };
 
+  const { collaborators } = useCollaborators();
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="sticky top-0 z-30 bg-white">
@@ -136,7 +139,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-center">
 
         <div className="flex items-center gap-2 text-primary font-medium">
@@ -158,119 +160,153 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 flex">
-        <div className="flex flex-col w-10 pr-2">
-          {timeSlots.map(({ id, label }, index) => (
-            <div key={id} className="h-10 flex justify-end">
-              {index % 2 === 0 && label && (
-                <span className="text-sm text-gray-800 leading-none -translate-y-[10px]">
-                  {label}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="flex-1 relative">
-          {/* Grade de horários */}
-          {timeSlots.map(({ label }, index) => {
-            const isSelected = selectedIndex === index;
-            return (
-              <div
-                key={index}
-                onClick={() => setSelectedIndex(index)}
-                className={`h-10 border group flex items-center justify-center cursor-pointer
-                 border-gray-200 hover:border-[#09BDDD]`}
-              >
-                <span className={`text-xs font-bold text-[#09BDDD] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
-                  {label}
-                </span>
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex w-full min-w-full">
+          {/* Coluna de horários + espaço para alinhar com cabeçalho */}
+          <div className="flex flex-col w-10 pr-2">
+            {/* Espaço vazio com a mesma altura do cabeçalho */}
+            <div className="h-[40px]"></div>
+            {timeSlots.map(({ id, label }, index) => (
+              <div key={id} className="h-10 flex justify-end">
+                {index % 2 === 0 && label && (
+                  <span className="text-sm text-gray-800 leading-none">
+                    {label}
+                  </span>
+                )}
               </div>
-            );
-          })}
-          
-          {appointmentsOfTheDay.map((a) => {
-            const index = getSlotIndex(a.time);
-            const top = index * 40;
+            ))}
+          </div>
 
-            const durationInMinutes = parseDurationToMinutes(a.duration);
-            const height = (durationInMinutes / 30) * 40;
-            console.log(a.duration)
-            return (
-              <div
-              onClick={() => handleCardClick(a)}
-                key={a.id}
-                className="absolute left-0 w-[100%] sm:w-[70%] md:w-[50%] lg:w-[30%] xl:w-[20%] shadow-md rounded z-10 overflow-hidden bg-[#E3FBFF] border-l-4"
-                style={{ top, height, borderLeftColor: '#09BDDD' }}
-              >
-                <div className="p-2 text-[#18B7E7] h-full flex flex-col justify-between">
-                  <div>
-                    <p className="font-semibold text-sm">{a.customerName}</p>
-                    <p className="text-sm">{a.serviceName} às {a.time}</p>
-                    <p className="text-sm">R$ {a.price}</p>
-                  </div>
-
-                  {a.status && (
-                    <p className="text-xs text-gray-600 mt-2">{a.status}</p>
-                  )}
+          {/* Colunas dos colaboradores + cabeçalho fixo */}
+          <div className="overflow-x-auto relative">
+            {/* Cabeçalho fixo com os nomes dos colaboradores */}
+            <div className="flex sticky top-0 z-10 bg-white">
+              {collaborators.map((collab, index) => (
+                <div
+                  key={`header-${collab.id ?? index}`}
+                  className="min-w-[180px] h-[40px] flex items-center justify-center bg-[#f7f7f7] border-b border-gray-300 shadow text-sm font-medium text-gray-700 text-center"
+                >
+                  {collab.name}
                 </div>
-
-              </div>
-            );
-          })}
-        </div>
-      
-        {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/2 z-30">
-          <div className="bg-white w-80 p-5 rounded-xl shadow-2xl shadow-black/30">
-            <h2 className="font-semibold text-lg text-center text-gray-800">Alterar Status</h2>
-
-            <div className="mt-4 space-y-2">
-              <button
-                onClick={() => handleStatusChange('Em entendimento')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-              >
-                <FiHelpCircle className="text-gray-500" />
-                Em entendimento
-              </button>
-
-              <button
-                onClick={() => handleStatusChange('Cliente faltou')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-              >
-                <FiUserX className="text-gray-500" />
-                Cliente faltou
-              </button>
-
-              <button
-                onClick={() => handleStatusChange('Cancelado')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-              >
-                <FiXCircle className="text-gray-500" />
-                Cancelado
-              </button>
-
-              <button
-                onClick={handleRemoveAppointment}
-                className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md flex items-center gap-2"
-              >
-                <FiTrash2 className="text-red-500" />
-                Remover
-              </button>
+              ))}
             </div>
 
-            <div className="mt-6">
-              <button
-                onClick={handleModalClose}
-                className="w-full py-2 bg-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 transition"
-              >
-                Fechar
-              </button>
+            {/* Grade de horários */}
+            <div className="flex w-full">
+              {collaborators.map((collab, index) => (
+                <div
+                  key={`body-${collab.id ?? index}`}
+                  className="flex flex-col border-l border-gray-200 min-w-[180px] flex-1 relative"
+                >
+                  {timeSlots.map(({ label }, index) => {
+                    const isSelected = selectedIndex === index;
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => setSelectedIndex(index)}
+                        className="h-10 border-b border-gray-200 group flex items-center justify-center cursor-pointer"
+                      >
+                        <span
+                          className={`text-xs font-bold text-[#09BDDD] ${
+                            isSelected ? 'block' : 'hidden group-hover:block'
+                          }`}
+                        >
+                          {label}
+                        </span>
+                      </div>
+                    );
+                  })}
+
+                  {/* Agendamentos */}
+                  {appointmentsOfTheDay
+                    .filter((a) => a.collaboratorId === collab.id)
+                    .map((a) => {
+                      const index = getSlotIndex(a.time);
+                      const top = index * 40;
+                      const durationInMinutes = parseDurationToMinutes(a.duration);
+                      const height = (durationInMinutes / 30) * 40;
+
+                      return (
+                        <div
+                          onClick={() => handleCardClick(a)}
+                          key={a.id}
+                          className="absolute left-2 right-2 shadow-md rounded z-10 overflow-hidden bg-[#E3FBFF] border-l-4"
+                          style={{ top, height, borderLeftColor: '#09BDDD' }}
+                        >
+                          <div className="p-2 text-[#18B7E7] h-full flex flex-col justify-between">
+                            <div>
+                              <p className="font-semibold text-sm">
+                                {a.customerName}
+                              </p>
+                              <p className="text-sm">
+                                {a.serviceName} às {a.time}
+                              </p>
+                              <p className="text-sm">R$ {a.price}</p>
+                            </div>
+                            {a.status && (
+                              <p className="text-xs text-gray-600 mt-2">
+                                {a.status}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      )}
 
+        {/* Modal de status */}
+        {modalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-30">
+            <div className="bg-white w-80 p-5 rounded-xl shadow-2xl shadow-black/30">
+              <h2 className="font-semibold text-lg text-center text-gray-800">
+                Alterar Status
+              </h2>
+              <div className="mt-4 space-y-2">
+                <button
+                  onClick={() => handleStatusChange('Em entendimento')}
+                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+                >
+                  <FiHelpCircle className="text-gray-500" />
+                  Em entendimento
+                </button>
+                <button
+                  onClick={() => handleStatusChange('Cliente faltou')}
+                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+                >
+                  <FiUserX className="text-gray-500" />
+                  Cliente faltou
+                </button>
+                <button
+                  onClick={() => handleStatusChange('Cancelado')}
+                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+                >
+                  <FiXCircle className="text-gray-500" />
+                  Cancelado
+                </button>
+                <button
+                  onClick={handleRemoveAppointment}
+                  className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md flex items-center gap-2"
+                >
+                  <FiTrash2 className="text-red-500" />
+                  Remover
+                </button>
+              </div>
+
+              <div className="mt-6">
+                <button
+                  onClick={handleModalClose}
+                  className="w-full py-2 bg-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 transition"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
