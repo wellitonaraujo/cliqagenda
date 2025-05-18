@@ -1,42 +1,33 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
-import Button from "@/componentes/Button";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import Header from "@/componentes/Header";
-import { useHorarios } from "@/context/HoursProvider";
-import { useRouter } from "next/navigation";
+import { normalizeDayName } from "../../../../../utils/normalizeDayName";
 import { useAppointments } from "@/context/AppointmentsProvider";
+import { FiChevronLeft, FiChevronRight, FiHelpCircle, FiTrash2, FiUserX, FiXCircle } from "react-icons/fi";
+import { useHorarios } from "@/context/HoursProvider";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Button from "@/componentes/Button";
+import Header from "@/componentes/Header";
 
 export default function Home() {
-  const { appointments } = useAppointments();
+  const { appointments, updateAppointment, removeAppointment } = useAppointments();
   const { hours } = useHorarios();
   const router = useRouter();
 
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    const dayName = today.toLocaleDateString('pt-BR', { weekday: 'long' });
-    return capitalizeFirstLetter(dayName);
-  });
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  function capitalizeFirstLetter(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
+  const [status, setStatus] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
 
-  const getDayName = (dateString: string) => {
-    if (dateString.startsWith("Seg")) return "Segunda";
-    if (dateString.startsWith("Ter")) return "Terça";
-    if (dateString.startsWith("Qua")) return "Quarta";
-    if (dateString.startsWith("Qui")) return "Quinta";
-    if (dateString.startsWith("Sex")) return "Sexta";
-    if (dateString.startsWith("Sáb")) return "Sábado";
-    if (dateString.startsWith("Dom")) return "Domingo";
-    return "";
+  const shortDayName = selectedDate.toLocaleDateString('pt-BR', { weekday: 'short' });
+
+  const convertToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
   };
-  
-  const dayName = getDayName(selectedDate);
 
   const generateTimeSlots = (day: string) => {
     const config = hours[day];
@@ -60,13 +51,24 @@ export default function Home() {
     return slots;
   };
 
-  const convertToMinutes = (time: string) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  };
-
+  const dayName = normalizeDayName(shortDayName);
   const timeSlots = generateTimeSlots(dayName);
 
+
+  const handleDayChange = (days: number) => {
+    setSelectedDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setDate(prev.getDate() + days);
+      return newDate;
+    });
+  };
+  
+  const formattedSelectedDate = selectedDate.toISOString().split('T')[0];
+  
+  const appointmentsOfTheDay = appointments.filter(
+    (appointment) => appointment.day === formattedSelectedDate
+  );
+  
   useEffect(() => {
     if (scrollRef.current && timeSlots.length > 0) {
       const itemHeight = 40;
@@ -74,26 +76,60 @@ export default function Home() {
     }
   }, [timeSlots]);
 
-  const handleDayChange = (direction: number) => {
-    const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+  useEffect(() => {
+    console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
+  }, [appointmentsOfTheDay]);
 
-    const currentIndex = daysOfWeek.indexOf(getDayName(selectedDate));
+  useEffect(() => {
+  }, [appointmentsOfTheDay]);
 
-    let newIndex = currentIndex + direction;
+  const getSlotIndex = (time: string) => {
+    return timeSlots.findIndex((slot) => slot.label === time);
+  };
+  
+  function parseDurationToMinutes(duration: string): number {
+    const horasMatch = duration.match(/(\d+)\s*hora/);
+    const minutosMatch = duration.match(/(\d+)\s*minuto/);
+  
+    const horas = horasMatch ? parseInt(horasMatch[1], 10) : 0;
+    const minutos = minutosMatch ? parseInt(minutosMatch[1], 10) : 0;
+  
+    return horas * 60 + minutos;
+  }
 
-    if (newIndex < 0) newIndex = daysOfWeek.length - 1;
-
-    if (newIndex >= daysOfWeek.length) newIndex = 0;
-
-    const newSelectedDate = daysOfWeek[newIndex];
-
-    setSelectedDate(newSelectedDate);
-    setSelectedIndex(null);
+  const handleCardClick = (appointment: any) => {
+    setSelectedAppointment(appointment);
+    setStatus(appointment.status || null);
+    setModalOpen(true);
+  };
+  
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedAppointment(null);
+    setStatus(null);
+  };
+  
+  const handleStatusChange = (newStatus: string) => {
+    if (selectedAppointment) {
+      updateAppointment(selectedAppointment.id, {
+        ...selectedAppointment,
+        status: newStatus,
+      });
+      setStatus(newStatus);
+      handleModalClose();
+    }
+   };
+    
+  const handleRemoveAppointment = () => {
+    if (selectedAppointment) {
+      removeAppointment(selectedAppointment.id);
+      handleModalClose();
+    }
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <div className="sticky top-0 z-10 bg-white">
+      <div className="sticky top-0 z-30 bg-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Header />
@@ -101,21 +137,21 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="sticky top-16 z-10 bg-white p-4 flex justify-between items-center">
+      <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-center">
+
         <div className="flex items-center gap-2 text-primary font-medium">
-          <button 
-            className="text-gray-700" 
-            onClick={() => handleDayChange(-1)}
-          >
-            <FiChevronLeft size={20} />
-          </button>
-          <span className="text-gray-700">{selectedDate}</span>
-          <button 
-            className="text-gray-700" 
-            onClick={() => handleDayChange(1)}
-          >
-            <FiChevronRight size={20} />
-          </button>
+          <button onClick={() => handleDayChange(-1)}><FiChevronLeft size={20} /></button>
+          <span>{selectedDate.toLocaleDateString('pt-BR')}</span>
+          <button onClick={() => handleDayChange(1)}><FiChevronRight size={20} /></button>
+
+          <span className="text-sm text-gray-500">
+            {appointmentsOfTheDay.length === 0
+              ? 'Nenhum agendamento'
+              : appointmentsOfTheDay.length === 1
+              ? '1 agendamento'
+              : `${appointmentsOfTheDay.length} agendamentos`}
+          </span>
+
         </div>
         <div className="ml-auto" onClick={() => router.push('/scheduling')}>
           <Button>Agendar</Button>
@@ -124,19 +160,19 @@ export default function Home() {
 
       <div className="flex-1 overflow-y-auto p-6 flex">
         <div className="flex flex-col w-10 pr-2">
-          {
-            timeSlots.map(({ id, label }, index) => (
-              <div key={id} className="h-10 flex items-end justify-end pb-[1px]">
-                {index % 2 === 0 && label && (
-                  <span className="text-sm text-gray-800 leading-none translate-y-1/2">
-                    {label}
-                  </span>
-                )}
-              </div>
-            ))
-          }
+          {timeSlots.map(({ id, label }, index) => (
+            <div key={id} className="h-10 flex justify-end">
+              {index % 2 === 0 && label && (
+                <span className="text-sm text-gray-800 leading-none -translate-y-[10px]">
+                  {label}
+                </span>
+              )}
+            </div>
+          ))}
         </div>
+
         <div className="flex-1 relative">
+          {/* Grade de horários */}
           {timeSlots.map(({ label }, index) => {
             const isSelected = selectedIndex === index;
             return (
@@ -144,17 +180,98 @@ export default function Home() {
                 key={index}
                 onClick={() => setSelectedIndex(index)}
                 className={`h-10 border group flex items-center justify-center cursor-pointer
-                  ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
+                 border-gray-200 hover:border-[#09BDDD]`}
               >
-                <span className={`text-xs font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+                <span className={`text-xs font-bold text-[#09BDDD] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
                   {label}
                 </span>
               </div>
             );
           })}
-        </div>
-      </div>
+          
+          {appointmentsOfTheDay.map((a) => {
+            const index = getSlotIndex(a.time);
+            const top = index * 40;
 
+            const durationInMinutes = parseDurationToMinutes(a.duration);
+            const height = (durationInMinutes / 30) * 40;
+            console.log(a.duration)
+            return (
+              <div
+              onClick={() => handleCardClick(a)}
+                key={a.id}
+                className="absolute left-0 w-[100%] sm:w-[70%] md:w-[50%] lg:w-[30%] xl:w-[20%] shadow-md rounded z-10 overflow-hidden bg-[#E3FBFF] border-l-4"
+                style={{ top, height, borderLeftColor: '#09BDDD' }}
+              >
+                <div className="p-2 text-[#18B7E7] h-full flex flex-col justify-between">
+                  <div>
+                    <p className="font-semibold text-sm">{a.customerName}</p>
+                    <p className="text-sm">{a.serviceName} às {a.time}</p>
+                    <p className="text-sm">R$ {a.price}</p>
+                  </div>
+
+                  {a.status && (
+                    <p className="text-xs text-gray-600 mt-2">{a.status}</p>
+                  )}
+                </div>
+
+              </div>
+            );
+          })}
+        </div>
+      
+        {modalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/2 z-30">
+          <div className="bg-white w-80 p-5 rounded-xl shadow-2xl shadow-black/30">
+            <h2 className="font-semibold text-lg text-center text-gray-800">Alterar Status</h2>
+
+            <div className="mt-4 space-y-2">
+              <button
+                onClick={() => handleStatusChange('Em entendimento')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+              >
+                <FiHelpCircle className="text-gray-500" />
+                Em entendimento
+              </button>
+
+              <button
+                onClick={() => handleStatusChange('Cliente faltou')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+              >
+                <FiUserX className="text-gray-500" />
+                Cliente faltou
+              </button>
+
+              <button
+                onClick={() => handleStatusChange('Cancelado')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+              >
+                <FiXCircle className="text-gray-500" />
+                Cancelado
+              </button>
+
+              <button
+                onClick={handleRemoveAppointment}
+                className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md flex items-center gap-2"
+              >
+                <FiTrash2 className="text-red-500" />
+                Remover
+              </button>
+            </div>
+
+            <div className="mt-6">
+              <button
+                onClick={handleModalClose}
+                className="w-full py-2 bg-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 transition"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      </div>
     </div>
   );
 }

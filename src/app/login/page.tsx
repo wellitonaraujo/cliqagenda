@@ -34,13 +34,13 @@ export default function Login() {
       <div className="w-full max-w-sm space-y-6">
         <div>
           <h1 className="text-3xl font-bold mb-4 text-center">
-            <span className="text-primary">agendei99</span>
+            <span className="text-primary">CliqAgenda</span>
           </h1>
           <p className="text-gray-500 text-center">Entre com seu email e senha</p>
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="mb-8">
+          <div className="mb-10">
             <Input
               label=""
               type="email"
@@ -48,9 +48,12 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               hasError={isSubmitted && !email}
             />
+            {isSubmitted && (!email || !password) && (
+              <ErrorMessage message="Email e senha obrigatórios" />
+            )}
           </div>
 
-          <div className="mb-12 relative">
+          <div className="relative">
             <Input
               label=""
               type="password"
@@ -58,9 +61,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               hasError={isSubmitted && !password}
             />
-            {isSubmitted && (!email || !password) && (
-              <ErrorMessage message="Email e senha obrigatórios" />
-            )}
+
           </div>
 
           <div className="flex items-center justify-between text-sm">
@@ -68,7 +69,7 @@ export default function Login() {
             <Link href="#" className="text-primary">Esqueci a senha</Link>
           </div>
 
-          <div className="pt-10">
+          <div className="pt-5">
             <Button type="submit" full>
               Entrar
             </Button>
@@ -77,7 +78,7 @@ export default function Login() {
 
         <p className="text-center text-md text-gray-500">
           Não possui uma conta?{" "}
-          <Link href="/signup" className="text-[#7567E4] font-bold">Criar conta</Link>
+          <Link href="/signup" className="text-[#09BDDD] font-bold">Criar conta</Link>
         </p>
       </div>
     </div>

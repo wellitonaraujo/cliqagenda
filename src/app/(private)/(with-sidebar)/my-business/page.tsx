@@ -59,19 +59,19 @@ export default function MeuNegocioPage() {
       <div className="bg-white rounded-xl p-4 space-y-6 max-w-3xl mx-auto">
       <div className="flex flex-col items-center gap-2">
           <div className="relative">
-            <div className="w-25 h-25 rounded-full overflow-hidden border-2 border-[#7567E4]">
+            <div className="w-25 h-25 rounded-full overflow-hidden border-3 border-[#00AEEF]">
               <Image
-                src="/eu.svg"
+                src="/profile.png"
                 alt="foto de perfil"
                 width={80}
                 height={80}
                 className="w-full h-full object-cover"
               />
             </div>
-            <FiEdit2 className="absolute bottom-1 right-1 bg-white rounded-full p-1 text-sm border" />
+            <FiEdit2 className="absolute bottom-1 right-1 bg-white rounded-full p-1 text-xl border" />
           </div>
           <div className="flex items-center gap-2 m-5">
-            <span className="text-xl font-medium">Barba Negra Barbearia</span>
+            <span className="text-xl font-medium">Minha Barbearia</span>
             <FiEdit2 className="text-sm text-gray-500 cursor-pointer" />
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function MeuNegocioPage() {
         <div>
           <label className="text-md text-gray-700 font-medium">Agendamento online</label>
           <div className="mt-1 flex items-center justify-between border border-[#DEDEDE] px-3 py-2 rounded-md">
-            <span className="text-sm text-[#7567E4] font-medium">www.saas.com.br/barbanegra</span>
+            <span className="text-sm text-[#00AEEF] font-medium">www.cliqagenda.com/minha-barbearia</span>
             <FiLink />
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function MeuNegocioPage() {
           <label className="text-md text-gray-700 font-medium">Endereço</label>
           <div className="mt-1 border border-[#DEDEDE] rounded-md overflow-hidden">
             <div className="px-3 py-2 text-sm">
-              Avenida Vai Quem é Doido, 208, velho Horizonte, Teresina - PI
+              Avenida Vai Quem Tem Vontade, 123, Velho Horizonte, Teresina - PI
             </div>
             <Image
               src="/location.svg"
@@ -118,7 +118,7 @@ export default function MeuNegocioPage() {
                           checked={hours[day].open}
                           onChange={() => handleToggle(day)}
                           className={`${
-                            hours[day].open ? 'bg-[#7567E4]' : 'bg-gray-300'
+                            hours[day].open ? 'bg-[#00AEEF]' : 'bg-gray-300'
                           } relative inline-flex h-5 w-10 items-center rounded-full`}
                         >
                           <span

@@ -127,7 +127,7 @@ export default function Signup() {
         </form>
 
         <p className="text-center text-md text-gray-500">
-          Já tem uma conta? <Link href="/login" className="text-[#7567E4] font-bold">Entrar</Link>
+          Já tem uma conta? <Link href="/login" className="text-[#09BDDD] font-bold">Entrar</Link>
         </p>
       </div>
     </div>

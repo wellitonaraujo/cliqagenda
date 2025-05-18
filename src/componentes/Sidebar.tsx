@@ -50,14 +50,14 @@ export default function Sidebar() {
             {isCollapsed ? (
               <button
                 onClick={toggleSidebar}
-                className="text-2xl font-bold text-[#7567E4]"
+                className="text-2xl font-bold text-[#09BDDD]"
               >
                 <HiMenu />
               </button>
             ) : (
               <div className="flex items-center justify-between w-full">
-                <h1 className="text-2xl font-bold text-[#7567E4]">
-                  agendei99
+                <h1 className="text-2xl font-bold text-[#09BDDD]">
+                CliqAgenda
                 </h1>
 
                 {/* Ícone para fechar no desktop */}
@@ -91,7 +91,7 @@ export default function Sidebar() {
                   className={clsx(
                     'flex items-center px-6 py-3 text-sm font-medium transition-all gap-3',
                     {
-                      'bg-[#F4F1FD] border-r-4 border-[#7567E4] text-[#7567E4]': isActive,
+                      'bg-[#EFFBFF] border-r-4 border-[#09BDDD] text-[#09BDDD]': isActive,
                       'text-gray-800 hover:bg-gray-50': !isActive,
                       'justify-center': isCollapsed,
                       'justify-start': !isCollapsed,
@@ -104,7 +104,7 @@ export default function Sidebar() {
                  <Image src={icon} alt={label} width={24} height={24} />
 
                   {!isCollapsed && (
-                  <span className="text-base font-medium whitespace-nowrap">{label}</span>
+                  <span className="text-base text-[#034D82] font-medium whitespace-nowrap">{label}</span>
                   )}
                 </Link>
               );
