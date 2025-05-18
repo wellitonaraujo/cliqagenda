@@ -12,16 +12,21 @@ import { useCollaborators } from "@/context/CollaboratorContext";
 
 export default function Home() {
   const { appointments, updateAppointment, removeAppointment } = useAppointments();
+  const { collaborators } = useCollaborators();
+
   const { hours } = useHorarios();
   const router = useRouter();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const [status, setStatus] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
+  const [minCols, setMinCols] = useState(4);
+  const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: string; timeSlotIndex: number } | null>(null);
+
+  const COL_WIDTH = 180;
 
   const shortDayName = selectedDate.toLocaleDateString('pt-BR', { weekday: 'short' });
 
@@ -55,7 +60,6 @@ export default function Home() {
   const dayName = normalizeDayName(shortDayName);
   const timeSlots = generateTimeSlots(dayName);
 
-
   const handleDayChange = (days: number) => {
     setSelectedDate(prev => {
       const newDate = new Date(prev);
@@ -77,14 +81,7 @@ export default function Home() {
     }
   }, [timeSlots]);
 
-  useEffect(() => {
-    console.log('Agendamentos no dia selecionado:', appointmentsOfTheDay);
-  }, [appointmentsOfTheDay]);
-
-  useEffect(() => {
-  }, [appointmentsOfTheDay]);
-
-  const getSlotIndex = (time: string) => {
+  const getSlotIndex = (time: string, timeSlots: { id: number; label: string }[]) => {
     return timeSlots.findIndex((slot) => slot.label === time);
   };
   
@@ -97,12 +94,6 @@ export default function Home() {
   
     return horas * 60 + minutos;
   }
-
-  const handleCardClick = (appointment: any) => {
-    setSelectedAppointment(appointment);
-    setStatus(appointment.status || null);
-    setModalOpen(true);
-  };
   
   const handleModalClose = () => {
     setModalOpen(false);
@@ -128,24 +119,16 @@ export default function Home() {
     }
   };
 
-  const { collaborators } = useCollaborators();
-
-  const COL_WIDTH = 180;
-  const [minCols, setMinCols] = useState(4);
-  // Atualiza minCols com base na largura da janela
   useEffect(() => {
     function updateMinCols() {
       const cols = Math.floor(window.innerWidth / COL_WIDTH);
       setMinCols(cols > 0 ? cols : 1);
     }
-
     updateMinCols();
 
     window.addEventListener('resize', updateMinCols);
     return () => window.removeEventListener('resize', updateMinCols);
   }, []);
-
-  const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: number; timeSlotIndex: number } | null>(null);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -263,7 +246,10 @@ export default function Home() {
                         key={a.id}
                         onClick={() => {
                           setModalOpen(true);
+                          setSelectedAppointment(a);
+                          console.log('Clicou em:', a);
                         }}
+                        
                         className="absolute left-2 right-2 shadow-md rounded z-10 overflow-hidden bg-[#E3FBFF] border-l-4"
                         style={{ top, height, borderLeftColor: '#09BDDD' }}
                       >
@@ -304,15 +290,47 @@ export default function Home() {
 
       {/* Modal de status (simplificado) */}
       {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-30">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/2 z-30">
           <div className="bg-white w-80 p-5 rounded-xl shadow-2xl shadow-black/30">
-            <h2 className="font-semibold text-lg text-center text-gray-800">
-              Alterar Status
-            </h2>
-            {/* Botões e ações omitidas */}
+            <h2 className="font-semibold text-lg text-center text-gray-800">Alterar Status</h2>
+
+            <div className="mt-4 space-y-2">
+              <button
+                onClick={() => handleStatusChange('Em entendimento')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+              >
+                <FiHelpCircle className="text-gray-500" />
+                Em entendimento
+              </button>
+
+              <button
+                onClick={() => handleStatusChange('Cliente faltou')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+              >
+                <FiUserX className="text-gray-500" />
+                Cliente faltou
+              </button>
+
+              <button
+                onClick={() => handleStatusChange('Cancelado')}
+                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+              >
+                <FiXCircle className="text-gray-500" />
+                Cancelado
+              </button>
+
+              <button
+                onClick={handleRemoveAppointment}
+                className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md flex items-center gap-2"
+              >
+                <FiTrash2 className="text-red-500" />
+                Remover
+              </button>
+            </div>
+
             <div className="mt-6">
               <button
-                onClick={() => setModalOpen(false)}
+                onClick={handleModalClose}
                 className="w-full py-2 bg-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 transition"
               >
                 Fechar
