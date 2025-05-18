@@ -112,46 +112,46 @@ export default function AgendamentoForm() {
     router.push('/home');
   };
 
-  const handleServiceChange = (opt: OptionType | null) => {
-    const id = opt?.value || '';
-    setSelectedServiceId(id);
-  
-    const selectedService = services.find(s => s.id === id);
-    if (selectedService) {
-      setDuration(selectedService.duration);
-      setPrice(selectedService.price.toString());
-    } else {
-      setDuration('');
-      setPrice('');
-    }
-  };
-
-  useEffect(() => {
-    if (selectedCollaboratorId && selectedDate) {
-      const collaborator = collaborators.find(c => c.id === selectedCollaboratorId);
-  
-      if (!collaborator) return;
-  
-      const dayName = getDayName(selectedDate);
-      const daySchedule = collaborator.schedule?.[dayName];
-  
-      console.log("daySchedule:", daySchedule);
-  
-      if (
-        daySchedule &&
-        daySchedule.open &&
-        Array.isArray(daySchedule.ranges) &&
-        daySchedule.ranges.every(range => typeof range.start === 'string' && typeof range.end === 'string')
-      ) {
-        const slots = daySchedule.ranges.flatMap(range =>
-          generateTimeSlots(range.start, range.end)
-        );
-        setAvailableTimes(slots);
+    const handleServiceChange = (opt: OptionType | null) => {
+      const id = opt?.value || '';
+      setSelectedServiceId(id);
+    
+      const selectedService = services.find(s => s.id === id);
+      if (selectedService) {
+        setDuration(selectedService.duration);
+        setPrice(selectedService.price.toString());
       } else {
-        setAvailableTimes([]);
+        setDuration('');
+        setPrice('');
       }
-    }
-  }, [selectedCollaboratorId, selectedDate, collaborators]);
+    };
+
+    useEffect(() => {
+      if (selectedCollaboratorId && selectedDate) {
+        const collaborator = collaborators.find(c => c.id === selectedCollaboratorId);
+    
+        if (!collaborator) return;
+    
+        const dayName = getDayName(selectedDate);
+        const daySchedule = collaborator.schedule?.[dayName];
+    
+        console.log("daySchedule:", daySchedule);
+    
+        if (
+          daySchedule &&
+          daySchedule.open &&
+          Array.isArray(daySchedule.ranges) &&
+          daySchedule.ranges.every(range => typeof range.start === 'string' && typeof range.end === 'string')
+        ) {
+          const slots = daySchedule.ranges.flatMap(range =>
+            generateTimeSlots(range.start, range.end)
+          );
+          setAvailableTimes(slots);
+        } else {
+          setAvailableTimes([]);
+        }
+      }
+    }, [selectedCollaboratorId, selectedDate, collaborators]);
   
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
@@ -178,18 +178,33 @@ export default function AgendamentoForm() {
           />
         </div>
   
-        {/* Serviço */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Serviço</label>
-          <Select
-            options={serviceOptions}
-            value={serviceOptions.find(opt => opt.value === selectedServiceId) || null}
-            onChange={handleServiceChange}
-            placeholder="Selecione um serviço"
-            classNames={customSelectStyles.classNames}
-          />
+        <div className="mb-6 flex flex-col md:flex-row md:items-end md:gap-4">
+          {/* Serviço */}
+          <div className="w-full md:w-2/3">
+            <label className="block text-sm font-medium mb-2">Serviço</label>
+            <Select
+              options={serviceOptions}
+              value={serviceOptions.find(opt => opt.value === selectedServiceId) || null}
+              onChange={handleServiceChange}
+              placeholder="Selecione um serviço"
+              classNames={customSelectStyles.classNames}
+            />
+          </div>
+
+          {/* Preço */}
+          <div className="w-full md:w-1/3">
+            <label className="block text-sm font-medium mb-2">Preço</label>
+            <input
+              type="text"
+              value={price}
+              readOnly
+              onChange={e => setPrice(formatCurrency(e.target.value))}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+              placeholder="R$ 0,00"
+            />
+          </div>
         </div>
-  
+
         {/* Colaborador */}
         <div className="mb-6">
           <label className="block text-sm font-medium mb-2">Colaborador</label>
@@ -254,21 +269,6 @@ export default function AgendamentoForm() {
             </div>
           </div>
         )}
-  
-        {/* Preço */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-end md:gap-4">
-          <div className="w-full md:w-1/2">
-            <label className="block text-sm font-medium mb-2">Preço</label>
-            <input
-              type="text"
-              value={price}
-              readOnly
-              onChange={e => setPrice(formatCurrency(e.target.value))}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
-              placeholder="R$ 0,00"
-            />
-          </div>
-        </div>
   
         {/* Botões */}
         <div className="flex justify-end gap-4 mt-auto mb-20">
