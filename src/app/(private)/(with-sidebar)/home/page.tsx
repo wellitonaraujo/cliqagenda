@@ -180,9 +180,9 @@ export default function Home() {
                 key={index}
                 onClick={() => setSelectedIndex(index)}
                 className={`h-10 border group flex items-center justify-center cursor-pointer
-                  ${isSelected ? 'border-[#7567E4] border-3 rounded-2xl' : 'border-gray-200'} hover:border-[#7567E4]`}
+                 border-gray-200 hover:border-[#09BDDD]`}
               >
-                <span className={`text-xs font-bold text-[#7567E4] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
+                <span className={`text-xs font-bold text-[#09BDDD] ${isSelected ? 'block' : 'hidden group-hover:block'}`}>
                   {label}
                 </span>
               </div>
@@ -200,10 +200,10 @@ export default function Home() {
               <div
               onClick={() => handleCardClick(a)}
                 key={a.id}
-                className="absolute left-0 w-[100%] sm:w-[70%] md:w-[50%] lg:w-[30%] xl:w-[20%] shadow-md rounded z-10 overflow-hidden bg-[#E3E1FA] border-l-4"
-                style={{ top, height, borderLeftColor: '#7567E4' }}
+                className="absolute left-0 w-[100%] sm:w-[70%] md:w-[50%] lg:w-[30%] xl:w-[20%] shadow-md rounded z-10 overflow-hidden bg-[#E3FBFF] border-l-4"
+                style={{ top, height, borderLeftColor: '#09BDDD' }}
               >
-                <div className="p-2 text-[#1E1E1E] h-full flex flex-col justify-between">
+                <div className="p-2 text-[#18B7E7] h-full flex flex-col justify-between">
                   <div>
                     <p className="font-semibold text-sm">{a.customerName}</p>
                     <p className="text-sm">{a.serviceName} às {a.time}</p>
