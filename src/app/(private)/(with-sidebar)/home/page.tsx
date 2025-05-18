@@ -145,6 +145,8 @@ export default function Home() {
     return () => window.removeEventListener('resize', updateMinCols);
   }, []);
 
+  const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: number; timeSlotIndex: number } | null>(null);
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="sticky top-0 z-30 bg-white">
@@ -179,7 +181,7 @@ export default function Home() {
       <div className="flex w-full min-w-full">
         {/* Coluna de horários */}
         <div className="flex flex-col w-10 pr-2">
-          <div className="h-[40px]"></div>
+          <div className="h-[40px]" />
           {timeSlots.map(({ id, label }, index) => (
             <div key={id} className="h-10 flex justify-end">
               {index % 2 === 0 && label && (
@@ -221,12 +223,19 @@ export default function Home() {
                 className="flex flex-col border-l border-gray-200 min-w-[180px] flex-1 relative"
               >
                 {timeSlots.map(({ label }, index) => {
-                  const isSelected = selectedIndex === index;
+                  const isSelected =
+                    selectedSlot?.collaboratorId === collab.id &&
+                    selectedSlot?.timeSlotIndex === index;
+
                   return (
                     <div
                       key={index}
-                      onClick={() => setSelectedIndex(index)}
-                      className="h-10 border-b border-gray-200 group flex items-center justify-center cursor-pointer"
+                      onClick={() =>
+                        setSelectedSlot({ collaboratorId: collab.id, timeSlotIndex: index })
+                      }
+                      className={`h-10 border-b border-gray-200 group flex items-center justify-center cursor-pointer ${
+                        isSelected ? 'bg-blue-100' : ''
+                      }`}
                     >
                       <span
                         className={`text-xs font-bold text-[#09BDDD] ${
@@ -243,7 +252,7 @@ export default function Home() {
                 {appointmentsOfTheDay
                   .filter((a) => a.collaboratorId === collab.id)
                   .map((a) => {
-                    const index = getSlotIndex(a.time);
+                    const index = getSlotIndex(a.time, timeSlots);
                     if (index === -1) return null;
                     const top = index * 40;
                     const durationInMinutes = parseDurationToMinutes(a.duration);
@@ -253,7 +262,6 @@ export default function Home() {
                       <div
                         key={a.id}
                         onClick={() => {
-                          // handleCardClick(a);
                           setModalOpen(true);
                         }}
                         className="absolute left-2 right-2 shadow-md rounded z-10 overflow-hidden bg-[#E3FBFF] border-l-4"
@@ -286,10 +294,7 @@ export default function Home() {
                   className="flex flex-col border-l border-gray-200 min-w-[180px] flex-1"
                 >
                   {timeSlots.map(({ label }, index) => (
-                    <div
-                      key={index}
-                      className="h-10 border-b border-gray-200"
-                    />
+                    <div key={index} className="h-10 border-b border-gray-200" />
                   ))}
                 </div>
               ))}
