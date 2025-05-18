@@ -192,9 +192,8 @@ export default function AgendamentoForm() {
               classNames={customSelectStyles.classNames}
             />
           </div>
-
           {/* Preço */}
-          <div className="w-full md:w-1/3">
+          <div className="w-full md:w-1/3 mt-6 md:mt-0">
             <label className="block text-sm font-medium mb-2">Preço</label>
             <input
               type="text"
@@ -205,6 +204,7 @@ export default function AgendamentoForm() {
               placeholder="R$ 0,00"
             />
           </div>
+
         </div>
 
         {/* Colaborador */}
@@ -217,7 +217,7 @@ export default function AgendamentoForm() {
                 .map(c => ({ value: c.id, label: c.name }))
                 .find(opt => opt.value === selectedCollaboratorId) || null
             }
-            onChange={opt => setSelectedCollaboratorId(opt?.value || '')}
+            onChange={(opt: SingleValue<OptionType>) => setSelectedCollaboratorId(opt?.value || '')}
             placeholder="Selecione um colaborador"
             classNames={customSelectStyles.classNames}
           />
