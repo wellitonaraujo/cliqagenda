@@ -142,39 +142,41 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-center">
-        {/* Coluna: botões + texto "agendamentos" */}
-        
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex items-center gap-2 text-primary font-medium">
-            <button
-              onClick={() => handleDayChange(-1)}
-              className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
-            >
-              <FiChevronLeft size={20} />
-            </button>
+      <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-start md:items-center">
+        {/* Container: botões + texto "agendamentos" */}
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+          {/* Linha com botões e texto no desktop */}
+          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
+            {/* Botões */}
+            <div className="flex items-center gap-2 text-primary font-medium">
+              <button
+                onClick={() => handleDayChange(-1)}
+                className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
+              >
+                <FiChevronLeft size={20} />
+              </button>
 
-            <span className="h-10 flex text-[#034D82] items-center justify-center border border-gray-100 bg-gray-50 px-4 rounded-md text-sm font-medium shadow-sm">
-              {selectedDate.toLocaleDateString('pt-BR')}
+              <span className="h-10 flex text-[#034D82] items-center justify-center border border-gray-100 bg-gray-50 px-4 rounded-md text-sm font-medium shadow-sm">
+                {selectedDate.toLocaleDateString('pt-BR')}
+              </span>
+
+              <button
+                onClick={() => handleDayChange(1)}
+                className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
+              >
+                <FiChevronRight size={20} />
+              </button>
+            </div>
+
+            {/* Texto de agendamentos */}
+            <span className="text-sm text-[#034D82] text-center md:text-left pt-4 md:pt-0">
+              {appointmentsOfTheDay.length === 0
+                ? 'Nenhum agendamento'
+                : appointmentsOfTheDay.length === 1
+                ? '1 agendamento'
+                : `${appointmentsOfTheDay.length} agendamentos`}
             </span>
-
-            <button
-              onClick={() => handleDayChange(1)}
-              className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
-            >
-              <FiChevronRight size={20} />
-            </button>
           </div>
-
-          {/* Texto de agendamentos, alinhado abaixo dos botões */}
-
-          {/* <span className="text-sm text-[#034D82] mt-3">
-            {appointmentsOfTheDay.length === 0
-              ? 'Nenhum agendamento'
-              : appointmentsOfTheDay.length === 1
-              ? '1 agendamento'
-              : `${appointmentsOfTheDay.length} agendamentos`}
-          </span> */}
         </div>
 
         {/* Botão à direita */}
