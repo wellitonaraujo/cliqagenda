@@ -233,11 +233,14 @@ export default function Home() {
                 .map((_, i) => (
                   <div
                     key={`empty-header-${i}`}
-                    className="min-w-[220px] h-[40px] border-gray-300 border-b-1 bg-gray-50"
+                    className="min-w-[220px] h-[40px] border-gray-200 border-b-1 bg-gray-200"
+                    style={{
+                      backgroundImage:
+                        'repeating-linear-gradient(-45deg, #f9fafb 0px, #f9fafb 10px, #f3f4f6 10px, #f3f4f6 20px)',
+                    }}
                   />
                 ))}
             </div>
-
 
             {/* Grade de horários */}
             <div className="flex w-full min-w-full">
@@ -347,6 +350,10 @@ export default function Home() {
                   <div
                     key={`empty-body-${i}`}
                     className="flex flex-col border-l border-gray-200 min-w-[220px] flex-1"
+                    style={{
+                      backgroundImage:
+                        'repeating-linear-gradient(-45deg, #f9fafb 0px, #f9fafb 10px, #f3f4f6 10px, #f3f4f6 20px)',
+                    }}
                   >
                     {timeSlots.map(({ label }, index) => (
                       <div key={index} className="h-10 border-b border-gray-200" />
