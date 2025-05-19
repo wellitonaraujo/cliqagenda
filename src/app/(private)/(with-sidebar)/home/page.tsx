@@ -180,7 +180,7 @@ export default function Home() {
         </div>
 
         {/* Botão à direita */}
-        <div className="ml-auto" onClick={() => router.push('/scheduling')}>
+        <div className="ml-auto " onClick={() => router.push('/scheduling')}>
           <Button>Novo agendamento</Button>
         </div>
       </div>
@@ -206,7 +206,7 @@ export default function Home() {
               {collaborators.map((collab, index) => (
                 <div
                   key={`header-${collab.id ?? index}`}
-                  className="min-w-[200px] h-[40px] flex items-center justify-center bg-gray-50 shadow text-xs font-medium text-gray-500 text-center"
+                  className="min-w-[200px] h-[40px] flex items-center justify-center border-gray-300 border-b-1 bg-gray-50 text-xs font-medium text-gray-500 text-center"
                 >
                   {collab.name}
                 </div>
@@ -218,7 +218,7 @@ export default function Home() {
                 .map((_, i) => (
                   <div
                     key={`empty-header-${i}`}
-                    className="min-w-[200px] h-[40px] shadow bg-gray-50"
+                    className="min-w-[200px] h-[40px] border-gray-300 border-b-1 bg-gray-50"
                   />
                 ))}
             </div>
