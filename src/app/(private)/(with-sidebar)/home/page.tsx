@@ -165,7 +165,7 @@ export default function Home() {
           </div>
 
 
-          <span className="text-sm text-[#034D82]">
+          <span className="text-md pl-2 text-[#034D82]">
             {appointmentsOfTheDay.length === 0
               ? 'Nenhum agendamento'
               : appointmentsOfTheDay.length === 1
@@ -179,209 +179,214 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
-      <div className="flex w-full min-w-full">
-        {/* Coluna de horários */}
-        <div className="flex flex-col w-10 pr-2">
-          <div className="h-[40px]" />
-          {timeSlots.map(({ id, label }, index) => (
-            <div key={id} className="h-10 flex justify-end">
-              {index % 2 === 0 && label && (
-                <span className="text-sm text-[#034D82] leading-none">{label}</span>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Colunas dos colaboradores + colunas vazias para preencher */}
-        <div className="overflow-x-auto relative flex-1">
-          {/* Cabeçalho fixo */}
-          <div className="flex sticky top-0 z-10 bg-white min-w-full">
-            {collaborators.map((collab, index) => (
-              <div
-                key={`header-${collab.id ?? index}`}
-                className="min-w-[180px] h-[40px] flex items-center justify-center bg-gray-50 shadow text-xs font-medium text-[#034D82] text-center"
-              >
-                {collab.name}
+      <div className="flex-1 overflow-y-auto pt-6 pr-0 pb-6 pl-6">
+        <div className="flex w-full min-w-full">
+          {/* Coluna de horários */}
+          <div className="flex flex-col w-10 pr-2">
+            <div className="h-[40px]" />
+            {timeSlots.map(({ id, label }, index) => (
+              <div key={id} className="h-10 flex justify-end">
+                {index % 2 === 0 && label && (
+                  <span className="text-sm text-[#034D82] leading-none">{label}</span>
+                )}
               </div>
             ))}
-
-            {/* Colunas vazias para preencher */}
-            {Array(Math.max(0, minCols - collaborators.length))
-              .fill(0)
-              .map((_, i) => (
-                <div
-                  key={`empty-header-${i}`}
-                  className="min-w-[180px] h-[40px] shadow bg-gray-50"
-                />
-              ))}
           </div>
 
-          {/* Grade de horários */}
-          <div className="flex w-full min-w-full">
-            {collaborators.map((collab, index) => (
-              <div
-                key={`body-${collab.id ?? index}`}
-                className="flex flex-col border-l border-gray-200 min-w-[180px] flex-1 relative"
-              >
-                {timeSlots.map(({ label }, index) => {
-                  const isSelected =
-                    selectedSlot?.collaboratorId === collab.id &&
-                    selectedSlot?.timeSlotIndex === index;
-
-                  return (
-                    <div
-                      key={index}
-                      onClick={() =>
-                        setSelectedSlot({ collaboratorId: collab.id, timeSlotIndex: index })
-                      }
-                      className={`h-10 border-b border-gray-200 group flex items-center justify-center cursor-pointer ${
-                        isSelected ? 'bg-[#EFFBFF]' : ''
-                      }`}
-                    >
-                      <span
-                        className={`text-xs font-bold text-[#09BDDD] ${
-                          isSelected ? 'block' : 'hidden group-hover:block'
-                        }`}
-                      >
-                        {label}
-                      </span>
-                    </div>
-                  );
-                })}
-
-                {/* Agendamentos */}
-                {appointmentsOfTheDay
-                .filter((a) => a.collaboratorId === collab.id)
-                .map((a) => {
-                  const index = getSlotIndex(a.time, timeSlots);
-                  if (index === -1) return null;
-
-                  const top = index * 40;
-                  const durationInMinutes = parseDurationToMinutes(a.duration);
-                  const height = (durationInMinutes / 30) * 40;
-
-                  const isShort = height <= 50;
-                  const isExpanded = expandedId === a.id;
-                  const displayHeight = isShort && isExpanded ? 100 : height;
-
-                  return (
-                    <div
-                      key={a.id}
-                      className="absolute left-1 right-0 shadow-md rounded z-10 overflow-hidden bg-[#EFFBFF] border-l-4 transition-all duration-300 cursor-pointer"
-                      style={{
-                        top,
-                        height: displayHeight,
-                        borderLeftColor: '#09BDDD',
-                      }}
-                      onClick={() => {
-                        if (!isShort) return;
-                        setExpandedId((prev) => (prev === a.id ? null : a.id));
-                      }}
-                    >
-                      <div className="p-2 text-[#034D82] h-full flex flex-col justify-between">
-                        {/* Cabeçalho: nome + botão */}
-                        <div className="flex justify-between items-start">
-                          <p className="font-semibold text-xs">{a.customerName}</p>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation(); // evita disparar o clique no card
-                              setSelectedAppointment(a);
-                              setModalOpen(true);
-                            }}
-                            className="text-[#034D82]"
-                          >
-                            <FiMoreVertical size={18} />
-                          </button>
-                        </div>
-
-                        {/* Conteúdo clicável */}
-                        <div>
-                          <p className="text-xs">
-                            {a.serviceName} às {a.time}
-                          </p>
-                          <p className="text-xs">R$ {a.price}</p>
-                          {a.status && (
-                            <p className="text-xs text-gray-600 mt-2">{a.status}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-
-            {/* Colunas vazias para preencher */}
-            {Array(Math.max(0, minCols - collaborators.length))
-              .fill(0)
-              .map((_, i) => (
+          {/* Colunas dos colaboradores + colunas vazias para preencher */}
+          <div className="overflow-x-auto relative flex-1">
+            {/* Cabeçalho fixo */}
+            <div className="flex sticky top-0 z-10 bg-white min-w-full">
+              {collaborators.map((collab, index) => (
                 <div
-                  key={`empty-body-${i}`}
-                  className="flex flex-col border-l border-gray-200 min-w-[180px] flex-1"
+                  key={`header-${collab.id ?? index}`}
+                  className="min-w-[200px] h-[40px] flex items-center justify-center bg-gray-50 shadow text-xs font-medium text-gray-500 text-center"
                 >
-                  {timeSlots.map(({ label }, index) => (
-                    <div key={index} className="h-10 border-b border-gray-200" />
-                  ))}
+                  {collab.name}
                 </div>
               ))}
+
+              {/* Colunas vazias para preencher */}
+              {Array(Math.max(0, minCols - collaborators.length))
+                .fill(0)
+                .map((_, i) => (
+                  <div
+                    key={`empty-header-${i}`}
+                    className="min-w-[200px] h-[40px] shadow bg-gray-50"
+                  />
+                ))}
+            </div>
+
+            {/* Grade de horários */}
+            <div className="flex w-full min-w-full">
+              {collaborators.map((collab, index) => (
+                <div
+                  key={`body-${collab.id ?? index}`}
+                  className="flex flex-col border-l border-gray-200 min-w-[200px] flex-1 relative"
+                >
+                  {timeSlots.map(({ label }, index) => {
+                    const isSelected =
+                      selectedSlot?.collaboratorId === collab.id &&
+                      selectedSlot?.timeSlotIndex === index;
+
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => {
+                          if (isSelected) {
+                            setSelectedSlot(null);
+                          } else {
+                            setSelectedSlot({ collaboratorId: collab.id, timeSlotIndex: index });
+                          }
+                        }}
+                        
+                        className={`h-10 border-b border-gray-200 group flex items-center justify-center cursor-pointer ${
+                          isSelected ? 'bg-[#EFFBFF]' : ''
+                        }`}
+                      >
+                        <span
+                          className={`text-xs font-bold text-[#09BDDD] ${
+                            isSelected ? 'block' : 'hidden group-hover:block'
+                          }`}
+                        >
+                          {label}
+                        </span>
+                      </div>
+                    );
+                  })}
+
+                  {/* Agendamentos */}
+                  {appointmentsOfTheDay
+                  .filter((a) => a.collaboratorId === collab.id)
+                  .map((a) => {
+                    const index = getSlotIndex(a.time, timeSlots);
+                    if (index === -1) return null;
+
+                    const top = index * 40;
+                    const durationInMinutes = parseDurationToMinutes(a.duration);
+                    const height = (durationInMinutes / 30) * 40;
+
+                    const isShort = height <= 50;
+                    const isExpanded = expandedId === a.id;
+                    const displayHeight = isShort && isExpanded ? 100 : height;
+
+                    return (
+                      <div
+                        key={a.id}
+                        className="absolute left-1 right-0 shadow-md rounded z-10 overflow-hidden bg-[#EFFBFF] border-l-4 transition-all duration-300 cursor-pointer"
+                        style={{
+                          top,
+                          height: displayHeight,
+                          borderLeftColor: '#09BDDD',
+                        }}
+                        onClick={() => {
+                          if (!isShort) return;
+                          setExpandedId((prev) => (prev === a.id ? null : a.id));
+                        }}
+                      >
+                        <div className="pl-2 pt-0.5 text-[#034D82] h-full flex flex-col justify-between">
+                          {/* Cabeçalho: nome + botão */}
+                          <div className="flex justify-between items-start">
+                            <p className="font-semibold text-xs">{a.customerName}</p>
+
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation(); // evita disparar o clique no card
+                                setSelectedAppointment(a);
+                                setModalOpen(true);
+                              }}
+                              className="text-[#034D82] pr-1"
+                            >
+                              <FiMoreVertical size={18} />
+                            </button>
+                          </div>
+
+                          {/* Conteúdo clicável */}
+                          <div>
+                            <p className="text-xs">
+                              {a.serviceName} às {a.time}
+                            </p>
+                            <p className="text-xs">R$ {a.price}</p>
+                            {a.status && (
+                              <p className="text-xs text-gray-600 mt-2">{a.status}</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+
+              {/* Colunas vazias para preencher */}
+              {Array(Math.max(0, minCols - collaborators.length))
+                .fill(0)
+                .map((_, i) => (
+                  <div
+                    key={`empty-body-${i}`}
+                    className="flex flex-col border-l border-gray-200 min-w-[200px] flex-1"
+                  >
+                    {timeSlots.map(({ label }, index) => (
+                      <div key={index} className="h-10 border-b border-gray-200" />
+                    ))}
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
+
+        {/* Modal de status (simplificado) */}
+        {modalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/2 z-30">
+            <div className="bg-white w-80 p-5 rounded-xl shadow-2xl shadow-black/30">
+              <h2 className="font-semibold text-lg text-center text-gray-800">Alterar Status</h2>
+
+              <div className="mt-4 space-y-2">
+                <button
+                  onClick={() => handleStatusChange('Em entendimento')}
+                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+                >
+                  <FiHelpCircle className="text-gray-500" />
+                  Em entendimento
+                </button>
+
+                <button
+                  onClick={() => handleStatusChange('Cliente faltou')}
+                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+                >
+                  <FiUserX className="text-gray-500" />
+                  Cliente faltou
+                </button>
+
+                <button
+                  onClick={() => handleStatusChange('Cancelado')}
+                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
+                >
+                  <FiXCircle className="text-gray-500" />
+                  Cancelado
+                </button>
+
+                <button
+                  onClick={handleRemoveAppointment}
+                  className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md flex items-center gap-2"
+                >
+                  <FiTrash2 className="text-red-500" />
+                  Remover
+                </button>
+              </div>
+
+              <div className="mt-6">
+                <button
+                  onClick={handleModalClose}
+                  className="w-full py-2 bg-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 transition"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Modal de status (simplificado) */}
-      {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/2 z-30">
-          <div className="bg-white w-80 p-5 rounded-xl shadow-2xl shadow-black/30">
-            <h2 className="font-semibold text-lg text-center text-gray-800">Alterar Status</h2>
-
-            <div className="mt-4 space-y-2">
-              <button
-                onClick={() => handleStatusChange('Em entendimento')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-              >
-                <FiHelpCircle className="text-gray-500" />
-                Em entendimento
-              </button>
-
-              <button
-                onClick={() => handleStatusChange('Cliente faltou')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-              >
-                <FiUserX className="text-gray-500" />
-                Cliente faltou
-              </button>
-
-              <button
-                onClick={() => handleStatusChange('Cancelado')}
-                className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-              >
-                <FiXCircle className="text-gray-500" />
-                Cancelado
-              </button>
-
-              <button
-                onClick={handleRemoveAppointment}
-                className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md flex items-center gap-2"
-              >
-                <FiTrash2 className="text-red-500" />
-                Remover
-              </button>
-            </div>
-
-            <div className="mt-6">
-              <button
-                onClick={handleModalClose}
-                className="w-full py-2 bg-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 transition"
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
     </div>
   );
 }

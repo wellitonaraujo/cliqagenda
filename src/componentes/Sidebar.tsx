@@ -50,30 +50,31 @@ export default function Sidebar() {
             {isCollapsed ? (
               <button
                 onClick={toggleSidebar}
-                className="text-2xl font-bold text-[#09BDDD]"
+                className="text-2xl font-bold text-[#034D82]"
               >
-                <HiMenu />
+                <HiMenu color='#034D82'/>
               </button>
             ) : (
               <div className="flex items-center justify-between w-full">
-                <h1 className="text-2xl font-bold text-[#09BDDD]">
-                CliqAgenda
-                </h1>
+               <h1 className="text-2xl font-bold">
+                <span className="text-[#034D82]">Cliq</span>
+                <span className="text-[#09BDDD]">Agenda</span>
+              </h1>
 
                 {/* Ícone para fechar no desktop */}
                 <button
                   onClick={toggleSidebar}
-                  className="text-gray-700 text-xl md:block hidden"
+                  className="text-[#034D82] text-xl md:block hidden"
                 >
-                  <HiChevronLeft />
+                  <HiChevronLeft color='#034D82' />
                 </button>
 
                 {/* Ícone para abrir/fechar no mobile */}
                 <button
                   onClick={toggleSidebar}
-                  className="absolute right-4 text-gray-700 text-xl md:hidden block"
+                  className="absolute right-4 text-[#034D82] text-xl md:hidden block"
                 >
-                  {isCollapsed ? <HiChevronRight /> : <HiChevronLeft />}
+                  {isCollapsed ? <HiChevronRight color='#034D82' /> : <HiChevronLeft color='#034D82' />}
                 </button>
 
               </div>

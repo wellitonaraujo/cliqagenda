@@ -16,7 +16,7 @@ export default function Header() {
           className="text-3xl text-gray-700 md:hidden"
           onClick={toggleSidebar}
         >
-          <HiMenu />
+          <HiMenu color='#034D82'/>
         </button>
 
         {/* Exibe o título do header */}
