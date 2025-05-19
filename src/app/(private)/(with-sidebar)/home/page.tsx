@@ -297,12 +297,7 @@ export default function Home() {
                         </div>
 
                         {/* Conteúdo clicável */}
-                        <div
-                          onClick={() => {
-                            if (!isShort) return;
-                            setExpandedId((prev) => (prev === a.id ? null : a.id));
-                          }}
-                        >
+                        <div>
                           <p className="text-xs">
                             {a.serviceName} às {a.time}
                           </p>
@@ -315,7 +310,6 @@ export default function Home() {
                     </div>
                   );
                 })}
-
               </div>
             ))}
 
