@@ -185,7 +185,7 @@ export default function Home() {
           {timeSlots.map(({ id, label }, index) => (
             <div key={id} className="h-10 flex justify-end">
               {index % 2 === 0 && label && (
-                <span className="text-sm text-gray-800 leading-none">{label}</span>
+                <span className="text-sm text-[#034D82] leading-none">{label}</span>
               )}
             </div>
           ))}
@@ -264,19 +264,18 @@ export default function Home() {
                         onClick={() => {
                           setModalOpen(true);
                           setSelectedAppointment(a);
-                          console.log('Clicou em:', a);
                         }}
                         
-                        className="absolute left-2 right-2 shadow-md rounded z-10 overflow-hidden bg-[#E3FBFF] border-l-4"
+                        className="absolute left-2 right-2 shadow-md rounded z-10 overflow-hidden bg-[#EFFBFF] border-l-4"
                         style={{ top, height, borderLeftColor: '#09BDDD' }}
                       >
-                        <div className="p-2 text-[#18B7E7] h-full flex flex-col justify-between">
+                        <div className="p-2 text-[#034D82] h-full flex flex-col justify-between">
                           <div>
-                            <p className="font-semibold text-sm">{a.customerName}</p>
-                            <p className="text-sm">
+                            <p className="font-semibold text-xs">{a.customerName}</p>
+                            <p className="text-xs">
                               {a.serviceName} às {a.time}
                             </p>
-                            <p className="text-sm">R$ {a.price}</p>
+                            <p className="text-xs">R$ {a.price}</p>
                           </div>
                           {a.status && (
                             <p className="text-xs text-gray-600 mt-2">{a.status}</p>

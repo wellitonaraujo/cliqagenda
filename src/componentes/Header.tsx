@@ -20,7 +20,7 @@ export default function Header() {
         </button>
 
         {/* Exibe o título do header */}
-        <h2 className="text-lg font-semibold text-gray-700">{headerTitle}</h2>
+        <h2 className="text-lg font-semibold text-[#034D82]">{headerTitle}</h2>
       </div>
     </div>
   );
