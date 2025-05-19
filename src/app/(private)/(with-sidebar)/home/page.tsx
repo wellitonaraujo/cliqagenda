@@ -142,11 +142,28 @@ export default function Home() {
       <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-center">
 
         <div className="flex items-center gap-2 text-primary font-medium">
-          <button onClick={() => handleDayChange(-1)}><FiChevronLeft size={20} /></button>
-          <span>{selectedDate.toLocaleDateString('pt-BR')}</span>
-          <button onClick={() => handleDayChange(1)}><FiChevronRight size={20} /></button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleDayChange(-1)}
+              className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
+            >
+              <FiChevronLeft size={20} />
+            </button>
 
-          <span className="text-sm text-gray-500">
+            <span className="h-10 flex text-[#034D82] items-center justify-center border border-gray-100 bg-gray-50 px-4 rounded-md text-sm font-medium shadow-sm">
+              {selectedDate.toLocaleDateString('pt-BR')}
+            </span>
+
+            <button
+              onClick={() => handleDayChange(1)}
+              className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
+            >
+              <FiChevronRight size={20} />
+            </button>
+          </div>
+
+
+          <span className="text-sm text-[#034D82]">
             {appointmentsOfTheDay.length === 0
               ? 'Nenhum agendamento'
               : appointmentsOfTheDay.length === 1
@@ -181,7 +198,7 @@ export default function Home() {
             {collaborators.map((collab, index) => (
               <div
                 key={`header-${collab.id ?? index}`}
-                className="min-w-[180px] h-[40px] flex items-center justify-center bg-[#f7f7f7] border-b border-gray-300 shadow text-sm font-medium text-gray-700 text-center"
+                className="min-w-[180px] h-[35px] flex items-center justify-center bg-gray-50 shadow text-xs font-medium text-[#034D82] text-center"
               >
                 {collab.name}
               </div>
@@ -193,7 +210,7 @@ export default function Home() {
               .map((_, i) => (
                 <div
                   key={`empty-header-${i}`}
-                  className="min-w-[180px] h-[40px] border-b border-gray-300 bg-[#f7f7f7]"
+                  className="min-w-[180px] h-[35px] shadow bg-gray-50"
                 />
               ))}
           </div>
@@ -217,7 +234,7 @@ export default function Home() {
                         setSelectedSlot({ collaboratorId: collab.id, timeSlotIndex: index })
                       }
                       className={`h-10 border-b border-gray-200 group flex items-center justify-center cursor-pointer ${
-                        isSelected ? 'bg-blue-100' : ''
+                        isSelected ? 'bg-[#EFFBFF]' : ''
                       }`}
                     >
                       <span
