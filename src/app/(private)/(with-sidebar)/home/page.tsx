@@ -2,7 +2,7 @@
 
 import { normalizeDayName } from "../../../../../utils/normalizeDayName";
 import { useAppointments } from "@/context/AppointmentsProvider";
-import { FiChevronLeft, FiChevronRight, FiHelpCircle, FiTrash2, FiUserX, FiXCircle } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiHelpCircle, FiMoreVertical, FiTrash2, FiUserX, FiXCircle } from "react-icons/fi";
 import { useHorarios } from "@/context/HoursProvider";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -26,6 +26,7 @@ export default function Home() {
   const [minCols, setMinCols] = useState(4);
   const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: string; timeSlotIndex: number } | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const COL_WIDTH = 180;
 
@@ -199,7 +200,7 @@ export default function Home() {
             {collaborators.map((collab, index) => (
               <div
                 key={`header-${collab.id ?? index}`}
-                className="min-w-[180px] h-[35px] flex items-center justify-center bg-gray-50 shadow text-xs font-medium text-[#034D82] text-center"
+                className="min-w-[180px] h-[40px] flex items-center justify-center bg-gray-50 shadow text-xs font-medium text-[#034D82] text-center"
               >
                 {collab.name}
               </div>
@@ -211,7 +212,7 @@ export default function Home() {
               .map((_, i) => (
                 <div
                   key={`empty-header-${i}`}
-                  className="min-w-[180px] h-[35px] shadow bg-gray-50"
+                  className="min-w-[180px] h-[40px] shadow bg-gray-50"
                 />
               ))}
           </div>
@@ -251,48 +252,70 @@ export default function Home() {
 
                 {/* Agendamentos */}
                 {appointmentsOfTheDay
-                  .filter((a) => a.collaboratorId === collab.id)
-                  .map((a) => {
-                    const index = getSlotIndex(a.time, timeSlots);
-                    if (index === -1) return null;
-                    const top = index * 40;
-                    const durationInMinutes = parseDurationToMinutes(a.duration);
-                    const height = (durationInMinutes / 30) * 40;
-                    const isShort = height <= 60;
-                    const displayHeight = isShort && expanded ? 100 : height;
-                    
-                    return (
-                      <div
-                        key={a.id}
-                        onMouseEnter={() => isShort && setExpanded(true)}
-                        onMouseLeave={() => isShort && setExpanded(false)}
-                        onClick={() => {
-                          setModalOpen(true);
-                          setSelectedAppointment(a);
-                        }}
-                        className="absolute left-2 right-2 shadow-md rounded z-10 overflow-hidden bg-[#EFFBFF] border-l-4 transition-all duration-300 cursor-pointer"
-                        style={{
-                          top,
-                          height: displayHeight,
-                          borderLeftColor: '#09BDDD',
-                        }}
-                      >
-                        <div className="p-2 text-[#034D82] h-full flex flex-col justify-between">
-                          <div>
-                            <p className="font-semibold text-xs">{a.customerName}</p>
-                            <p className="text-xs">
-                              {a.serviceName} às {a.time}
-                            </p>
-                            <p className="text-xs">R$ {a.price}</p>
-                          </div>
+                .filter((a) => a.collaboratorId === collab.id)
+                .map((a) => {
+                  const index = getSlotIndex(a.time, timeSlots);
+                  if (index === -1) return null;
+
+                  const top = index * 40;
+                  const durationInMinutes = parseDurationToMinutes(a.duration);
+                  const height = (durationInMinutes / 30) * 40;
+
+                  const isShort = height <= 50;
+                  const isExpanded = expandedId === a.id;
+                  const displayHeight = isShort && isExpanded ? 100 : height;
+
+                  return (
+                    <div
+                      key={a.id}
+                      className="absolute left-1 right-0 shadow-md rounded z-10 overflow-hidden bg-[#EFFBFF] border-l-4 transition-all duration-300 cursor-pointer"
+                      style={{
+                        top,
+                        height: displayHeight,
+                        borderLeftColor: '#09BDDD',
+                      }}
+                      onClick={() => {
+                        if (!isShort) return;
+                        setExpandedId((prev) => (prev === a.id ? null : a.id));
+                      }}
+                    >
+                      <div className="p-2 text-[#034D82] h-full flex flex-col justify-between">
+                        {/* Cabeçalho: nome + botão */}
+                        <div className="flex justify-between items-start">
+                          <p className="font-semibold text-xs">{a.customerName}</p>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // evita disparar o clique no card
+                              setSelectedAppointment(a);
+                              setModalOpen(true);
+                            }}
+                            className="text-[#034D82]"
+                          >
+                            <FiMoreVertical size={18} />
+                          </button>
+                        </div>
+
+                        {/* Conteúdo clicável */}
+                        <div
+                          onClick={() => {
+                            if (!isShort) return;
+                            setExpandedId((prev) => (prev === a.id ? null : a.id));
+                          }}
+                        >
+                          <p className="text-xs">
+                            {a.serviceName} às {a.time}
+                          </p>
+                          <p className="text-xs">R$ {a.price}</p>
                           {a.status && (
                             <p className="text-xs text-gray-600 mt-2">{a.status}</p>
                           )}
                         </div>
                       </div>
-                    );
-                    
-                  })}
+                    </div>
+                  );
+                })}
+
               </div>
             ))}
 
