@@ -25,6 +25,7 @@ export default function Home() {
   const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
   const [minCols, setMinCols] = useState(4);
   const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: string; timeSlotIndex: number } | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   const COL_WIDTH = 180;
 
@@ -257,17 +258,24 @@ export default function Home() {
                     const top = index * 40;
                     const durationInMinutes = parseDurationToMinutes(a.duration);
                     const height = (durationInMinutes / 30) * 40;
-
+                    const isShort = height <= 60;
+                    const displayHeight = isShort && expanded ? 100 : height;
+                    
                     return (
                       <div
                         key={a.id}
+                        onMouseEnter={() => isShort && setExpanded(true)}
+                        onMouseLeave={() => isShort && setExpanded(false)}
                         onClick={() => {
                           setModalOpen(true);
                           setSelectedAppointment(a);
                         }}
-                        
-                        className="absolute left-2 right-2 shadow-md rounded z-10 overflow-hidden bg-[#EFFBFF] border-l-4"
-                        style={{ top, height, borderLeftColor: '#09BDDD' }}
+                        className="absolute left-2 right-2 shadow-md rounded z-10 overflow-hidden bg-[#EFFBFF] border-l-4 transition-all duration-300 cursor-pointer"
+                        style={{
+                          top,
+                          height: displayHeight,
+                          borderLeftColor: '#09BDDD',
+                        }}
                       >
                         <div className="p-2 text-[#034D82] h-full flex flex-col justify-between">
                           <div>
@@ -283,6 +291,7 @@ export default function Home() {
                         </div>
                       </div>
                     );
+                    
                   })}
               </div>
             ))}
