@@ -155,7 +155,7 @@ export default function Home() {
             <div className="flex items-center gap-2 text-primary font-medium">
               <button
                 onClick={() => handleDayChange(-1)}
-                className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
+                className="h-10 w-10 flex items-center justify-center border text-gray-400 border-gray-100 bg-gray-50 rounded-md shadow-sm"
               >
                 <FiChevronLeft size={20} />
               </button>
@@ -166,7 +166,7 @@ export default function Home() {
 
               <button
                 onClick={() => handleDayChange(1)}
-                className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
+                className="h-10 w-10 flex items-center justify-center border text-gray-400 border-gray-100 bg-gray-50 rounded-md shadow-sm"
               >
                 <FiChevronRight size={20} />
               </button>
@@ -219,20 +219,20 @@ export default function Home() {
                   >
                     {/* Foto + Nome */}
                     <div className="flex items-center gap-2 overflow-hidden">
-                      <div className="w-7 h-7 rounded-full overflow-hidden border border-[#00AEEF]">
+                      <div className="w-7 h-7 rounded-full overflow-hidden border border-gray-400">
                         <Image
-                          src="/eu.svg"
+                          src="/image.png"
                           alt="foto de perfil"
                           width={40}
                           height={40}
                           className="w-full h-full"
                         />
                       </div>
-                      <span className="truncate max-w-[110px]">{collab.name}</span>
+                      <span className="truncate max-w-[110px] text-gray-500">{collab.name}</span>
                     </div>
 
                     {/* Contador redondo */}
-                    <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#034D82] text-[10px] flex items-center justify-center">
+                    <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#034D82] text-[12px] flex items-center justify-center">
                       {count}
                     </div>
                   </div>
@@ -303,14 +303,14 @@ export default function Home() {
                     const durationInMinutes = parseDurationToMinutes(a.duration);
                     const height = (durationInMinutes / 30) * 40;
 
-                    const isShort = height <= 50;
+                    const isShort = height <= 700;
                     const isExpanded = expandedId === a.id;
                     const displayHeight = isShort && isExpanded ? 100 : height;
 
                     return (
                       <div
                         key={a.id}
-                        className="absolute left-1 right-0 shadow-md rounded z-10 overflow-hidden bg-[#EFFBFF] border-l-4 transition-all duration-300 cursor-pointer"
+                        className="absolute left-1 right-0 shadow-md rounded z-10 overflow-hidden bg-[#F5FCFF] border-l-4 transition-all duration-300 cursor-pointer"
                         style={{
                           top,
                           height: displayHeight,
@@ -318,6 +318,7 @@ export default function Home() {
                         }}
                         onClick={() => {
                           if (!isShort) return;
+
                           setExpandedId((prev) => (prev === a.id ? null : a.id));
                         }}
                       >
@@ -340,12 +341,12 @@ export default function Home() {
 
                           {/* Conteúdo clicável */}
                           <div>
-                            <p className="text-xs">
+                            <p className="text-xs text-gray-400 ">
                               {a.serviceName} às {a.time}
                             </p>
-                            <p className="text-xs">R$ {a.price}</p>
+                            <p className="text-xs text-gray-400">R$ {a.price}</p>
                             {a.status && (
-                              <p className="text-xs text-gray-600 mt-2">{a.status}</p>
+                              <p className="text-xs text-[#00AEEF] mt-2">{a.status}</p>
                             )}
                           </div>
                         </div>
