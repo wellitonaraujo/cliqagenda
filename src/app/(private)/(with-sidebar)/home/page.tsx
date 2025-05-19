@@ -122,6 +122,9 @@ export default function Home() {
     }
   };
 
+  const countAppointments = (collaboratorId: string) =>
+    appointmentsOfTheDay.filter(a => a.collaboratorId === collaboratorId).length;  
+
   useEffect(() => {
     function updateMinCols() {
       const cols = Math.floor(window.innerWidth / COL_WIDTH);
@@ -170,7 +173,7 @@ export default function Home() {
             </div>
 
             {/* Texto de agendamentos */}
-            <span className="text-sm text-[#034D82] text-center md:text-left pt-4 md:pt-0">
+            <span className="text-sl text-[#034D82] text-center md:text-left pt-4 md:pt-0">
               {appointmentsOfTheDay.length === 0
                 ? 'Nenhum agendamento'
                 : appointmentsOfTheDay.length === 1
@@ -204,28 +207,37 @@ export default function Home() {
           <div className="overflow-x-auto relative flex-1">
             {/* Cabeçalho fixo */}
             <div className="flex sticky top-0 z-10 bg-white min-w-full">
-              {collaborators.map((collab, index) => (
-                <div
-                  key={`header-${collab.id ?? index}`}
-                  className="min-w-[220px] h-[40px] flex items-center justify-start gap-2 px-3 border-gray-300 border-b-1 bg-gray-50 text-xs font-medium text-gray-500"
-                >
-                  {/* Avatar */}
-                  <div className="w-7 h-7 rounded-full overflow-hidden border border-[#00AEEF]">
+              {collaborators.map((collab, index) => {
+                const count = appointmentsOfTheDay.filter(
+                  (a) => a.collaboratorId === collab.id
+                ).length;
 
-                   <Image
-                      src="/eu.svg"
-                      alt="foto de perfil"
-                      width={40}
-                      height={40}
-                      className="w-full h-full"
-                    />
+                return (
+                  <div
+                    key={`header-${collab.id ?? index}`}
+                    className="min-w-[220px] h-[40px] flex items-center justify-between px-3 border-gray-300 border-b-1 bg-gray-50 text-xs font-medium text-gray-500"
+                  >
+                    {/* Foto + Nome */}
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <div className="w-7 h-7 rounded-full overflow-hidden border border-[#00AEEF]">
+                        <Image
+                          src="/eu.svg"
+                          alt="foto de perfil"
+                          width={40}
+                          height={40}
+                          className="w-full h-full"
+                        />
+                      </div>
+                      <span className="truncate max-w-[110px]">{collab.name}</span>
+                    </div>
 
+                    {/* Contador redondo */}
+                    <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#034D82] text-[10px] flex items-center justify-center">
+                      {count}
+                    </div>
                   </div>
-
-                  {/* Nome do colaborador */}
-                  <span className="truncate">{collab.name}</span>
-                </div>
-              ))}
+                );
+              })}
 
               {/* Colunas vazias para preencher */}
               {Array(Math.max(0, minCols - collaborators.length))
