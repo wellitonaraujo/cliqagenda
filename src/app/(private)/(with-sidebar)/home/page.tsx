@@ -141,10 +141,12 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-center">
 
-        <div className="flex items-center gap-2 text-primary font-medium">
-          <div className="flex items-center gap-2">
+      <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-center">
+        {/* Coluna: botões + texto "agendamentos" */}
+        
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center gap-2 text-primary font-medium">
             <button
               onClick={() => handleDayChange(-1)}
               className="h-10 w-10 flex items-center justify-center border text-[#034D82] border-gray-100 bg-gray-50 rounded-md shadow-sm"
@@ -164,30 +166,32 @@ export default function Home() {
             </button>
           </div>
 
+          {/* Texto de agendamentos, alinhado abaixo dos botões */}
 
-          <span className="text-md pl-2 text-[#034D82]">
+          {/* <span className="text-sm text-[#034D82] mt-3">
             {appointmentsOfTheDay.length === 0
               ? 'Nenhum agendamento'
               : appointmentsOfTheDay.length === 1
               ? '1 agendamento'
               : `${appointmentsOfTheDay.length} agendamentos`}
-          </span>
-
+          </span> */}
         </div>
+
+        {/* Botão à direita */}
         <div className="ml-auto" onClick={() => router.push('/scheduling')}>
-          <Button>Agendar</Button>
+          <Button>Novo agendamento</Button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto pt-6 pr-0 pb-6 pl-6">
+      <div className="flex-1 overflow-y-auto pt-3 pr-0 pb-6 pl-6">
         <div className="flex w-full min-w-full">
           {/* Coluna de horários */}
           <div className="flex flex-col w-10 pr-2">
-            <div className="h-[40px]" />
+            <div className="h-[32px]" />
             {timeSlots.map(({ id, label }, index) => (
               <div key={id} className="h-10 flex justify-end">
                 {index % 2 === 0 && label && (
-                  <span className="text-sm text-[#034D82] leading-none">{label}</span>
+                  <span className="text-sm text-gray-400 leading-none">{label}</span>
                 )}
               </div>
             ))}
@@ -390,3 +394,4 @@ export default function Home() {
     </div>
   );
 }
+
