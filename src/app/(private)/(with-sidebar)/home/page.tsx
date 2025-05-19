@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/componentes/Button";
 import Header from "@/componentes/Header";
 import { useCollaborators } from "@/context/CollaboratorContext";
+import Image from "next/image";
 
 export default function Home() {
   const { appointments, updateAppointment, removeAppointment } = useAppointments();
@@ -206,9 +207,23 @@ export default function Home() {
               {collaborators.map((collab, index) => (
                 <div
                   key={`header-${collab.id ?? index}`}
-                  className="min-w-[200px] h-[40px] flex items-center justify-center border-gray-300 border-b-1 bg-gray-50 text-xs font-medium text-gray-500 text-center"
+                  className="min-w-[220px] h-[40px] flex items-center justify-start gap-2 px-3 border-gray-300 border-b-1 bg-gray-50 text-xs font-medium text-gray-500"
                 >
-                  {collab.name}
+                  {/* Avatar */}
+                  <div className="w-7 h-7 rounded-full overflow-hidden border border-[#00AEEF]">
+
+                   <Image
+                      src="/eu.svg"
+                      alt="foto de perfil"
+                      width={40}
+                      height={40}
+                      className="w-full h-full"
+                    />
+
+                  </div>
+
+                  {/* Nome do colaborador */}
+                  <span className="truncate">{collab.name}</span>
                 </div>
               ))}
 
@@ -218,17 +233,18 @@ export default function Home() {
                 .map((_, i) => (
                   <div
                     key={`empty-header-${i}`}
-                    className="min-w-[200px] h-[40px] border-gray-300 border-b-1 bg-gray-50"
+                    className="min-w-[220px] h-[40px] border-gray-300 border-b-1 bg-gray-50"
                   />
                 ))}
             </div>
+
 
             {/* Grade de horários */}
             <div className="flex w-full min-w-full">
               {collaborators.map((collab, index) => (
                 <div
                   key={`body-${collab.id ?? index}`}
-                  className="flex flex-col border-l border-gray-200 min-w-[200px] flex-1 relative"
+                  className="flex flex-col border-l border-gray-200 min-w-[220px] flex-1 relative"
                 >
                   {timeSlots.map(({ label }, index) => {
                     const isSelected =
@@ -251,7 +267,7 @@ export default function Home() {
                         }`}
                       >
                         <span
-                          className={`text-xs font-bold text-[#09BDDD] ${
+                          className={`text-xs font-bold text-[#00AEEF] ${
                             isSelected ? 'block' : 'hidden group-hover:block'
                           }`}
                         >
@@ -283,7 +299,7 @@ export default function Home() {
                         style={{
                           top,
                           height: displayHeight,
-                          borderLeftColor: '#09BDDD',
+                          borderLeftColor: '#00AEEF',
                         }}
                         onClick={() => {
                           if (!isShort) return;
@@ -330,7 +346,7 @@ export default function Home() {
                 .map((_, i) => (
                   <div
                     key={`empty-body-${i}`}
-                    className="flex flex-col border-l border-gray-200 min-w-[200px] flex-1"
+                    className="flex flex-col border-l border-gray-200 min-w-[220px] flex-1"
                   >
                     {timeSlots.map(({ label }, index) => (
                       <div key={index} className="h-10 border-b border-gray-200" />

@@ -58,7 +58,7 @@ export default function Sidebar() {
               <div className="flex items-center justify-between w-full">
                <h1 className="text-2xl font-bold">
                 <span className="text-[#034D82]">Cliq</span>
-                <span className="text-[#09BDDD]">Agenda</span>
+                <span className="text-[#00AEEF]">Agenda</span>
               </h1>
 
                 {/* Ícone para fechar no desktop */}
@@ -92,7 +92,7 @@ export default function Sidebar() {
                   className={clsx(
                     'flex items-center px-6 py-3 text-sm font-medium transition-all gap-3',
                     {
-                      'bg-[#EFFBFF] border-r-4 border-[#09BDDD] text-[#09BDDD]': isActive,
+                      'bg-[#EFFBFF] border-r-4 border-[#00AEEF] text-[#00AEEF]': isActive,
                       'text-gray-800 hover:bg-gray-50': !isActive,
                       'justify-center': isCollapsed,
                       'justify-start': !isCollapsed,

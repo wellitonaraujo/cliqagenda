@@ -11,7 +11,7 @@ export default function Button({ children, type = 'button', full, disabled }: Bu
   return (
     <button
       type={type}
-      style={{ backgroundColor: "#09BDDD" }}
+      style={{ backgroundColor: "#00AEEF" }}
       className={`text-white font-medium px-4 py-3 rounded-md hover:opacity-90 transition ${
         full ? 'w-full' : ''
       }`}

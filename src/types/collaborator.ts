@@ -17,6 +17,7 @@ export type Collaborator = {
   name: string;
   email: string;
   phone: string;
+  photoUrl?: string;
   address: {
     street: string;
     number: string;
