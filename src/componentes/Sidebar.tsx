@@ -7,6 +7,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import { HiChevronRight, HiMenu } from 'react-icons/hi';
 import { HiChevronLeft } from 'react-icons/hi';
+import { useAuth } from '@/context/AuthContext';
 
 const menuItems = [
   { label: 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
@@ -21,6 +22,8 @@ const menuItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+   const { logout } = useAuth();
+
   const { isCollapsed, toggleSidebar } = useSidebar();
 
   return (
@@ -107,9 +110,11 @@ export default function Sidebar() {
                   {!isCollapsed && (
                   <span className="text-base text-[#034D82] font-medium whitespace-nowrap">{label}</span>
                   )}
+          
                 </Link>
               );
             })}
+              <button onClick={logout}>Sair</button>
           </nav>
         </div>
       </div>

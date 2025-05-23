@@ -23,10 +23,14 @@ export default function Login() {
   
     if (!email || !password) return;
   
-    await login();
-    console.log('Redirecionando para /home');
-
-    router.push('/home');
+    try {
+      await login(email, password);
+      router.push('/home');
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message || 'Email ou senha inválidos';
+      alert(message);
+    }    
   };
   
   return (

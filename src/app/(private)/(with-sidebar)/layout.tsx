@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import { SidebarProvider } from '@/context/SidebarContext';
 import { HeaderProvider } from '@/context/HeaderContext';
-import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/componentes/Sidebar';
 
 export default function PrivateLayout({ children }: { children: React.ReactNode }) {
@@ -17,19 +17,19 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
     }
   }, [isLoading, isAuthenticated]);
 
-  if (isLoading) return <div>Carregando...</div>;
+  if (isLoading) return <div className="p-4">Carregando...</div>;
   if (!isAuthenticated) return null;
 
   return (
-      <SidebarProvider>
-        <HeaderProvider>
-          <div className="flex h-full">
-            <Sidebar />
-            <div className="flex flex-col flex-1 overflow-y-auto">
-              <main>{children}</main>
-            </div>
+    <SidebarProvider>
+      <HeaderProvider>
+        <div className="flex h-full">
+          <Sidebar />
+          <div className="flex flex-col flex-1 overflow-y-auto">
+            <main>{children}</main>
           </div>
-        </HeaderProvider>
-      </SidebarProvider>
+        </div>
+      </HeaderProvider>
+    </SidebarProvider>
   );
 }

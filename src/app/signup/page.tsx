@@ -5,15 +5,22 @@ import Button from "@/componentes/Button";
 import Link from "next/link";
 import ErrorMessage from "@/componentes/ErrorMessage";
 import { usePasswordValidation } from "@/hooks/usePasswordValidation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Signup() {
   const [name, setName] = useState("");
+  const [nomeEmpresa, setNomeEmpresa] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [endereco, setEndereco] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isConfirmTouched, setIsConfirmTouched] = useState(false);
+
+  const router = useRouter();
 
   const {
     isTouched,
@@ -22,25 +29,45 @@ export default function Signup() {
     validatePasswords,
   } = usePasswordValidation();
 
-  const handleSignup = (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsSubmitted(true);
-
-    // Valida as senhas
-    const isValid = validatePasswords(password, confirmPassword);
-    if (!name || !email || !password || !confirmPassword || !isValid) return;
-
-    console.log("Cadastro enviado");
-  };
-
   const passwordIsValid = isPasswordValid(password);
 
   const isFormValid =
     name.trim() !== "" &&
     email.trim() !== "" &&
+    nomeEmpresa.trim() !== "" &&
     passwordIsValid &&
     confirmPassword.trim() !== "" &&
     password === confirmPassword;
+
+    const handleSignup = async (event: React.FormEvent) => {
+      event.preventDefault();
+      setIsSubmitted(true);
+    
+      const isValid = validatePasswords(password, confirmPassword);
+      if (!isFormValid || !isValid) return;
+    
+      const payload = {
+        nome: name,
+        email,
+        senha: password,
+        telefone: telefone || undefined,
+        endereco: endereco || undefined,
+        nomeEmpresa,
+      };
+    
+      try {
+        await axios.post('http://localhost:3000/auth/signup', payload);
+    
+        alert('Conta criada com sucesso!');
+        router.push('/login');
+      } catch (error: any) {
+        if (error.response) {
+          alert(error.response.data?.message || 'Erro ao criar conta');
+        } else {
+          alert('Erro ao conectar com o servidor.');
+        }
+      }
+    };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
@@ -54,61 +81,55 @@ export default function Signup() {
 
         <form onSubmit={handleSignup}>
           <div className="mb-4">
-            <Input
-              label=""
-              type="text"
-              placeholder="Nome completo"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-              hasError={isSubmitted && !name}
-            />
-            <p className="text-start text-xs mt-2 text-gray-500">Nome e sobrenome</p>
+            <Input placeholder="Nome completo" onChange={(e) => setName(e.target.value)} hasError={isSubmitted && !name} />
+          </div>
+
+          <div className="mb-4">
+            <Input placeholder="Nome da empresa" onChange={(e) => setNomeEmpresa(e.target.value)} hasError={isSubmitted && !nomeEmpresa} />
+          </div>
+
+          <div className="mb-4">
+            <Input placeholder="Telefone (opcional)" onChange={(e) => setTelefone(e.target.value)} />
+          </div>
+
+          <div className="mb-4">
+            <Input placeholder="Endereço (opcional)" onChange={(e) => setEndereco(e.target.value)} />
           </div>
 
           <div className="mb-4">
             <Input
-              label=""
               type="email"
               placeholder="Email"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               hasError={isSubmitted && !email}
             />
-            <p className="text-start text-xs mt-2 text-gray-500">
-              Iremos enviar um email de confirmação
-            </p>
           </div>
 
           <div className="mb-4">
             <Input
-              label=""
               type="password"
               placeholder="Senha"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              onChange={(e) => {
                 setPassword(e.target.value);
                 setIsTouched(true);
               }}
               hasError={isSubmitted && !password}
             />
-            <p
-              className={`text-xs mt-2 ${
-                !password
-                  ? "text-gray-500"
-                  : passwordIsValid
-                  ? "text-green-600"
-                  : isTouched
-                  ? "text-red-500"
-                  : "text-gray-400"
-              }`}
-            >
+            <p className={`text-xs mt-2 ${
+              !password ? "text-gray-500"
+              : passwordIsValid ? "text-green-600"
+              : isTouched ? "text-red-500"
+              : "text-gray-400"
+            }`}>
               A senha deve ter no mínimo 8 caracteres e conter ao menos um número.
             </p>
           </div>
 
           <div className="mb-4">
             <Input
-              label=""
               type="password"
               placeholder="Confirmar senha"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              onChange={(e) => {
                 setConfirmPassword(e.target.value);
                 setIsConfirmTouched(true);
               }}

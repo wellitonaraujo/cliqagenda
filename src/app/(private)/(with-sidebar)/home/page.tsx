@@ -155,18 +155,18 @@ export default function Home() {
             <div className="flex items-center gap-2 text-primary font-medium">
               <button
                 onClick={() => handleDayChange(-1)}
-                className="h-10 w-10 flex items-center justify-center border text-gray-400 border-gray-100 bg-gray-50 rounded-md shadow-sm"
+                className="h-10 w-10 flex items-center justify-center border text-gray-400 border-gray-200 bg-gray-50 rounded-md"
               >
                 <FiChevronLeft size={20} />
               </button>
 
-              <span className="h-10 flex text-[#034D82] items-center justify-center border border-gray-100 bg-gray-50 px-4 rounded-md text-sm font-medium shadow-sm">
+              <span className="h-10 flex text-[#034D82] items-center justify-center border border-gray-200 bg-gray-50 px-4 rounded-md text-sm font-medium">
                 {selectedDate.toLocaleDateString('pt-BR')}
               </span>
 
               <button
                 onClick={() => handleDayChange(1)}
-                className="h-10 w-10 flex items-center justify-center border text-gray-400 border-gray-100 bg-gray-50 rounded-md shadow-sm"
+                className="h-10 w-10 flex items-center justify-center border text-gray-400 border-gray-200 bg-gray-50 rounded-md"
               >
                 <FiChevronRight size={20} />
               </button>
@@ -215,7 +215,7 @@ export default function Home() {
                 return (
                   <div
                     key={`header-${collab.id ?? index}`}
-                    className="min-w-[220px] h-[40px] flex items-center justify-between px-3 border-gray-300 border-b-1 bg-gray-50 text-xs font-medium text-gray-500"
+                    className="min-w-[220px] h-[40px] flex items-center justify-between px-3 bg-gray-50 text-xs font-medium text-gray-500"
                   >
                     {/* Foto + Nome */}
                     <div className="flex items-center gap-2 overflow-hidden">
@@ -231,7 +231,7 @@ export default function Home() {
                       <span className="truncate max-w-[110px] text-gray-500">{collab.name}</span>
                     </div>
 
-                    {/* Contador redondo */}
+                    {/* Contador */}
                     <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#034D82] text-[12px] flex items-center justify-center">
                       {count}
                     </div>
@@ -310,7 +310,8 @@ export default function Home() {
                     return (
                       <div
                         key={a.id}
-                        className="absolute left-1 right-0 shadow-md rounded z-10 overflow-hidden bg-[#F5FCFF] border-l-4 transition-all duration-300 cursor-pointer"
+                        className={`absolute left-1 right-0 shadow-md rounded overflow-hidden bg-[#F5FCFF] border-l-4 transition-all duration-300 cursor-pointer
+                          ${isExpanded ? 'z-30' : 'z-10'}`}
                         style={{
                           top,
                           height: displayHeight,
@@ -318,10 +319,10 @@ export default function Home() {
                         }}
                         onClick={() => {
                           if (!isShort) return;
-
                           setExpandedId((prev) => (prev === a.id ? null : a.id));
                         }}
                       >
+
                         <div className="pl-2 pt-0.5 text-[#034D82] h-full flex flex-col justify-between">
                           {/* Cabeçalho: nome + botão */}
                           <div className="flex justify-between items-start">
