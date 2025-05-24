@@ -11,7 +11,7 @@ import { useState } from "react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [senha, setSenha] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const { login } = useAuth();
@@ -21,10 +21,10 @@ export default function Login() {
     event.preventDefault();
     setIsSubmitted(true);
   
-    if (!email || !password) return;
+    if (!email || !senha) return;
   
     try {
-      await login(email, password);
+      await login(email, senha);
       router.push('/home');
     } catch (err: any) {
       const message =
@@ -52,7 +52,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               hasError={isSubmitted && !email}
             />
-            {isSubmitted && (!email || !password) && (
+            {isSubmitted && (!email || !senha) && (
               <ErrorMessage message="Email e senha obrigatórios" />
             )}
           </div>
@@ -62,8 +62,8 @@ export default function Login() {
               label=""
               type="password"
               placeholder="Senha"
-              onChange={(e) => setPassword(e.target.value)}
-              hasError={isSubmitted && !password}
+              onChange={(e) => setSenha(e.target.value)}
+              hasError={isSubmitted && !senha}
             />
 
           </div>

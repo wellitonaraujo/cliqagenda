@@ -10,7 +10,7 @@ import { useState } from "react";
 import axios from "axios";
 
 export default function Signup() {
-  const [name, setName] = useState("");
+  const [nome, setNome] = useState("");
   const [nomeEmpresa, setNomeEmpresa] = useState("");
   const [telefone, setTelefone] = useState("");
   const [endereco, setEndereco] = useState("");
@@ -32,7 +32,7 @@ export default function Signup() {
   const passwordIsValid = isPasswordValid(password);
 
   const isFormValid =
-    name.trim() !== "" &&
+    nome.trim() !== "" &&
     email.trim() !== "" &&
     nomeEmpresa.trim() !== "" &&
     passwordIsValid &&
@@ -47,7 +47,7 @@ export default function Signup() {
       if (!isFormValid || !isValid) return;
     
       const payload = {
-        nome: name,
+        nome: nome,
         email,
         senha: password,
         telefone: telefone || undefined,
@@ -81,7 +81,7 @@ export default function Signup() {
 
         <form onSubmit={handleSignup}>
           <div className="mb-4">
-            <Input placeholder="Nome completo" onChange={(e) => setName(e.target.value)} hasError={isSubmitted && !name} />
+            <Input placeholder="Nome completo" onChange={(e) => setNome(e.target.value)} hasError={isSubmitted && !nome} />
           </div>
 
           <div className="mb-4">

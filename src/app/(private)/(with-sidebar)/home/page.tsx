@@ -26,7 +26,6 @@ export default function Home() {
   const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
   const [minCols, setMinCols] = useState(4);
   const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: string; timeSlotIndex: number } | null>(null);
-  const [expanded, setExpanded] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const COL_WIDTH = 180;
@@ -122,8 +121,6 @@ export default function Home() {
     }
   };
 
-  const countAppointments = (collaboratorId: string) =>
-    appointmentsOfTheDay.filter(a => a.collaboratorId === collaboratorId).length;  
 
   useEffect(() => {
     function updateMinCols() {
