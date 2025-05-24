@@ -2,12 +2,32 @@
 
 import Button from '@/componentes/Button';
 import Header from '@/componentes/Header';
-import { useServices } from '@/context/ServiceContext';
+import { useService } from '@/context/ServiceContext';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function Services() {
   const router = useRouter();
-  const { services } = useServices();
+  const { services, loadServices } = useService();
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      setLoading(true);
+      await loadServices(); // reforce o carregamento aqui se quiser mais controle
+      setLoading(false);
+    };
+    fetchServices();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500 text-lg">Carregando serviços...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -33,7 +53,6 @@ export default function Services() {
                 <span>Duração</span>
                 <span>Preço</span>
               </div>
-
               <div className="grid grid-cols-3 text-base font-semibold text-gray-800">
                 <span>{service.nome}</span>
                 <span>{service.duracaoMin} min</span>

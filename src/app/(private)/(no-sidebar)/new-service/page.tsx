@@ -1,147 +1,185 @@
 'use client'
 
-import { useState } from 'react';
+import { useService } from '@/context/ServiceContext';
+import api from '@/services/api';
+
+import React, { useEffect, useState } from 'react';
+import { HiArrowLeft } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
+import Select, { MultiValue } from 'react-select';
 import Input from '@/componentes/Input';
 import Button from '@/componentes/Button';
-import { useServices } from '@/context/ServiceContext';
-import { v4 as uuidv4 } from 'uuid';
-import { HiArrowLeft } from 'react-icons/hi';
-import { formatCurrency } from '../../../../../utils/formatCurrency';
-import { generateDurations } from '../../../../../utils/generateDurations';
-import Select from 'react-select';
-import { customSelectStyles } from '../../../../../utils/customSelectStyles';
-import { useCollaborator } from '@/context/CollaboratorContext';
+
+interface User {
+  id: number;
+  nome: string;
+}
+
+interface Option {
+  value: number | string;
+  label: string;
+}
 
 export default function NewService() {
   const router = useRouter();
-  const { collaborators } = useCollaborator();
-  const { addService } = useServices();
+  const { createService } = useService();
 
-  const [name, setName] = useState('');
+  const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
-  const [price, setPrice] = useState('');
-  const [duration, setDuration] = useState('');
-  const [selectedCollaboratorIds, setSelectedCollaboratorIds] = useState<string[]>([]);
+  const [duracaoMin, setDuracaoMin] = useState(60);
+  const [preco, setPreco] = useState(0);
+  const [colaboradoresIds, setColaboradoresIds] = useState<number[]>([]);
 
-  const durations = generateDurations();
+  const [colaboradores, setColaboradores] = useState<User[]>([]);
+  const [loadingColabs, setLoadingColabs] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const collaboratorOptions = collaborators.map((c) => ({
+  const durationOptions: Option[] = [
+    { value: 5, label: '30 minutos' },
+    { value: 15, label: '30 minutos' },
+    { value: 30, label: '30 minutos' },
+    { value: 60, label: '60 minutos' },
+    { value: 90, label: '90 minutos' },
+    { value: 120, label: '120 minutos' },
+  ];
+
+  const collaboratorOptions: Option[] = colaboradores.map(c => ({
     value: c.id,
     label: c.nome,
   }));
 
-  const durationOptions = durations.map((d) => ({
-    value: d,
-    label: d,
-  }));
+  useEffect(() => {
+    async function fetchColaboradores() {
+      try {
+        setLoadingColabs(true);
+        const response = await api.get<User[]>('/collaborators');
+        setColaboradores(response.data);
+      } catch (err) {
+        setError((err as Error).message || 'Erro ao carregar colaboradores');
+      } finally {
+        setLoadingColabs(false);
+      }
+    }
+  
+    fetchColaboradores();
+  }, []);
 
-  const handleSave = () => {
-    if (!name || !price || !duration || selectedCollaboratorIds.length === 0) {
-      alert('Preencha todos os campos');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccessMessage('');
+    if (!nome || duracaoMin < 1 || preco < 0 || colaboradoresIds.length === 0) {
+      setError('Preencha todos os campos obrigatórios corretamente.');
       return;
     }
 
-    const newService = {
-      id: uuidv4(),
-      name,
-      price,
-      duration,
-      collaboratorIds: selectedCollaboratorIds,
-    };
-
-    console.log('Serviço criado:', newService);
-
-    addService(newService);
-    router.push('/services');
+    try {
+      await createService({ nome, descricao, duracaoMin, preco, colaboradoresIds });
+      setSuccessMessage('Serviço criado com sucesso!');
+      setNome('');
+      setDescricao('');
+      setDuracaoMin(60);
+      setPreco(0);
+      setColaboradoresIds([]);
+    } catch (err) {
+      setError((err as Error).message);
+    }
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value;
-    const numeric = rawValue.replace(/\D/g, '');
-    setPrice(formatCurrency(numeric));
+    const value = Number(e.target.value);
+    if (value >= 0) setPreco(value);
   };
 
-  const handleCollaboratorChange = (selectedOptions: any) => {
-    if (!selectedOptions) return;
-    
-    // Quando 'isMulti' está ativo, selectedOptions será um array de objetos
-    const selectedValues = selectedOptions.map((opt: any) => opt.value);
-    console.log("Selected collaborators:", selectedValues); // Log para depurar
+  const handleDurationChange = (selectedOption: Option | null) => {
+    setDuracaoMin(selectedOption ? Number(selectedOption.value) : 0);
+  };
 
-    setSelectedCollaboratorIds(selectedValues); // Atualiza o estado com os IDs selecionados
+  const handleCollaboratorChange = (selectedOptions: MultiValue<Option>) => {
+    setColaboradoresIds(selectedOptions ? selectedOptions.map(o => Number(o.value)) : []);
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-white">
-      <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
+    <div className="flex justify-center items-start min-h-screen bg-white p-4">
+      <div className="w-full max-w-2xl bg-white rounded-lg p-6 shadow-md relative">
         <div className="flex justify-between items-center mb-8">
-          <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
+          <button
+            onClick={() => router.back()}
+            className="text-gray-600 hover:text-gray-800"
+          >
             <HiArrowLeft size={24} />
           </button>
           <h1 className="text-xl font-semibold mx-auto">Novo serviço</h1>
+          <div style={{ width: 24 }} />
         </div>
 
-        <div className="mb-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <Input
+            label="Nome*"
             placeholder="Nome do serviço"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
           />
-        </div>
 
-        <div className="mb-4">
-          <Input
-           type="text"
-           placeholder="Descrição"
-           value={descricao}
-           onChange={(e) => setDescricao(e.target.value)}
-          />
-        </div>
+          <div>
+            <label className="block text-gray-700 mb-1">Descrição</label>
+            <textarea
+              className="w-full border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows={4}
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              placeholder="Descrição do serviço"
+            />
+          </div>
 
-        <div className="mb-4">
-          <Input
-            placeholder="Valor"
-            value={price}
-            onChange={handlePriceChange}
-          />
-        </div>
-
-        <div className="mb-4">
           <Select
             options={durationOptions}
-            value={durationOptions.find((opt) => opt.value === duration) || null}
-            onChange={(selectedOption) => setDuration(selectedOption?.value ?? '')}
-            placeholder="Selecione a duração"
-            classNames={customSelectStyles.classNames}
+            value={durationOptions.find(opt => opt.value === duracaoMin) || null}
+            onChange={handleDurationChange}
+            placeholder="Selecione a duração*"
+            classNamePrefix="react-select"
+            isClearable={false}
           />
-        </div>
 
-        <div className="mb-6">
-          <Select
-            isMulti
-            options={collaboratorOptions}
-            value={collaboratorOptions.filter((opt) =>
-              selectedCollaboratorIds.includes(opt.value)
+          <Input
+            label="Preço (R$)*"
+            type="number"
+            value={preco}
+            onChange={handlePriceChange}
+          />
+
+          <div>
+            <label className="block text-gray-700 mb-1">Colaboradores*</label>
+            {loadingColabs ? (
+              <p>...</p>
+            ) : (
+              <Select
+                options={collaboratorOptions}
+                value={collaboratorOptions.filter(opt => colaboradoresIds.includes(opt.value as number))}
+                onChange={handleCollaboratorChange}
+                placeholder="Selecione os colaboradores"
+                isMulti
+                closeMenuOnSelect={false}
+              />
             )}
-            onChange={handleCollaboratorChange}
-            placeholder="Selecione os colaboradores"
-            classNames={customSelectStyles.classNames}
-          />
-          <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
-        </div>
-
-        <div className="flex justify-end gap-4 mt-auto mb-20">
-          <button
-            onClick={() => router.back()}
-            className="text-gray-700 font-medium hover:underline"
-          >
-            Cancelar
-          </button>
-          <div onClick={handleSave}>
-            <Button>Salvar</Button>
+             <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
           </div>
-        </div>
+
+          {error && <p className="text-red-600">{error}</p>}
+          {successMessage && <p className="text-green-600">{successMessage}</p>}
+
+          <div className="flex justify-end gap-4 mt-6">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="text-gray-700 font-medium hover:underline"
+            >
+              Cancelar
+            </button>
+            <Button type="submit">Criar Serviço</Button>
+          </div>
+        </form>
       </div>
     </div>
   );

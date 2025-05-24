@@ -5,13 +5,13 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 type InputProps = {
-  name?: string; // adiciona name
+  name?: string;
   label?: string;
   type?: string;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   hasError?: boolean;
-  value?: string;
+  value?: string | number;
 };
 
 export default function Input({ 

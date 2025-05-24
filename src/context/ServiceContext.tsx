@@ -1,98 +1,73 @@
-'use client';
+"use client"
 
 import api from '@/services/api';
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-export type Collaborator = {
-  id: number;
-  nome: string;
-  email: string;
-  role: string;
-  telefone: string;
-  endereco: string;
-  empresaId: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type Service = {
+interface Service {
   id: number;
   nome: string;
   descricao?: string;
-  preco: number;
   duracaoMin: number;
-  empresaId: number;
-  createdAt: string;
-  updatedAt: string;
-  colaboradores: Collaborator[];
-};
+  preco: number;
+  colaboradores: { id: number; nome: string }[];
+}
 
-type ServiceContextType = {
+interface CreateServiceDto {
+  nome: string;
+  descricao?: string;
+  duracaoMin: number;
+  preco: number;
+  colaboradoresIds: number[];
+}
+
+interface ServiceContextData {
   services: Service[];
-  fetchServices: () => Promise<void>;
-  addService: (
-    serviceInput: Omit<Service, 'id' | 'createdAt' | 'updatedAt' | 'colaboradores'> & { colaboradoresIds: number[] }
-  ) => Promise<void>;
-  loading: boolean;
-};
+  createService: (data: CreateServiceDto) => Promise<void>;
+  loadServices: () => Promise<void>;
+}
 
-const ServiceContext = createContext<ServiceContextType | undefined>(undefined);
+const ServiceContext = createContext<ServiceContextData | undefined>(undefined);
 
-const STORAGE_KEY = 'myapp_services';
-
-export function ServiceProvider({ children }: { children: ReactNode }) {
+export const ServiceProvider = ({ children }: { children: ReactNode }) => {
   const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  const fetchServices = async () => {
-    setLoading(true);
-    
+  const loadServices = async () => {
+    try {
+      const { data } = await api.get<Service[]>('/services');
+      setServices(data);
+    } catch (error) {
+      console.error('Erro ao carregar serviços:', error);
+    }
   };
 
-  const addService = async (
-    serviceInput: Omit<Service, 'id' | 'createdAt' | 'updatedAt' | 'colaboradores'> & { colaboradoresIds: number[] }
-  ) => {
-    if (!serviceInput.empresaId) {
-      alert('Não foi possível identificar a empresa. Faça login novamente.');
-      return;
-    }
-
+  const createService = async (data: CreateServiceDto) => {
     try {
-      setLoading(true);
-      const response = await api.post<Service>('/services', {
-        nome: serviceInput.nome,
-        descricao: serviceInput.descricao,
-        preco: serviceInput.preco,
-        duracaoMin: serviceInput.duracaoMin,
-        empresaId: serviceInput.empresaId,
-        colaboradoresIds: serviceInput.colaboradoresIds,
-      });
-      setServices((prev) => {
-        const updated = [...prev, response.data];
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-        return updated;
-      });
-    } catch (error) {
-      console.error('Erro ao adicionar serviço:', error);
-      alert('Erro ao salvar serviço. Verifique se está autenticado e os dados.');
-    } finally {
-      setLoading(false);
+      const response = await api.post<Service>('/services', data);
+      setServices((prev) => [...prev, response.data]);
+    } catch (error: any) {
+      console.error('Erro ao criar serviço:', error);
+      // Caso queira lançar para tratamento na UI
+      throw new Error(
+        error.response?.data?.message || 'Erro ao criar serviço'
+      );
     }
   };
 
   useEffect(() => {
-    fetchServices();
+    loadServices();
   }, []);
 
   return (
-    <ServiceContext.Provider value={{ services, fetchServices, addService, loading }}>
+    <ServiceContext.Provider value={{ services, createService, loadServices }}>
       {children}
     </ServiceContext.Provider>
   );
-}
+};
 
-export function useServices() {
+export const useService = () => {
   const context = useContext(ServiceContext);
-  if (!context) throw new Error('useServices must be used within a ServiceProvider');
+  if (!context) {
+    throw new Error('useService deve ser usado dentro de ServiceProvider');
+  }
   return context;
-}
+};

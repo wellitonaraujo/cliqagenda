@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useHorarios } from '@/context/HoursProvider';
 import { useCustomers } from '@/context/CustomersContext';
-import { useServices } from '@/context/ServiceContext';
 import Button from '@/componentes/Button';
 import { HiArrowLeft } from 'react-icons/hi';
 import { useAppointments } from '@/context/AppointmentsProvider';
@@ -12,12 +11,13 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { formatCurrency } from '../../../../../utils/formatCurrency';
 import { generateDurations } from '../../../../../utils/generateDurations';
-import { useCollaborators } from '@/context/CollaboratorContext';
 import { v4 as uuidv4 } from 'uuid';
 import { customSelectStyles } from '../../../../../utils/customSelectStyles';
 import Select from '@/componentes/ClientSelect';
 
 import type { SingleValue } from 'react-select';
+import { useCollaborator } from '@/context/CollaboratorContext';
+import { useService } from '@/context/ServiceContext';
 
 type OptionType = {
   label: string;
@@ -28,8 +28,8 @@ export default function AgendamentoForm() {
   const router = useRouter();
   const { hours } = useHorarios();
   const { customers } = useCustomers();
-  const { collaborators } = useCollaborators();
-  const { services } = useServices();
+  const { collaborators } = useCollaborator();
+  const { services } = useService();
 
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedServiceId, setSelectedServiceId] = useState('');
@@ -95,11 +95,11 @@ export default function AgendamentoForm() {
 
     const appointmentData = {
       id: uuidv4(),
-      customerName: customer.name,
+      customerName: customer.nome,
       serviceId: service.id,
-      serviceName: service.name,
+      serviceName: service.nome,
       collaboratorId: collaborator.id,
-      collaboratorName: collaborator.name,
+      collaboratorName: collaborator.nome,
       day: formattedDay,
       duration,
       time: selectedTime,
