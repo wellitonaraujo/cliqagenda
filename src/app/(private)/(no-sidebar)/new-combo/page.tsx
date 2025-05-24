@@ -6,14 +6,14 @@ import Button from "@/componentes/Button";
 import Input from "@/componentes/Input";
 import { useCombos } from '@/context/ComboContext';
 import { useServices } from '@/context/ServiceContext';
-import { useCollaborators } from '@/context/CollaboratorContext';
 import { v4 } from 'uuid';
 import { HiArrowLeft } from 'react-icons/hi';
+import { useCollaborator } from '@/context/CollaboratorContext';
 
 export default function NewCombo() {
   const { addCombo } = useCombos();
   const { services: availableServices } = useServices();
-  const { collaborators } = useCollaborators();
+  const { collaborators } = useCollaborator();
   const router = useRouter();
 
   const [name, setName] = useState('');
@@ -87,7 +87,7 @@ export default function NewCombo() {
               </option>
               {availableServices.map((service) => (
                 <option key={service.id} value={service.id}>
-                  {service.name}
+                  {service.nome}
                 </option>
               ))}
             </select>

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Input from '@/componentes/Input';
 import Button from '@/componentes/Button';
-import { useCollaborators } from '@/context/CollaboratorContext';
 import { useServices } from '@/context/ServiceContext';
 import { v4 as uuidv4 } from 'uuid';
 import { HiArrowLeft } from 'react-icons/hi';
@@ -12,10 +11,11 @@ import { formatCurrency } from '../../../../../utils/formatCurrency';
 import { generateDurations } from '../../../../../utils/generateDurations';
 import Select from 'react-select';
 import { customSelectStyles } from '../../../../../utils/customSelectStyles';
+import { useCollaborator } from '@/context/CollaboratorContext';
 
 export default function NewService() {
   const router = useRouter();
-  const { collaborators } = useCollaborators();
+  const { collaborators } = useCollaborator();
   const { addService } = useServices();
 
   const [name, setName] = useState('');
@@ -28,7 +28,7 @@ export default function NewService() {
 
   const collaboratorOptions = collaborators.map((c) => ({
     value: c.id,
-    label: c.name,
+    label: c.nome,
   }));
 
   const durationOptions = durations.map((d) => ({

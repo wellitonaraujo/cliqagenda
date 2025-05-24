@@ -1,15 +1,16 @@
 'use client';
 
-import { useCollaborators } from '@/context/CollaboratorContext';
 import { useRouter } from 'next/navigation';
 import Button from '@/componentes/Button';
 import Header from '@/componentes/Header';
 import { useEffect } from 'react';
 import Image from 'next/image';
+import { useCollaborator } from '@/context/CollaboratorContext';
+;
 
 export default function Collaborators() {
   const router = useRouter();
-  const { collaborators, fetchCollaborators, loading } = useCollaborators();
+  const { collaborators, fetchCollaborators, loading } = useCollaborator();
 
   useEffect(() => {
     fetchCollaborators();

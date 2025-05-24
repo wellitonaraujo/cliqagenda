@@ -8,12 +8,12 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/componentes/Button";
 import Header from "@/componentes/Header";
-import { useCollaborators } from "@/context/CollaboratorContext";
 import Image from "next/image";
+import { useCollaborator } from "@/context/CollaboratorContext";
 
 export default function Home() {
   const { appointments, updateAppointment, removeAppointment } = useAppointments();
-  const { collaborators } = useCollaborators();
+  const { collaborators } = useCollaborator();
 
   const { hours } = useHorarios();
   const router = useRouter();
@@ -206,7 +206,7 @@ export default function Home() {
             <div className="flex sticky top-0 z-10 bg-white min-w-full">
               {collaborators.map((collab, index) => {
                const count = appointmentsOfTheDay.filter(
-                (a) => Number(a.collaboratorId) === collab.id
+                (a) => (a.collaboratorId) === collab.id
               ).length;              
                 return (
                   <div
