@@ -13,7 +13,7 @@ import { useCollaborator } from "@/context/CollaboratorContext";
 
 export default function Home() {
   const { appointments, updateAppointment, removeAppointment } = useAppointments();
-  const { collaborators } = useCollaborator();
+  const { collaborators, fetchCollaborators } = useCollaborator();
 
   const { hours } = useHorarios();
   const router = useRouter();
@@ -69,7 +69,11 @@ export default function Home() {
       return newDate;
     });
   };
-  
+
+  useEffect(() => {
+    fetchCollaborators();
+  }, []);
+
   const formattedSelectedDate = selectedDate.toISOString().split('T')[0];
   
   const appointmentsOfTheDay = appointments.filter(
@@ -120,7 +124,6 @@ export default function Home() {
       handleModalClose();
     }
   };
-
 
   useEffect(() => {
     function updateMinCols() {
@@ -326,7 +329,7 @@ export default function Home() {
 
                             <button
                               onClick={(e) => {
-                                e.stopPropagation(); // evita disparar o clique no card
+                                e.stopPropagation();
                                 setSelectedAppointment(a);
                                 setModalOpen(true);
                               }}

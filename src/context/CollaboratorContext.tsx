@@ -2,9 +2,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import api from '../services/api'; // seu axios configurado
+import api from '../services/api';
 
-// Tipagens básicas para colaborador e horários
 type DiaSemana = 'DOMINGO' | 'SEGUNDA' | 'TERCA' | 'QUARTA' | 'QUINTA' | 'SEXTA' | 'SABADO';
 
 export interface Horario {
@@ -25,7 +24,6 @@ export interface Collaborator {
   cidade: string;
   role: string;
   empresaId: string;
-  // adicione mais campos se tiver
 }
 
 export interface CreateCollaboratorInput {
@@ -70,7 +68,7 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       await api.post('/collaborators', data);
-      await fetchCollaborators(); // Atualiza lista após criar
+      await fetchCollaborators();
     } catch (error: any) {
       console.error('Erro ao criar colaborador', error);
     
@@ -83,11 +81,10 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
     
   };
 
-  // opcional: busca colaboradores ao montar o provider
   useEffect(() => {
     fetchCollaborators();
   }, []);
-
+  
   return (
     <CollaboratorContext.Provider
       value={{
