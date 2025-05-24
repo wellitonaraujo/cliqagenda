@@ -13,6 +13,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const router = useRouter(); 
@@ -20,9 +21,10 @@ export default function Login() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsSubmitted(true);
-  
+
     if (!email || !senha) return;
-  
+
+    setLoading(true);
     try {
       await login(email, senha);
       router.push('/home');
@@ -30,7 +32,9 @@ export default function Login() {
       const message =
         err?.response?.data?.message || 'Email ou senha inválidos';
       alert(message);
-    }    
+    } finally {
+      setLoading(false);
+    }
   };
   
   return (
@@ -65,7 +69,6 @@ export default function Login() {
               onChange={(e) => setSenha(e.target.value)}
               hasError={isSubmitted && !senha}
             />
-
           </div>
 
           <div className="flex items-center justify-between text-sm">
@@ -74,8 +77,8 @@ export default function Login() {
           </div>
 
           <div className="pt-5">
-            <Button type="submit" full>
-              Entrar
+            <Button type="submit" full disabled={loading}>
+              {loading ? 'Entrando...' : 'Entrar'}
             </Button>
           </div>
         </form>

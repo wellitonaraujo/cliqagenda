@@ -13,17 +13,11 @@ export type Schedule = {
 };
 
 export type Collaborator = {
-  id: string;
-  name: string;
+  id: number;
+  nome: string;
   email: string;
-  phone: string;
-  photoUrl?: string;
-  address: {
-    street: string;
-    number: string;
-    district: string;
-    city: string;
-    state: string;
-  };
-  schedule: Schedule;
+  telefone: string;
+  endereco: string;
+  createdAt: string;
+  role: string;
 };
