@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useCustomers } from "@/context/CustomersContext";
 import { useRouter } from "next/navigation";
@@ -25,27 +25,25 @@ export default function Customers() {
         </div>
       ) : (
         <div className="px-6 py-4">
-          {customers.map((customer) => (
+          {customers.map((customer, index) => (
             <div
-              key={customer.id}
+              key={index} // se não tem id, pode usar o index (melhor ter id depois)
               className="border border-gray-200 hover:shadow-md transition-shadow duration-200 rounded-lg p-4 max-w-xl mx-auto cursor-pointer mb-5"
             >
               <div className="flex items-center gap-2 text-base text-gray-800 font-medium">
                 <FiUser />
-                <span>{customer.name}</span>
+                <span>{customer.nome}</span>
               </div>
 
               <div className="flex items-center gap-2 text-base text-gray-600 mt-3">
                 <FiPhone />
-                <span>{customer.phone}</span>
+                <span>{customer.telefone}</span>
               </div>
 
               <div className="flex items-start gap-2 text-base text-gray-600 mt-3">
                 <FiMapPin className="mt-1" />
                 <div>
-                  <p>{customer.address.street}, {customer.address.number}</p>
-                  <p>{customer.address.district}</p>
-                  <p>{customer.address.city} - {customer.address.state}</p>
+                  <p>{customer.endereco}</p>
                 </div>
               </div>
             </div>
@@ -53,12 +51,13 @@ export default function Customers() {
         </div>
       )}
 
-      <div className="mt-auto p-6 mb-20 w-full max-w-xl mx-auto" onClick={() => {
-        router.push('/new-customers');
-      }}>
-        <Button full>
-          Novo cliente
-        </Button>
+      <div
+        className="mt-auto p-6 mb-20 w-full max-w-xl mx-auto"
+        onClick={() => {
+          router.push('/new-customers');
+        }}
+      >
+        <Button full>Novo cliente</Button>
       </div>
     </div>
   );

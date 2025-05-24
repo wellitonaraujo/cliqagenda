@@ -23,30 +23,24 @@ export default function NewCustomer() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name || !email || !phone || !street || !number || !district || !city || !state) {
       alert('Preencha todos os campos.');
       return;
     }
-
-    // Adicionando o cliente ao contexto
-    addCustomer({
-      id: uuidv4(),
-      name,
+  
+    const enderecoCompleto = `${street}, ${number}, ${district}, ${city} - ${state}`;
+  
+    await addCustomer({
+      nome: name,
       email,
-      phone,
-      address: {
-        street,
-        number,
-        district,
-        city,
-        state,
-      },
+      telefone: phone,
+      endereco: enderecoCompleto,
     });
-
-    router.push('/customers'); // Redireciona para a lista de clientes
+  
+    router.push('/customers');
   };
-
+  
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
