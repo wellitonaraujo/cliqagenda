@@ -205,10 +205,9 @@ export default function Home() {
             {/* Cabeçalho fixo */}
             <div className="flex sticky top-0 z-10 bg-white min-w-full">
               {collaborators.map((collab, index) => {
-                const count = appointmentsOfTheDay.filter(
-                  (a) => a.collaboratorId === collab.id
-                ).length;
-
+               const count = appointmentsOfTheDay.filter(
+                (a) => Number(a.collaboratorId) === collab.id
+              ).length;              
                 return (
                   <div
                     key={`header-${collab.id ?? index}`}
@@ -225,7 +224,7 @@ export default function Home() {
                           className="w-full h-full"
                         />
                       </div>
-                      <span className="truncate max-w-[110px] text-gray-500">{collab.name}</span>
+                      <span className="truncate max-w-[110px] text-gray-500">{collab.nome}</span>
                     </div>
 
                     {/* Contador */}
@@ -259,10 +258,9 @@ export default function Home() {
                   className="flex flex-col border-l border-gray-200 min-w-[220px] flex-1 relative"
                 >
                   {timeSlots.map(({ label }, index) => {
-                    const isSelected =
-                      selectedSlot?.collaboratorId === collab.id &&
-                      selectedSlot?.timeSlotIndex === index;
-
+                   const isSelected =
+                   selectedSlot?.collaboratorId === String(collab.id) &&
+                   selectedSlot?.timeSlotIndex === index;
                     return (
                       <div
                         key={index}
@@ -270,7 +268,7 @@ export default function Home() {
                           if (isSelected) {
                             setSelectedSlot(null);
                           } else {
-                            setSelectedSlot({ collaboratorId: collab.id, timeSlotIndex: index });
+                            setSelectedSlot({ collaboratorId: String(collab.id), timeSlotIndex: index });
                           }
                         }}
                         
@@ -291,7 +289,8 @@ export default function Home() {
 
                   {/* Agendamentos */}
                   {appointmentsOfTheDay
-                  .filter((a) => a.collaboratorId === collab.id)
+                  .filter((a) => a.collaboratorId === String(collab.id)
+                )
                   .map((a) => {
                     const index = getSlotIndex(a.time, timeSlots);
                     if (index === -1) return null;

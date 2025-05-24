@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Collaborator } from '@/types/collaborator';
-import axios from 'axios';
+import api from '@/services/api';
 
 type CollaboratorContextType = {
   collaborators: Collaborator[];
@@ -20,7 +20,7 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
   async function fetchCollaborators() {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3000/collaborators');
+      const response = await api.get('/collaborators')
       setCollaborators(response.data);
       localStorage.setItem('collaborators', JSON.stringify(response.data));
     } catch (error) {

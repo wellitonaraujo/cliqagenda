@@ -19,6 +19,7 @@ export default function NewService() {
   const { addService } = useServices();
 
   const [name, setName] = useState('');
+  const [descricao, setDescricao] = useState('');
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
   const [selectedCollaboratorIds, setSelectedCollaboratorIds] = useState<string[]>([]);
@@ -86,6 +87,15 @@ export default function NewService() {
             placeholder="Nome do serviço"
             value={name}
             onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-4">
+          <Input
+           type="text"
+           placeholder="Descrição"
+           value={descricao}
+           onChange={(e) => setDescricao(e.target.value)}
           />
         </div>
 

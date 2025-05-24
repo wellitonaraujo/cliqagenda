@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/services/api';
 
 export type Customer = {
   nome: string;
@@ -26,7 +26,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
   async function fetchCustomers() {
     setLoading(true);
     try {
-      const response = await axios.get<Customer[]>('http://localhost:3000/customers');
+      const response = await api.get<Customer[]>('/customers');
       setCustomers(response.data);
       localStorage.setItem('customers', JSON.stringify(response.data));
     } catch (error) {
@@ -50,7 +50,7 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
   const addCustomer = async (c: Customer) => {
     try {
       // Faz o POST no backend
-      const response = await axios.post<Customer>('http://localhost:3000/customers', c);
+      const response = await api.post<Customer>('/customers', c);
   
       // Atualiza o estado local só se a requisição deu certo
       setCustomers((prev) => {
@@ -64,7 +64,6 @@ export const CustomerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
   
-
   return (
     <CustomerContext.Provider value={{ customers, addCustomer, fetchCustomers, loading }}>
       {children}

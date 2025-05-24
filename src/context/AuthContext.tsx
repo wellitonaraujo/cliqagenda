@@ -15,7 +15,7 @@ interface AuthContextData {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, senha: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -31,7 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
     }
 
     setIsLoading(false);
@@ -50,7 +49,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
     } catch (error) {
       console.error('Erro no login:', error);
@@ -63,7 +61,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
