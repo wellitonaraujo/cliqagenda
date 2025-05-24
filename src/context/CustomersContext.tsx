@@ -1,78 +1,59 @@
-"use client";
+"use client"
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import api from '@/services/api';
 
-export type Customer = {
+interface Customer {
+  id: number;
   nome: string;
   email: string;
-  telefone: string;
-  endereco: string;
-};
+  telefone?: string;
+  rua?: string;
+  numero?: string;
+  bairro?: string;
+  cidade?: string;
+}
 
-type CustomerContextType = {
+interface CreateCustomerInput {
+  nome: string;
+  email: string;
+  telefone?: string;
+  rua?: string;
+  numero?: string;
+  bairro?: string;
+  cidade?: string;
+}
+
+interface CustomerContextData {
   customers: Customer[];
-  addCustomer: (customer: Customer) => void;
   fetchCustomers: () => Promise<void>;
-  loading: boolean;
-};
+  createCustomer: (data: CreateCustomerInput) => Promise<void>;
+}
 
-const CustomerContext = createContext<CustomerContextType | undefined>(undefined);
+const CustomerContext = createContext<CustomerContextData>({} as CustomerContextData);
 
-export const CustomerProvider = ({ children }: { children: ReactNode }) => {
+export const CustomerProvider = ({ children }: { children: React.ReactNode }) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  async function fetchCustomers() {
-    setLoading(true);
-    try {
-      const response = await api.get<Customer[]>('/customers');
-      setCustomers(response.data);
-      localStorage.setItem('customers', JSON.stringify(response.data));
-    } catch (error) {
-      console.error('Erro ao buscar clientes', error);
-    } finally {
-      setLoading(false);
-    }
-  }
-  
+  const fetchCustomers = async () => {
+    const res = await api.get('/customers');
+    setCustomers(res.data);
+  };
+
+  const createCustomer = async (data: CreateCustomerInput) => {
+    await api.post('/customers', data);
+    await fetchCustomers();
+  };
 
   useEffect(() => {
-    const stored = localStorage.getItem('customers');
-    if (stored) {
-      setCustomers(JSON.parse(stored));
-      setLoading(false);
-    } else {
-      fetchCustomers();
-    }
+    fetchCustomers();
   }, []);
 
-  const addCustomer = async (c: Customer) => {
-    try {
-      // Faz o POST no backend
-      const response = await api.post<Customer>('/customers', c);
-  
-      // Atualiza o estado local só se a requisição deu certo
-      setCustomers((prev) => {
-        const updated = [...prev, response.data];
-        localStorage.setItem('customers', JSON.stringify(updated));
-        return updated;
-      });
-    } catch (error) {
-      console.error('Erro ao adicionar cliente', error);
-      alert('Erro ao adicionar cliente. Tente novamente.');
-    }
-  };
-  
   return (
-    <CustomerContext.Provider value={{ customers, addCustomer, fetchCustomers, loading }}>
+    <CustomerContext.Provider value={{ customers, fetchCustomers, createCustomer }}>
       {children}
     </CustomerContext.Provider>
   );
 };
 
-export const useCustomers = () => {
-  const context = useContext(CustomerContext);
-  if (!context) throw new Error('useCustomers must be used within a CustomerProvider');
-  return context;
-};
+export const useCustomers = () => useContext(CustomerContext);

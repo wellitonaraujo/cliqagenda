@@ -1,46 +1,36 @@
 'use client';
 
 import { useState } from 'react';
-import { HiCamera, HiArrowLeft } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
+import { HiArrowLeft, HiCamera } from 'react-icons/hi';
 import Button from '@/componentes/Button';
 import Input from '@/componentes/Input';
-import { v4 as uuidv4 } from 'uuid';
 import { useCustomers } from '@/context/CustomersContext';
 
 export default function NewCustomer() {
   const router = useRouter();
-  const { addCustomer } = useCustomers(); // Usando o contexto para adicionar clientes
+  const { createCustomer } = useCustomers();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [form, setForm] = useState({
+    nome: '',
+    email: '',
+    telefone: '',
+    rua: '',
+    numero: '',
+    bairro: '',
+    cidade: '',
+  });
 
-  // Estados de endereço
-  const [street, setStreet] = useState('');
-  const [number, setNumber] = useState('');
-  const [district, setDistrict] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const handleSave = async () => {
-    if (!name || !email || !phone || !street || !number || !district || !city || !state) {
-      alert('Preencha todos os campos.');
-      return;
-    }
-  
-    const enderecoCompleto = `${street}, ${number}, ${district}, ${city} - ${state}`;
-  
-    await addCustomer({
-      nome: name,
-      email,
-      telefone: phone,
-      endereco: enderecoCompleto,
-    });
-  
+  const handleSubmit = async () => {
+    await createCustomer(form);
     router.push('/customers');
   };
-  
+
   return (
     <div className="flex justify-center items-start min-h-screen bg-white">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
@@ -61,15 +51,33 @@ export default function NewCustomer() {
           <h2 className="text-lg font-semibold mb-2">Informações pessoais</h2>
 
           <div className="mb-6">
-            <Input placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input
+              placeholder="Nome"
+              name="nome"
+              value={form.nome}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="mb-6">
-            <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              placeholder="Email"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="mb-6">
-            <Input placeholder="Telefone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <Input
+              placeholder="Telefone"
+              name="telefone"
+              value={form.telefone}
+              onChange={handleChange}
+            />
           </div>
         </section>
 
@@ -77,17 +85,36 @@ export default function NewCustomer() {
           <h2 className="text-lg font-semibold mb-2">Endereço</h2>
 
           <div className="mb-6">
-            <Input placeholder="Logradouro" value={street} onChange={(e) => setStreet(e.target.value)} />
+            <Input
+              placeholder="Logradouro"
+              name="rua"
+              value={form.rua}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-2 mb-4">
-            <Input placeholder="Número" value={number} onChange={(e) => setNumber(e.target.value)} />
-            <Input placeholder="Bairro" value={district} onChange={(e) => setDistrict(e.target.value)} />
+            <Input
+              placeholder="Número"
+              name="numero"
+              value={form.numero}
+              onChange={handleChange}
+            />
+            <Input
+              placeholder="Bairro"
+              name="bairro"
+              value={form.bairro}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-2 mb-4">
-            <Input placeholder="Cidade" value={city} onChange={(e) => setCity(e.target.value)} />
-            <Input placeholder="Estado" value={state} onChange={(e) => setState(e.target.value)} />
+            <Input
+              placeholder="Cidade"
+              name="cidade"
+              value={form.cidade}
+              onChange={handleChange}
+            />
           </div>
         </section>
 
@@ -99,7 +126,7 @@ export default function NewCustomer() {
             Cancelar
           </button>
 
-          <div onClick={handleSave}>
+          <div onClick={handleSubmit}>
             <Button>Salvar</Button>
           </div>
         </div>

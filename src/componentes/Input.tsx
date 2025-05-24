@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 type InputProps = {
+  name?: string; // adiciona name
   label?: string;
   type?: string;
   placeholder?: string;
@@ -13,16 +14,25 @@ type InputProps = {
   value?: string;
 };
 
-export default function Input({ label, type = 'text', placeholder, onChange, hasError, value }: InputProps) {
+export default function Input({ 
+  name,
+  label, 
+  type = 'text', 
+  placeholder, 
+  onChange, 
+  hasError, 
+  value 
+}: InputProps) {
   const isPassword = type === 'password';
   const { visible, toggle } = usePasswordToggle();
   const [isFocused, setIsFocused] = useState(false);
 
   return (
     <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
+      {label && <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>}
       <div className="relative">
         <input
+          name={name} // repasse o name aqui
           type={isPassword ? (visible ? 'text' : 'password') : type}
           placeholder={placeholder}
           onChange={onChange}

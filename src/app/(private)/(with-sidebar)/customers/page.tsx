@@ -6,7 +6,7 @@ import Button from "@/componentes/Button";
 import Header from "@/componentes/Header";
 import { FiMapPin, FiPhone, FiUser } from "react-icons/fi";
 
-export default function Customers() {
+export default function Customers(){
   const router = useRouter();
   const { customers } = useCustomers();
 
@@ -27,7 +27,7 @@ export default function Customers() {
         <div className="px-6 py-4">
           {customers.map((customer, index) => (
             <div
-              key={index} // se não tem id, pode usar o index (melhor ter id depois)
+              key={index}
               className="border border-gray-200 hover:shadow-md transition-shadow duration-200 rounded-lg p-4 max-w-xl mx-auto cursor-pointer mb-5"
             >
               <div className="flex items-center gap-2 text-base text-gray-800 font-medium">
@@ -43,7 +43,9 @@ export default function Customers() {
               <div className="flex items-start gap-2 text-base text-gray-600 mt-3">
                 <FiMapPin className="mt-1" />
                 <div>
-                  <p>{customer.endereco}</p>
+                <p>
+                  {customer.rua}, {customer.numero} - {customer.bairro}, {customer.cidade}
+                </p>
                 </div>
               </div>
             </div>
