@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import axios from 'axios';
 import api from '@/services/api';
 
 interface User {
@@ -29,27 +28,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
-
+  
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
+      api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
     }
-
+  
     setIsLoading(false);
   }, []);
+  
 
   const login = async (email: string, senha: string) => {
     setIsLoading(true);
-
+  
     try {
-      const response = await api.post('/auth/login', {
-        email,
-        senha,
-      });
-
+      const response = await api.post('/auth/login', { email, senha });
       const { token, user } = response.data;
-
+  
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
+  
+      // 🔥 importante!
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  
       setUser(user);
     } catch (error) {
       console.error('Erro no login:', error);
@@ -58,12 +59,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
     }
   };
+  
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
   };
+  
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>

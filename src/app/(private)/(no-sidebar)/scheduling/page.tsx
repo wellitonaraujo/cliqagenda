@@ -1,291 +1,149 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useHorarios } from '@/context/HoursProvider';
-import { useCustomers } from '@/context/CustomersContext';
-import Button from '@/componentes/Button';
-import { HiArrowLeft } from 'react-icons/hi';
-import { useAppointments } from '@/context/AppointmentsProvider';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { formatCurrency } from '../../../../../utils/formatCurrency';
-import { generateDurations } from '../../../../../utils/generateDurations';
-import { v4 as uuidv4 } from 'uuid';
-import { customSelectStyles } from '../../../../../utils/customSelectStyles';
-import Select from '@/componentes/ClientSelect';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";import api from "@/services/api";
+import { toast } from 'react-toastify';
 
-import type { SingleValue } from 'react-select';
-import { useCollaborator } from '@/context/CollaboratorContext';
-import { useService } from '@/context/ServiceContext';
+interface Cliente {
+  id: number;
+  nome: string;
+}
 
-type OptionType = {
-  label: string;
-  value: string;
-};
+interface Colaborador {
+  id: number;
+  nome: string;
+}
 
-export default function AgendamentoForm() {
+interface Servico {
+  id: number;
+  nome: string;
+}
+
+
+export default function CreateAppointmentPage() {
   const router = useRouter();
-  const { hours } = useHorarios();
-  const { customers } = useCustomers();
-  const { collaborators } = useCollaborator();
-  const { services } = useService();
-
-  const [selectedCustomerId, setSelectedCustomerId] = useState('');
-  const [selectedServiceId, setSelectedServiceId] = useState('');
-  const [selectedCollaboratorId, setSelectedCollaboratorId] = useState('');
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState('');
-  const [availableTimes, setAvailableTimes] = useState<string[]>([]);
+  const [form, setForm] = useState({
+    clienteId: "",
+    colaboradorId: "",
+    servicoId: "",
+    data: "",
+    duracaoMin: "",
+    preco: "",
+  });
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
+  const [servicos, setServicos] = useState<Servico[]>([]);
   
-  const [duration, setDuration] = useState('');
-  const [price, setPrice] = useState('');
+  const [error, setError] = useState("");
 
-  const { addAppointment } = useAppointments();
-  const durations = generateDurations();
-
-  const formattedDay = selectedDate ? selectedDate.toISOString().split('T')[0] : '';
-
-  const customerOptions = customers.map(c => ({ value: c.id, label: c.name }));
-  const selectedCustomer = customerOptions.find(opt => opt.value === selectedCustomerId) || null;
-  const serviceOptions = services.map(s => ({ value: s.id, label: s.name }));
-
-  const generateTimeSlots = (start: string, end: string): string[] => {
-    const times: string[] = [];
-    const [startHour, startMinute] = start.split(':').map(Number);
-    const [endHour, endMinute] = end.split(':').map(Number);
-  
-    const startDate = new Date();
-    startDate.setHours(startHour, startMinute, 0, 0);
-  
-    const endDate = new Date();
-    endDate.setHours(endHour, endMinute, 0, 0);
-  
-    while (startDate <= endDate) {
-      const hours = startDate.getHours().toString().padStart(2, '0');
-      const minutes = startDate.getMinutes().toString().padStart(2, '0');
-      times.push(`${hours}:${minutes}`);
-      startDate.setMinutes(startDate.getMinutes() + 15);
-    }
-  
-    return times;
-  };
-  
-  const getDayName = (date: Date) => {
-    const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-    return daysOfWeek[date.getDay()];
-  };
-
-  const isDateAvailable = (date: Date) => {
-    const dayName = getDayName(date);
-    return hours[dayName]?.open ?? false;
-  };
-
-  const handleSubmit = () => {
-    if (!selectedCustomerId || !selectedServiceId || !selectedCollaboratorId || !selectedDate || !selectedTime) {
-      alert('Preencha todos os campos!');
-      return;
-    }
-    
-    const customer = customers.find(c => c.id === selectedCustomerId);
-    const service = services.find(s => s.id === selectedServiceId);
-    const collaborator = collaborators.find(c => c.id === selectedCollaboratorId);
-
-    if (!customer || !service || !collaborator) return;
-
-    const appointmentData = {
-      id: uuidv4(),
-      customerName: customer.nome,
-      serviceId: service.id,
-      serviceName: service.nome,
-      collaboratorId: collaborator.id,
-      collaboratorName: collaborator.nome,
-      day: formattedDay,
-      duration,
-      time: selectedTime,
-      price,
-    };
-
-    console.log('Agendamento confirmado:', appointmentData);
-
-    addAppointment(appointmentData);
-
-    alert('Agendamento realizado com sucesso!');
-    router.push('/home');
-  };
-
-    const handleServiceChange = (opt: OptionType | null) => {
-      const id = opt?.value || '';
-      setSelectedServiceId(id);
-    
-      const selectedService = services.find(s => s.id === id);
-      if (selectedService) {
-        setDuration(selectedService.duration);
-        setPrice(selectedService.price.toString());
-      } else {
-        setDuration('');
-        setPrice('');
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [resClientes, resColaboradores, resServicos] = await Promise.all([
+          api.get("/customers"),
+          api.get("/collaborators"),
+          api.get("/services"),
+        ]);
+        setClientes(resClientes.data);
+        setColaboradores(resColaboradores.data);
+        setServicos(resServicos.data);
+      } catch (err) {
+        toast.error("Erro ao carregar dados:");
       }
-    };
+    }
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-      if (selectedCollaboratorId && selectedDate) {
-        const collaborator = collaborators.find(c => c.id === selectedCollaboratorId);
-    
-        if (!collaborator) return;
-    
-        const dayName = getDayName(selectedDate);
-        const daySchedule = collaborator.schedule?.[dayName];
-    
-        console.log("daySchedule:", daySchedule);
-    
-        if (
-          daySchedule &&
-          daySchedule.open &&
-          Array.isArray(daySchedule.ranges) &&
-          daySchedule.ranges.every(range => typeof range.start === 'string' && typeof range.end === 'string')
-        ) {
-          const slots = daySchedule.ranges.flatMap(range =>
-            generateTimeSlots(range.start, range.end)
-          );
-          setAvailableTimes(slots);
-        } else {
-          setAvailableTimes([]);
-        }
-      }
-    }, [selectedCollaboratorId, selectedDate, collaborators]);
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setError("");
+  
+    try {
+      const dataIso = new Date(form.data).toISOString();
+  
+      const payload = {
+        clienteId: parseInt(form.clienteId),
+        colaboradorId: parseInt(form.colaboradorId),
+        servicoId: parseInt(form.servicoId),
+        data: dataIso,
+        duracaoMin: form.duracaoMin ? parseInt(form.duracaoMin) : undefined,
+        preco: form.preco ? parseFloat(form.preco) : undefined,
+      };
+  
+      console.log("Enviando agendamento:", payload); // <-- Dados enviados
+  
+      const response = await api.post("/appointments", payload);
+  
+      console.log("Resposta do servidor:", response.data); // <-- Resposta recebida
+  
+      router.push("/home");
+    } catch (err: any) {
+      console.error("Erro ao criar agendamento:", err); // <-- Log de erro completo
+      setError(err.response?.data?.message || "Erro ao criar agendamento.");
+    }
+  };
   
   return (
-    <div className="flex justify-center items-start min-h-screen bg-white">
-      <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
-        
-        {/* Cabeçalho */}
-        <div className="flex justify-between items-center mb-8">
-          <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
-            <HiArrowLeft size={24} />
-          </button>
-          <h1 className="text-xl font-semibold mx-auto">Agendamento</h1>
-        </div>
-  
-        {/* Cliente */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Cliente</label>
-          <Select
-            isClearable={false}
-            options={customerOptions}
-            value={selectedCustomer}
-            onChange={(opt: SingleValue<OptionType>) => setSelectedCustomerId(opt?.value || '')}
-            placeholder="Selecione um cliente"
-            classNames={customSelectStyles.classNames}
-          />
-        </div>
-  
-        <div className="mb-6 flex flex-col md:flex-row md:items-end md:gap-4">
-          {/* Serviço */}
-          <div className="w-full md:w-2/3">
-            <label className="block text-sm font-medium mb-2">Serviço</label>
-            <Select
-              options={serviceOptions}
-              value={serviceOptions.find(opt => opt.value === selectedServiceId) || null}
-              onChange={handleServiceChange}
-              placeholder="Selecione um serviço"
-              classNames={customSelectStyles.classNames}
-            />
-          </div>
-          {/* Preço */}
-          <div className="w-full md:w-1/3 mt-6 md:mt-0">
-            <label className="block text-sm font-medium mb-2">Preço</label>
-            <input
-              type="text"
-              value={price}
-              readOnly
-              onChange={e => setPrice(formatCurrency(e.target.value))}
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
-              placeholder="R$ 0,00"
-            />
-          </div>
+    <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded shadow">
+      <h1 className="text-2xl font-bold mb-4">Criar Agendamento</h1>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <select name="clienteId" value={form.clienteId} onChange={handleChange} className="w-full border rounded p-2">
+          <option value="">Selecione o cliente</option>
+          {clientes.map((c) => (
+            <option key={c.id} value={c.id}>{c.nome}</option>
+          ))}
+        </select>
 
-        </div>
+        <select name="colaboradorId" value={form.colaboradorId} onChange={handleChange} className="w-full border rounded p-2">
+          <option value="">Selecione o colaborador</option>
+          {colaboradores.map((c) => (
+            <option key={c.id} value={c.id}>{c.nome}</option>
+          ))}
+        </select>
 
-        {/* Colaborador */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Colaborador</label>
-          <Select
-            options={collaborators.map(c => ({ value: c.id, label: c.name }))}
-            value={
-              collaborators
-                .map(c => ({ value: c.id, label: c.name }))
-                .find(opt => opt.value === selectedCollaboratorId) || null
-            }
-            onChange={(opt: SingleValue<OptionType>) => setSelectedCollaboratorId(opt?.value || '')}
-            placeholder="Selecione um colaborador"
-            classNames={customSelectStyles.classNames}
-          />
-        </div>
-  
-        {/* Data */}
-        <div className="w-full md:w-1/2 mt-6 mb-6">
-          <label className="block text-sm font-medium mb-2">Selecione um dia</label>
-          <DatePicker
-            selected={selectedDate}
-            onChange={date => setSelectedDate(date)}
-            dateFormat="dd/MM/yyyy"
-            minDate={new Date()}
-            filterDate={isDateAvailable}
-            placeholderText="Escolha um dia disponível"
-            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
-          />
-        </div>
-  
-        {/* Horário e duração */}
-        {availableTimes.length > 0 && (
-          <div className="mb-6 mt-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              {/* Horário */}
-              <div className="flex-1">
-                <label className="block text-sm font-medium mb-2">Horário</label>
-                <Select
-                  options={availableTimes.map(time => ({ value: time, label: time }))}
-                  value={selectedTime ? { value: selectedTime, label: selectedTime } : null}
-                  onChange={(opt: SingleValue<OptionType>) => setSelectedTime(opt?.value || '')}
-                  placeholder="Selecione um horário"
-                  classNames={customSelectStyles.classNames}
-                />
-              </div>
-  
-              {/* Duração */}
-              <div className="flex-1">
-                <label className="block text-sm font-medium mb-2">Duração</label>
-                <Select
-                  options={durations.map(d => ({ value: d, label: d }))}
-                  value={
-                    durations
-                      .map(d => ({ value: d, label: d }))
-                      .find(opt => opt.value === duration) || null
-                  }
-                  onChange={(opt: SingleValue<OptionType>) => setDuration(opt?.value || '')}
-                  placeholder="Selecione a duração"
-                  classNames={customSelectStyles.classNames}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-  
-        {/* Botões */}
-        <div className="flex justify-end gap-4 mt-auto mb-20">
-          <button
-            onClick={() => router.back()}
-            className="text-gray-600 font-medium hover:underline"
-          >
-            Cancelar
-          </button>
-          <div onClick={handleSubmit}>
-            <Button>Confirmar Agendamento</Button>
-          </div>
-        </div>
-      </div>
+        <select name="servicoId" value={form.servicoId} onChange={handleChange} className="w-full border rounded p-2">
+          <option value="">Selecione o serviço</option>
+          {servicos.map((s) => (
+            <option key={s.id} value={s.id}>{s.nome}</option>
+          ))}
+        </select>
+
+        <input
+          type="datetime-local"
+          name="data"
+          value={form.data}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+
+        <input
+          type="number"
+          name="duracaoMin"
+          placeholder="Duração (minutos)"
+          value={form.duracaoMin}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+
+        <input
+          type="number"
+          name="preco"
+          placeholder="Preço (opcional)"
+          value={form.preco}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+        />
+
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Criar Agendamento
+        </button>
+      </form>
     </div>
   );
-  
 }

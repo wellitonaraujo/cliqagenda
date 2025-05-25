@@ -3,104 +3,123 @@
 import { normalizeDayName } from "../../../../../utils/normalizeDayName";
 import { useAppointments } from "@/context/AppointmentsProvider";
 import { FiChevronLeft, FiChevronRight, FiHelpCircle, FiMoreVertical, FiTrash2, FiUserX, FiXCircle } from "react-icons/fi";
-import { useHorarios } from "@/context/HoursProvider";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/componentes/Button";
 import Header from "@/componentes/Header";
 import Image from "next/image";
 import { useCollaborator } from "@/context/CollaboratorContext";
+import { DiaSemana, Horario, useBusiness } from "@/context/BusinessContext";
+import { parseISO } from "date-fns";
 
 export default function Home() {
   const { appointments, updateAppointment, removeAppointment } = useAppointments();
-  const { collaborators, fetchCollaborators } = useCollaborator();
+  const { collaborators } = useCollaborator();
 
-  const { hours } = useHorarios();
   const router = useRouter();
 
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  });
+    const scrollRef = useRef<HTMLDivElement>(null);
 
   const [status, setStatus] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
   const [minCols, setMinCols] = useState(4);
-  const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: string; timeSlotIndex: number } | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: number; timeSlotIndex: number } | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const COL_WIDTH = 180;
 
-  const shortDayName = selectedDate.toLocaleDateString('pt-BR', { weekday: 'short' });
 
-  const convertToMinutes = (time: string) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  };
+  const { horarios, loading, error } = useBusiness();
 
-  const generateTimeSlots = (day: string) => {
-    const config = hours[day];
-    if (!config) return [];    
 
-    const slots = config.ranges.flatMap((range) => {
-      const start = convertToMinutes(range.start);
-      const end = convertToMinutes(range.end);
-      const times = [];
+function getDiaSemanaFromDate(date: Date): DiaSemana {
+  const map = [
+    DiaSemana.DOMINGO,
+    DiaSemana.SEGUNDA,
+    DiaSemana.TERCA,
+    DiaSemana.QUARTA,
+    DiaSemana.QUINTA,
+    DiaSemana.SEXTA,
+    DiaSemana.SABADO,
+  ];
+  return map[date.getDay()];
+}
 
-      for (let t = start; t < end; t += 15) {
-        const hour = Math.floor(t / 60);
-        const minute = t % 60;
-        const label = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-        times.push({ id: t, label });
-      }
+function generateTimeSlots(horario: Horario): string[] {
 
-      return times;
-    });
+  if (!horario.aberto || !horario.horaAbertura || !horario.horaFechamento) return [];
 
-    return slots;
-  };
+  const [startHour, startMinute] = horario.horaAbertura.split(':').map(Number);
+  const [endHour, endMinute] = horario.horaFechamento.split(':').map(Number);
 
-  const dayName = normalizeDayName(shortDayName);
-  const timeSlots = generateTimeSlots(dayName);
+  const slots = [];
+  let current = new Date(0, 0, 0, startHour, startMinute);
+  const end = new Date(0, 0, 0, endHour, endMinute);
 
-  const handleDayChange = (days: number) => {
-    setSelectedDate(prev => {
-      const newDate = new Date(prev);
-      newDate.setDate(prev.getDate() + days);
-      return newDate;
-    });
-  };
+  while (current <= end) {
+    const hourStr = current.getHours().toString().padStart(2, '0');
+    const minuteStr = current.getMinutes().toString().padStart(2, '0');
+    slots.push(`${hourStr}:${minuteStr}`);
+    current.setMinutes(current.getMinutes() + 30);
+  }
+  return slots;
+}
 
-  useEffect(() => {
-    fetchCollaborators();
-  }, []);
+ // Pega o dia da semana atual no enum DiaSemana
+ const diaSemana = getDiaSemanaFromDate(selectedDate);
 
-  const formattedSelectedDate = selectedDate.toISOString().split('T')[0];
+ // Pega o horário do dia da semana selecionado
+ const horarioDoDia = horarios?.find(h => h.diaSemana === diaSemana);
+
+ // Gera os slots com base no horário aberto do dia
+ const labels = horarioDoDia ? generateTimeSlots(horarioDoDia) : [];
+
+ // Cria timeSlots para a UI com id e label
+ const timeSlots = labels.map((label, index) => ({ id: index, label }));
+
+ const handleDayChange = (days: number) => {
+  setSelectedDate(prev => {
+    const newDate = new Date(prev);
+    newDate.setDate(prev.getDate() + days);
+    newDate.setHours(0, 0, 0, 0); // garantir meia-noite
+    return newDate;
+  });
+};
+
+  function isSameDay(date1: Date, date2: Date) {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
   
-  const appointmentsOfTheDay = appointments.filter(
-    (appointment) => appointment.day === formattedSelectedDate
-  );
-  
-  useEffect(() => {
-    if (scrollRef.current && timeSlots.length > 0) {
-      const itemHeight = 40;
-      scrollRef.current.scrollTop = 4 * itemHeight;
-    }
-  }, [timeSlots]);
+  const appointmentsOfTheDay = appointments.filter((appointment) => {
+    return isSameDay(parseISO(appointment.data), selectedDate);
+  });
+
+  appointments.forEach((a) => {
+    console.log('appointment.data:', a.data);
+    console.log('appointmentDate local:', new Date(a.data));
+    console.log('selectedDate:', selectedDate);
+  });
+  console.log('Appointments from context:', appointments);
+
 
   const getSlotIndex = (time: string, timeSlots: { id: number; label: string }[]) => {
     return timeSlots.findIndex((slot) => slot.label === time);
   };
   
-  function parseDurationToMinutes(duration: string): number {
-    const horasMatch = duration.match(/(\d+)\s*hora/);
-    const minutosMatch = duration.match(/(\d+)\s*minuto/);
-  
-    const horas = horasMatch ? parseInt(horasMatch[1], 10) : 0;
-    const minutos = minutosMatch ? parseInt(minutosMatch[1], 10) : 0;
-  
-    return horas * 60 + minutos;
+  function parseDurationToMinutes(duration: number): number {
+    return duration;
   }
-  
+    
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedAppointment(null);
@@ -136,6 +155,12 @@ export default function Home() {
     return () => window.removeEventListener('resize', updateMinCols);
   }, []);
 
+  function getTimeFromISO(isoString: string): string {
+    const date = new Date(isoString);
+    return date.toTimeString().slice(0, 5);
+  }
+
+  
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="sticky top-0 z-30 bg-white">
@@ -145,7 +170,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       <div className="sticky top-15 z-20 bg-white p-4 flex justify-between items-start md:items-center">
         {/* Container: botões + texto "agendamentos" */}
         <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
@@ -189,13 +213,15 @@ export default function Home() {
         </div>
       </div>
 
+
       <div className="flex-1 overflow-y-auto pt-3 pr-0 pb-6 pl-6">
-        <div className="flex w-full min-w-full">
+
+      <div className="flex w-full min-w-full">
           {/* Coluna de horários */}
           <div className="flex flex-col w-10 pr-2">
             <div className="h-[32px]" />
-            {timeSlots.map(({ id, label }, index) => (
-              <div key={id} className="h-10 flex justify-end">
+            {timeSlots.map(({ label }, index) => (
+              <div key={label} className="h-10 flex justify-end">
                 {index % 2 === 0 && label && (
                   <span className="text-sm text-gray-400 leading-none">{label}</span>
                 )}
@@ -208,9 +234,10 @@ export default function Home() {
             {/* Cabeçalho fixo */}
             <div className="flex sticky top-0 z-10 bg-white min-w-full">
               {collaborators.map((collab, index) => {
-               const count = appointmentsOfTheDay.filter(
-                (a) => (a.collaboratorId) === collab.id
-              ).length;              
+                const count = appointmentsOfTheDay.filter(
+                  (a) => a.colaborador.id === collab.id
+                ).length;
+
                 return (
                   <div
                     key={`header-${collab.id ?? index}`}
@@ -261,9 +288,10 @@ export default function Home() {
                   className="flex flex-col border-l border-gray-200 min-w-[220px] flex-1 relative"
                 >
                   {timeSlots.map(({ label }, index) => {
-                   const isSelected =
-                   selectedSlot?.collaboratorId === String(collab.id) &&
-                   selectedSlot?.timeSlotIndex === index;
+                    const isSelected =
+                      selectedSlot?.collaboratorId === collab.id &&
+                      selectedSlot?.timeSlotIndex === index;
+
                     return (
                       <div
                         key={index}
@@ -271,7 +299,7 @@ export default function Home() {
                           if (isSelected) {
                             setSelectedSlot(null);
                           } else {
-                            setSelectedSlot({ collaboratorId: String(collab.id), timeSlotIndex: index });
+                            setSelectedSlot({ collaboratorId: collab.id, timeSlotIndex: index });
                           }
                         }}
                         
@@ -292,14 +320,13 @@ export default function Home() {
 
                   {/* Agendamentos */}
                   {appointmentsOfTheDay
-                  .filter((a) => a.collaboratorId === String(collab.id)
-                )
+                  .filter((a) => a.colaborador.id === collab.id)
                   .map((a) => {
-                    const index = getSlotIndex(a.time, timeSlots);
+                    const index = getSlotIndex(getTimeFromISO(a.data), timeSlots);
                     if (index === -1) return null;
 
                     const top = index * 40;
-                    const durationInMinutes = parseDurationToMinutes(a.duration);
+                    const durationInMinutes = parseDurationToMinutes(a.duracaoMin);
                     const height = (durationInMinutes / 30) * 40;
 
                     const isShort = height <= 700;
@@ -325,11 +352,11 @@ export default function Home() {
                         <div className="pl-2 pt-0.5 text-[#034D82] h-full flex flex-col justify-between">
                           {/* Cabeçalho: nome + botão */}
                           <div className="flex justify-between items-start">
-                            <p className="font-semibold text-xs">{a.customerName}</p>
+                            <p className="font-semibold text-xs">{a.cliente.nome}</p>
 
                             <button
                               onClick={(e) => {
-                                e.stopPropagation();
+                                e.stopPropagation(); // evita disparar o clique no card
                                 setSelectedAppointment(a);
                                 setModalOpen(true);
                               }}
@@ -342,9 +369,9 @@ export default function Home() {
                           {/* Conteúdo clicável */}
                           <div>
                             <p className="text-xs text-gray-400 ">
-                              {a.serviceName} às {a.time}
+                              {a.servico.nome} às {a.data}
                             </p>
-                            <p className="text-xs text-gray-400">R$ {a.price}</p>
+                            <p className="text-xs text-gray-400">R$ {a.preco}</p>
                             {a.status && (
                               <p className="text-xs text-[#00AEEF] mt-2">{a.status}</p>
                             )}
@@ -376,60 +403,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        {/* Modal de status (simplificado) */}
-        {modalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/2 z-30">
-            <div className="bg-white w-80 p-5 rounded-xl shadow-2xl shadow-black/30">
-              <h2 className="font-semibold text-lg text-center text-gray-800">Alterar Status</h2>
-
-              <div className="mt-4 space-y-2">
-                <button
-                  onClick={() => handleStatusChange('Em entendimento')}
-                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-                >
-                  <FiHelpCircle className="text-gray-500" />
-                  Em entendimento
-                </button>
-
-                <button
-                  onClick={() => handleStatusChange('Cliente faltou')}
-                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-                >
-                  <FiUserX className="text-gray-500" />
-                  Cliente faltou
-                </button>
-
-                <button
-                  onClick={() => handleStatusChange('Cancelado')}
-                  className="w-full py-2 px-4 text-sm text-left rounded-md hover:bg-gray-100 transition flex items-center gap-2"
-                >
-                  <FiXCircle className="text-gray-500" />
-                  Cancelado
-                </button>
-
-                <button
-                  onClick={handleRemoveAppointment}
-                  className="w-full py-2 px-4 text-sm text-left text-red-500 hover:bg-red-50 transition rounded-md flex items-center gap-2"
-                >
-                  <FiTrash2 className="text-red-500" />
-                  Remover
-                </button>
-              </div>
-
-              <div className="mt-6">
-                <button
-                  onClick={handleModalClose}
-                  className="w-full py-2 bg-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 transition"
-                >
-                  Fechar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
 }
-

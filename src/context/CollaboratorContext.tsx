@@ -14,7 +14,7 @@ export interface Horario {
 }
 
 export interface Collaborator {
-  id: string;
+  id: number;
   nome: string;
   email: string;
   telefone: string;
@@ -23,7 +23,7 @@ export interface Collaborator {
   bairro: string;
   cidade: string;
   role: string;
-  empresaId: string;
+  empresaId: number;
 }
 
 export interface CreateCollaboratorInput {

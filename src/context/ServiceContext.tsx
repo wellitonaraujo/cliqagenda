@@ -46,7 +46,6 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
       setServices((prev) => [...prev, response.data]);
     } catch (error: any) {
       console.error('Erro ao criar serviço:', error);
-      // Caso queira lançar para tratamento na UI
       throw new Error(
         error.response?.data?.message || 'Erro ao criar serviço'
       );

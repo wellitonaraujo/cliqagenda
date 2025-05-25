@@ -1,72 +1,154 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+'use client';
 
-// Para criação
-interface AppointmentInput {
-  customerName: string;
-  serviceId: string;
-  collaboratorId: string;
-  day: string;
-  time: string;
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { formatISO } from 'date-fns';
+import api from '@/services/api';
+import { toast } from 'react-toastify';
+
+interface Appointment {
+  id: number;
+  cliente: { nome: string };
+  colaborador: { id: number; nome: string };
+  servico: { nome: string };
+  data: string;
+  duracaoMin: number;
+  preco: number;
+  status: string;
 }
 
-// Para exibição no front
-interface Appointment extends AppointmentInput {
-  id: string;
-  serviceName: string;
-  duration: string;
-  price: string;
-  time: string;
-  status?: string;
+interface CreateAppointmentPayload {
+  clienteId: number;
+  colaboradorId: number;
+  servicoId: number;
+  data: string;
+  duracaoMin?: number;
+  preco?: number;
 }
 
-interface AppointmentsContextData {
+interface AppointmentContextType {
   appointments: Appointment[];
-  addAppointment: (appointment: Appointment) => void;
-  updateAppointment: (id: string, updatedAppointment: Appointment) => void;
-  removeAppointment: (id: string) => void;
+  fetchAppointments: (filters?: { colaboradorId?: number; data?: string; status?: string }) => Promise<void>;
+  createAppointment: (payload: CreateAppointmentPayload) => Promise<void>;
+  updateAppointment: (id: number, payload: Partial<CreateAppointmentPayload> & { status?: string }) => Promise<void>;
+  removeAppointment: (id: number) => Promise<void>;
+  loading: boolean;
+  error: string | null;
 }
 
-const AppointmentsContext = createContext<AppointmentsContextData | undefined>(undefined);
+interface ApiError {
+  response?: { data?: { message?: string } };
+}
 
-export function AppointmentsProvider({ children }: { children: ReactNode }) {
+const AppointmentContext = createContext<AppointmentContextType | undefined>(undefined);
+
+export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const storedAppointments = localStorage.getItem('appointments');
-    if (storedAppointments) {
-      setAppointments(JSON.parse(storedAppointments));
+  const fetchAppointments = async (filters = {}) => {
+    setLoading(true);
+    try {
+      const { data } = await api.get('/appointments', { params: filters });
+      setAppointments(data);
+      setError(null);
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? 'Erro ao buscar agendamentos');
+    } finally {
+      setLoading(false);
     }
-  }, []);
-
-  const addAppointment = (appointment: Appointment) => {
-    const newAppointments = [...appointments, appointment];
-    setAppointments(newAppointments);
-    localStorage.setItem('appointments', JSON.stringify(newAppointments));
   };
 
-  const updateAppointment = (id: string, updatedAppointment: Appointment) => {
-    const updatedAppointments = appointments.map((appointment) =>
-      appointment.id === id ? { ...appointment, ...updatedAppointment } : appointment
-    );
-    setAppointments(updatedAppointments);
-    localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+  const createAppointment = async (payload: CreateAppointmentPayload) => {
+    setLoading(true);
+    try {
+      const { data } = await api.post('/appointments', {
+        ...payload,
+        data: formatISO(new Date(payload.data)),
+      });
+
+      // Atualiza estado localmente com o novo agendamento
+      setAppointments(prev => [...prev, data]);
+
+      toast.success('Agendamento realizado.');
+      setError(null);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      const message = error.response?.data?.message ?? 'Erro ao criar agendamento';
+      toast.error(message);
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeAppointment = (id: string) => {
-    const updatedAppointments = appointments.filter((appointment) => appointment.id !== id);
-    setAppointments(updatedAppointments);
-    localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
+  const updateAppointment = async (
+    id: number,
+    payload: Partial<CreateAppointmentPayload> & { status?: string }
+  ) => {
+    setLoading(true);
+    try {
+      const { data } = await api.put(`/appointments/${id}`, {
+        ...payload,
+        ...(payload.data && { data: formatISO(new Date(payload.data)) }),
+      });
+
+      // Atualiza o agendamento no estado local
+      setAppointments(prev =>
+        prev.map(appointment => (appointment.id === id ? { ...appointment, ...data } : appointment))
+      );
+
+      toast.success('Agendamento atualizado.');
+      setError(null);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      const message = error.response?.data?.message ?? 'Erro ao atualizar agendamento';
+      toast.error(message);
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeAppointment = async (id: number) => {
+    setLoading(true);
+    try {
+      await api.delete(`/appointments/${id}`);
+
+      // Remove do estado local
+      setAppointments(prev => prev.filter(appointment => appointment.id !== id));
+
+      toast.success('Agendamento removido.');
+      setError(null);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      const message = error.response?.data?.message ?? 'Erro ao remover agendamento';
+      toast.error(message);
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <AppointmentsContext.Provider value={{ appointments, addAppointment, updateAppointment, removeAppointment }}>
+    <AppointmentContext.Provider
+      value={{
+        appointments,
+        fetchAppointments,
+        createAppointment,
+        updateAppointment,
+        removeAppointment,
+        loading,
+        error,
+      }}
+    >
       {children}
-    </AppointmentsContext.Provider>
+    </AppointmentContext.Provider>
   );
-}
+};
 
 export const useAppointments = () => {
-  const context = useContext(AppointmentsContext);
-  if (!context) throw new Error('useAppointments must be used within AppointmentsProvider');
+  const context = useContext(AppointmentContext);
+  if (!context) throw new Error('useAppointments deve ser usado dentro de AppointmentProvider');
   return context;
 };

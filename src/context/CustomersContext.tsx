@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import api from '@/services/api';
-
+import { toast } from "react-toastify";
 interface Customer {
   id: number;
   nome: string;
@@ -38,12 +38,21 @@ export const CustomerProvider = ({ children }: { children: React.ReactNode }) =>
   const fetchCustomers = async () => {
     const res = await api.get('/customers');
     setCustomers(res.data);
-  };
+  }; 
 
   const createCustomer = async (data: CreateCustomerInput) => {
-    await api.post('/customers', data);
-    await fetchCustomers();
+    try {
+      await api.post('/customers', data);
+      await fetchCustomers();
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+       toast.error('Cliente já cadastrado com esse CPF ou dados duplicados.');
+      } else {
+        toast.error('Erro ao cadastrar cliente.');
+      }
+    }
   };
+  
 
   useEffect(() => {
     fetchCustomers();

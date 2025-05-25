@@ -5,14 +5,14 @@ import { CustomerProvider } from '@/context/CustomersContext';
 import { ServiceProvider } from '@/context/ServiceContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { ComboProvider } from '@/context/ComboContext';
-import { HorariosProvider } from '@/context/HoursProvider';
-import { AppointmentsProvider } from '@/context/AppointmentsProvider';
+import { AppointmentProvider } from './AppointmentsProvider';
+import { BusinessProvider } from './BusinessContext';
 
 export const AppProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthProvider>
-      <AppointmentsProvider>
-        <HorariosProvider>
+      <AppointmentProvider>
+        <BusinessProvider>
           <ServiceProvider>
             <CustomerProvider>
               <ComboProvider>
@@ -20,8 +20,8 @@ export const AppProviders = ({ children }: { children: React.ReactNode }) => {
               </ComboProvider>
             </CustomerProvider>
           </ServiceProvider>
-        </HorariosProvider>
-      </AppointmentsProvider>
+        </BusinessProvider>
+      </AppointmentProvider>
     </AuthProvider>
   );
 };
