@@ -38,7 +38,7 @@ export default function AppointmentsHeader({
               <FiChevronLeft size={20} />
             </button>
 
-            <span className="h-10 flex text-[#034D82] items-center justify-center  bg-gray-50 px-4 rounded-md text-sm font-medium">
+            <span className="h-10 flex text-[#5C5C5C] items-center justify-center  bg-gray-50 px-4 rounded-md text-sm font-medium">
               {formatDate(selectedDate)}
             </span>
 
@@ -50,7 +50,7 @@ export default function AppointmentsHeader({
             </button>
           </div>
 
-          <span className="text-sl text-[#034D82] text-center md:text-left pt-4 md:pt-0">
+          <span className="text-sl text-[#5C5C5C] text-center md:text-left pt-4 md:pt-0">
             {getAppointmentsLabel()}
           </span>
         </div>

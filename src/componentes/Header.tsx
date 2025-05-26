@@ -16,11 +16,11 @@ export default function Header() {
           className="text-3xl text-gray-700 md:hidden"
           onClick={toggleSidebar}
         >
-          <HiMenu color='#034D82'/>
+          <HiMenu color='#5C5C5C'/>
         </button>
 
         {/* Exibe o título do header */}
-        <h2 className="text-lg font-semibold text-[#034D82]">{headerTitle}</h2>
+        <h2 className="text-lg font-semibold text-[#252525]">{headerTitle}</h2>
       </div>
     </div>
   );

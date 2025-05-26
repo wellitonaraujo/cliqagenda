@@ -53,7 +53,7 @@ export default function Sidebar() {
             {isCollapsed ? (
               <button
                 onClick={toggleSidebar}
-                className="text-2xl font-bold text-[#034D82]"
+                className="text-2xl font-bold text-[#5C5C5C]"
               >
                 <HiMenu color='#034D82'/>
               </button>
