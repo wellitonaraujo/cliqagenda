@@ -1,28 +1,16 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { formatISO } from 'date-fns';
-import api from '@/services/api';
+import { Appointment } from '@/types/Appointment';
 import { toast } from 'react-toastify';
-
-interface Appointment {
-  id: number;
-  cliente: { nome: string };
-  colaborador: { id: number; nome: string };
-  servico: { nome: string };
-  data: string;        // só a data YYYY-MM-DD
-  hora: string;        // só a hora HH:mm
-  duracaoMin: number;
-  preco: number;
-  status: string;
-}
+import api from '@/services/api';
 
 interface CreateAppointmentPayload {
   clienteId: number;
   colaboradorId: number;
   servicoId: number;
-  data: string;        // YYYY-MM-DD
-  hora: string;        // HH:mm
+  data: string;
+  hora: string;
   duracaoMin?: number;
   preco?: number;
 }

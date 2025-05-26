@@ -1,19 +1,16 @@
+export interface Collaborator {
+  id: number;
+  nome: string;
+}
+
 export interface Appointment {
-    id: string | number;
-    cliente: {
-      nome: string;
-    };
-    duracaoMin: string;
-    time: string;
-    servico: {
-      nome: string;
-    };
-    preco: string | number;
-    status?: string;
-  }
-  
-  export interface TimeSlot {
-    id: number
-    label: string;
-  }
-  
+  id: number;
+  cliente: { nome: string };
+  colaborador: Collaborator;
+  servico: { nome: string };
+  data: string;
+  hora: string;
+  duracaoMin: number;
+  preco: number;
+  status: string;
+}

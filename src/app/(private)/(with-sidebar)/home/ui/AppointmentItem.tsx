@@ -1,29 +1,29 @@
-import { Appointment, TimeSlot } from '@/types/Appointment';
+"use client";
+
+import { useAppointmentsLayout } from '@/hooks/useAppointmentsLayout';
+import React, { Dispatch, SetStateAction } from 'react';
+import { Appointment } from '@/types/Appointment';
 import { FiMoreVertical } from 'react-icons/fi';
 
-interface AppointmentCardProps {
+interface AppointmentItemProps {
   appointment: Appointment;
-  timeSlots: TimeSlot[];
   expandedId: string | number | null;
-  setExpandedId: React.Dispatch<React.SetStateAction<string | number | null>>;
-  setModalOpen: (open: boolean) => void;
-  setSelectedAppointment: (appointment: Appointment | null) => void;
+  setExpandedId: Dispatch<SetStateAction<string | number | null>>;
+  onOpenModal: (appointment: Appointment) => void;
+  horaAbertura: string;
 }
 
-export default function AppointmentCard({
+export const AppointmentItem: React.FC<AppointmentItemProps> = ({
   appointment,
-  timeSlots,
   expandedId,
   setExpandedId,
-  setModalOpen,
-  setSelectedAppointment,
-}: AppointmentCardProps) {
-  const index = timeSlots.findIndex((slot) => slot.label === appointment.time);
-  if (index === -1) return null;
+  onOpenModal,
+  horaAbertura,
+}) => {
+  const { getTopFromHora, getHeightFromDuracao } = useAppointmentsLayout([horaAbertura ?? '08:00']);
 
-  const top = index * 40;
-  const durationInMinutes = parseInt(appointment.duracaoMin, 10);
-  const height = (durationInMinutes / 30) * 40;
+  const top = getTopFromHora(appointment.hora);
+  const height = getHeightFromDuracao(appointment.duracaoMin);
 
   const isShort = height <= 700;
   const isExpanded = expandedId === appointment.id;
@@ -31,9 +31,9 @@ export default function AppointmentCard({
 
   return (
     <div
-      className={`absolute left-1 right-0 shadow-md rounded overflow-hidden bg-[#F5FCFF] border-l-4 transition-all duration-300 cursor-pointer ${
-        isExpanded ? 'z-30' : 'z-10'
-      }`}
+      key={appointment.id}
+      className={`absolute left-1 right-0 shadow-md overflow-hidden bg-[#F5FCFF] border-l-4 transition-all duration-300 cursor-pointer
+        ${isExpanded ? 'z-30' : 'z-10'}`}
       style={{
         top,
         height: displayHeight,
@@ -51,18 +51,16 @@ export default function AppointmentCard({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedAppointment(appointment);
-              setModalOpen(true);
+              onOpenModal(appointment);
             }}
             className="text-[#034D82] pr-1"
           >
             <FiMoreVertical size={18} />
           </button>
         </div>
-
         <div>
           <p className="text-xs text-gray-400 ">
-            {appointment.servico.nome} às {appointment.time}
+            {appointment.servico.nome} às {appointment.hora}
           </p>
           <p className="text-xs text-gray-400">R$ {appointment.preco}</p>
           {appointment.status && (
@@ -72,4 +70,4 @@ export default function AppointmentCard({
       </div>
     </div>
   );
-}
+};

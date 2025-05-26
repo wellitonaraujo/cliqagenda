@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import api from '@/services/api';
@@ -23,7 +25,6 @@ export interface UpdateHorarioDto {
   horarios: Horario[];
 }
 
-
 interface BusinessContextData {
   horarios: Horario[] | null;
   loading: boolean;
@@ -40,7 +41,6 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
   const [horarios, setHorarios] = useState<Horario[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
 
   const fetchSchedules = async (empresaId: number) => {
     setLoading(true);
@@ -60,7 +60,6 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     try {
       await api.patch(`/empresa/${empresaId}/horarios`, dto);
-      // Atualiza a lista local após sucesso
       await fetchSchedules(empresaId);
     } catch (err: any) {
       setError(err?.response?.data?.message || err.message || 'Erro ao atualizar horários');
@@ -70,11 +69,10 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Se quiser já carregar ao montar, usa efeito e pega do usuário
   useEffect(() => {
     if (user?.empresaId) {
       fetchSchedules(user.empresaId);
-      console.log(user?.empresaId)
+      console.log('EmpresaId carregado:', user.empresaId);
     }
   }, [user?.empresaId]);
 
