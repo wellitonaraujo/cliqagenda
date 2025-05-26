@@ -1,6 +1,13 @@
 export function findClosestSlot(hora: string, timeSlots: string[]) {
+  if (!hora) {
+    throw new Error('Hora está indefinida');
+  }
+  if (!timeSlots || timeSlots.length === 0) {
+    throw new Error('timeSlots vazio ou indefinido');
+  }
 
   const toMinutes = (t: string) => {
+    if (!t) throw new Error('time string undefined');
     const [h, m] = t.split(':').map(Number);
     return h * 60 + m;
   };

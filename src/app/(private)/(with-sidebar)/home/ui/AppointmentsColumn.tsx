@@ -40,7 +40,6 @@ export const AppointmentsColumn: React.FC<AppointmentsColumnProps> = ({
               expandedId={expandedId}
               setExpandedId={setExpandedId}
               onOpenModal={onOpenModal}
-              horaAbertura={timeSlots[0]} 
             />
           );
         })
