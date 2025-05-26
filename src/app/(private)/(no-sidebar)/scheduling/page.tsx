@@ -27,9 +27,12 @@ export default function CreateAppointmentPage() {
     colaboradorId: "",
     servicoId: "",
     data: "",
+    hora: "",
     duracaoMin: "",
     preco: "",
   });
+
+
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
   const [servicos, setServicos] = useState<Servico[]>([]);
@@ -54,36 +57,44 @@ export default function CreateAppointmentPage() {
     fetchData();
   }, []);
 
-  const handleChange = (e: any) => {
+  const formatDateToBackend = (date: string) => {
+    const [year, month, day] = date.split("-");
+    return `${day}-${month}-${year}`;
+  };
+  
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-
-  const handleSubmit = async (e: any) => {
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-  
+
+    if (!form.data || !form.hora) {
+      setError("Data e hora são obrigatórios.");
+      return;
+    }
+
     try {
-      const dataIso = new Date(form.data).toISOString();
-  
       const payload = {
         clienteId: parseInt(form.clienteId),
         colaboradorId: parseInt(form.colaboradorId),
         servicoId: parseInt(form.servicoId),
-        data: dataIso,
+        data: formatDateToBackend(form.data),
+        hora: form.hora,
         duracaoMin: form.duracaoMin ? parseInt(form.duracaoMin) : undefined,
         preco: form.preco ? parseFloat(form.preco) : undefined,
       };
-  
-      console.log("Enviando agendamento:", payload); // <-- Dados enviados
-  
-      const response = await api.post("/appointments", payload);
-  
-      console.log("Resposta do servidor:", response.data); // <-- Resposta recebida
-  
+
+      console.log("Enviando agendamento:", payload);
+
+      await api.post("/appointments", payload);
+
       router.push("/home");
     } catch (err: any) {
-      console.error("Erro ao criar agendamento:", err); // <-- Log de erro completo
+      console.error("Erro ao criar agendamento:", err);
       setError(err.response?.data?.message || "Erro ao criar agendamento.");
     }
   };
@@ -115,12 +126,23 @@ export default function CreateAppointmentPage() {
         </select>
 
         <input
-          type="datetime-local"
+          type="date"
           name="data"
           value={form.data}
           onChange={handleChange}
           className="w-full border rounded p-2"
+          required
         />
+
+        <input
+          type="time"
+          name="hora"
+          value={form.hora}
+          onChange={handleChange}
+          className="w-full border rounded p-2"
+          required
+        />
+
 
         <input
           type="number"

@@ -53,7 +53,6 @@ export const CustomerProvider = ({ children }: { children: React.ReactNode }) =>
     }
   };
   
-
   useEffect(() => {
     fetchCustomers();
   }, []);

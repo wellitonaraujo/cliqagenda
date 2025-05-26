@@ -10,7 +10,8 @@ interface Appointment {
   cliente: { nome: string };
   colaborador: { id: number; nome: string };
   servico: { nome: string };
-  data: string;
+  data: string;        // só a data YYYY-MM-DD
+  hora: string;        // só a hora HH:mm
   duracaoMin: number;
   preco: number;
   status: string;
@@ -20,7 +21,8 @@ interface CreateAppointmentPayload {
   clienteId: number;
   colaboradorId: number;
   servicoId: number;
-  data: string;
+  data: string;        // YYYY-MM-DD
+  hora: string;        // HH:mm
   duracaoMin?: number;
   preco?: number;
 }
@@ -62,14 +64,10 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
   const createAppointment = async (payload: CreateAppointmentPayload) => {
     setLoading(true);
     try {
-      const { data } = await api.post('/appointments', {
-        ...payload,
-        data: formatISO(new Date(payload.data)),
-      });
-
-      // Atualiza estado localmente com o novo agendamento
+      const { data } = await api.post('/appointments', payload);
+  
       setAppointments(prev => [...prev, data]);
-
+  
       toast.success('Agendamento realizado.');
       setError(null);
     } catch (err: unknown) {
@@ -81,23 +79,19 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-
+  
   const updateAppointment = async (
     id: number,
     payload: Partial<CreateAppointmentPayload> & { status?: string }
   ) => {
     setLoading(true);
     try {
-      const { data } = await api.put(`/appointments/${id}`, {
-        ...payload,
-        ...(payload.data && { data: formatISO(new Date(payload.data)) }),
-      });
-
-      // Atualiza o agendamento no estado local
+      const { data } = await api.put(`/appointments/${id}`, payload);
+  
       setAppointments(prev =>
         prev.map(appointment => (appointment.id === id ? { ...appointment, ...data } : appointment))
       );
-
+  
       toast.success('Agendamento atualizado.');
       setError(null);
     } catch (err: unknown) {
@@ -109,7 +103,7 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-
+  
   const removeAppointment = async (id: number) => {
     setLoading(true);
     try {

@@ -1,8 +1,7 @@
 'use client';
 
-import { normalizeDayName } from "../../../../../utils/normalizeDayName";
 import { useAppointments } from "@/context/AppointmentsProvider";
-import { FiChevronLeft, FiChevronRight, FiHelpCircle, FiMoreVertical, FiTrash2, FiUserX, FiXCircle } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiMoreVertical } from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/componentes/Button";
@@ -10,11 +9,12 @@ import Header from "@/componentes/Header";
 import Image from "next/image";
 import { useCollaborator } from "@/context/CollaboratorContext";
 import { DiaSemana, Horario, useBusiness } from "@/context/BusinessContext";
-import { parseISO } from "date-fns";
+import { isValid, parse } from "date-fns";
 
 export default function Home() {
-  const { appointments, updateAppointment, removeAppointment } = useAppointments();
+  const { appointments, fetchAppointments, removeAppointment } = useAppointments();
   const { collaborators } = useCollaborator();
+  const { horarios } = useBusiness();
 
   const router = useRouter();
 
@@ -23,7 +23,8 @@ export default function Home() {
     today.setHours(0, 0, 0, 0);
     return today;
   });
-    const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const [status, setStatus] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -33,10 +34,6 @@ export default function Home() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const COL_WIDTH = 180;
-
-
-  const { horarios, loading, error } = useBusiness();
-
 
 function getDiaSemanaFromDate(date: Date): DiaSemana {
   const map = [
@@ -71,16 +68,12 @@ function generateTimeSlots(horario: Horario): string[] {
   return slots;
 }
 
- // Pega o dia da semana atual no enum DiaSemana
  const diaSemana = getDiaSemanaFromDate(selectedDate);
 
- // Pega o horário do dia da semana selecionado
  const horarioDoDia = horarios?.find(h => h.diaSemana === diaSemana);
 
- // Gera os slots com base no horário aberto do dia
  const labels = horarioDoDia ? generateTimeSlots(horarioDoDia) : [];
 
- // Cria timeSlots para a UI com id e label
  const timeSlots = labels.map((label, index) => ({ id: index, label }));
 
  const handleDayChange = (days: number) => {
@@ -91,26 +84,24 @@ function generateTimeSlots(horario: Horario): string[] {
     return newDate;
   });
 };
+const formatDate = (input: string | Date) => {
+  const d = new Date(input);
+  return d.toLocaleDateString('pt-BR');
+};
 
-  function isSameDay(date1: Date, date2: Date) {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  }
-  
-  const appointmentsOfTheDay = appointments.filter((appointment) => {
-    return isSameDay(parseISO(appointment.data), selectedDate);
-  });
+// Supondo que a.data seja "25/05/26" (string)
+// Precisamos transformar isso corretamente para um `Date` válido primeiro
+const parseAppointmentDate = (dateStr: string) => {
+  const [day, month, year] = dateStr.split('/');
+  // Ajustar ano curto (26 => 2026)
+  const fullYear = year.length === 2 ? `20${year}` : year;
+  return new Date(`${fullYear}-${month}-${day}`);
+};
 
-  appointments.forEach((a) => {
-    console.log('appointment.data:', a.data);
-    console.log('appointmentDate local:', new Date(a.data));
-    console.log('selectedDate:', selectedDate);
-  });
-  console.log('Appointments from context:', appointments);
-
+const appointmentsOfTheDay = appointments.filter(a => {
+  const appointmentDate = parseAppointmentDate(a.data);
+  return formatDate(appointmentDate) === formatDate(selectedDate);
+});
 
   const getSlotIndex = (time: string, timeSlots: { id: number; label: string }[]) => {
     return timeSlots.findIndex((slot) => slot.label === time);
@@ -120,30 +111,6 @@ function generateTimeSlots(horario: Horario): string[] {
     return duration;
   }
     
-  const handleModalClose = () => {
-    setModalOpen(false);
-    setSelectedAppointment(null);
-    setStatus(null);
-  };
-  
-  const handleStatusChange = (newStatus: string) => {
-    if (selectedAppointment) {
-      updateAppointment(selectedAppointment.id, {
-        ...selectedAppointment,
-        status: newStatus,
-      });
-      setStatus(newStatus);
-      handleModalClose();
-    }
-   };
-    
-  const handleRemoveAppointment = () => {
-    if (selectedAppointment) {
-      removeAppointment(selectedAppointment.id);
-      handleModalClose();
-    }
-  };
-
   useEffect(() => {
     function updateMinCols() {
       const cols = Math.floor(window.innerWidth / COL_WIDTH);
@@ -155,12 +122,16 @@ function generateTimeSlots(horario: Horario): string[] {
     return () => window.removeEventListener('resize', updateMinCols);
   }, []);
 
-  function getTimeFromISO(isoString: string): string {
-    const date = new Date(isoString);
-    return date.toTimeString().slice(0, 5);
-  }
 
-  
+  useEffect(() => {
+    console.log('Lista de agendamentos:', appointments);
+  }, [appointments]);
+
+  useEffect(() => {
+    fetchAppointments()
+  }, []);
+
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <div className="sticky top-0 z-30 bg-white">
@@ -234,10 +205,10 @@ function generateTimeSlots(horario: Horario): string[] {
             {/* Cabeçalho fixo */}
             <div className="flex sticky top-0 z-10 bg-white min-w-full">
               {collaborators.map((collab, index) => {
-                const count = appointmentsOfTheDay.filter(
-                  (a) => a.colaborador.id === collab.id
-                ).length;
-
+           const count = appointmentsOfTheDay.filter(
+            (a) => a.colaborador.id === collab.id
+          ).length;
+          
                 return (
                   <div
                     key={`header-${collab.id ?? index}`}
@@ -322,9 +293,9 @@ function generateTimeSlots(horario: Horario): string[] {
                   {appointmentsOfTheDay
                   .filter((a) => a.colaborador.id === collab.id)
                   .map((a) => {
-                    const index = getSlotIndex(getTimeFromISO(a.data), timeSlots);
+                    const index = getSlotIndex(a.hora, timeSlots);
                     if (index === -1) return null;
-
+                    
                     const top = index * 40;
                     const durationInMinutes = parseDurationToMinutes(a.duracaoMin);
                     const height = (durationInMinutes / 30) * 40;
