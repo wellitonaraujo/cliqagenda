@@ -89,13 +89,10 @@ const formatDate = (input: string | Date) => {
   return d.toLocaleDateString('pt-BR');
 };
 
-// Supondo que a.data seja "25/05/26" (string)
-// Precisamos transformar isso corretamente para um `Date` válido primeiro
 const parseAppointmentDate = (dateStr: string) => {
   const [day, month, year] = dateStr.split('/');
-  // Ajustar ano curto (26 => 2026)
   const fullYear = year.length === 2 ? `20${year}` : year;
-  return new Date(`${fullYear}-${month}-${day}`);
+  return new Date(Number(fullYear), Number(month) - 1, Number(day));
 };
 
 const appointmentsOfTheDay = appointments.filter(a => {
@@ -327,7 +324,7 @@ const appointmentsOfTheDay = appointments.filter(a => {
 
                             <button
                               onClick={(e) => {
-                                e.stopPropagation(); // evita disparar o clique no card
+                                e.stopPropagation();
                                 setSelectedAppointment(a);
                                 setModalOpen(true);
                               }}
@@ -340,7 +337,7 @@ const appointmentsOfTheDay = appointments.filter(a => {
                           {/* Conteúdo clicável */}
                           <div>
                             <p className="text-xs text-gray-400 ">
-                              {a.servico.nome} às {a.data}
+                              {a.servico.nome} às {a.hora}
                             </p>
                             <p className="text-xs text-gray-400">R$ {a.preco}</p>
                             {a.status && (
