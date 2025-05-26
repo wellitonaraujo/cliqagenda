@@ -11,7 +11,7 @@ export function useAppointmentsLayout(timeSlots: string[]) {
     const startMinutes = startH * 60 + startM;
 
     const diff = totalMinutes - startMinutes;
-    return (diff / 30) * 40; // cada 30min = 40px
+    return (diff / 30) * 40;
   }
 
   function getHeightFromDuracao(duracaoMin: number) {

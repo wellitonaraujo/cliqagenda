@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppointmentsLayout } from '@/hooks/useAppointmentsLayout';
+import { useAppointmentLayoutWithBusiness } from '@/hooks/useAppointmentLayoutWithBusiness';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Appointment } from '@/types/Appointment';
 import { FiMoreVertical } from 'react-icons/fi';
@@ -10,7 +10,6 @@ interface AppointmentItemProps {
   expandedId: string | number | null;
   setExpandedId: Dispatch<SetStateAction<string | number | null>>;
   onOpenModal: (appointment: Appointment) => void;
-  horaAbertura: string;
 }
 
 export const AppointmentItem: React.FC<AppointmentItemProps> = ({
@@ -18,9 +17,9 @@ export const AppointmentItem: React.FC<AppointmentItemProps> = ({
   expandedId,
   setExpandedId,
   onOpenModal,
-  horaAbertura,
 }) => {
-  const { getTopFromHora, getHeightFromDuracao } = useAppointmentsLayout([horaAbertura ?? '08:00']);
+ 
+   const { getTopFromHora, getHeightFromDuracao } = useAppointmentLayoutWithBusiness();
 
   const top = getTopFromHora(appointment.hora);
   const height = getHeightFromDuracao(appointment.duracaoMin);
