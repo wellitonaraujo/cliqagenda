@@ -16,12 +16,14 @@ interface CollaboratorsHeaderProps {
   collaborators: Collaborator[];
   appointmentsOfTheDay: Appointment[];
   minCols?: number;
+  isLoadingCounts?: boolean;
 }
 
 export const CollaboratorsHeader: React.FC<CollaboratorsHeaderProps> = ({
   collaborators,
   appointmentsOfTheDay,
   minCols = 0,
+  isLoadingCounts = false,
 }) => {
   const isLoading = !collaborators || collaborators.length === 0;
 
@@ -38,12 +40,13 @@ export const CollaboratorsHeader: React.FC<CollaboratorsHeaderProps> = ({
               <div className="w-[110px] h-4 rounded bg-gray-300" />
             </div>
 
-            <div className="w-6 h-6 rounded-full bg-gray-300" />
+            <div className="w-6 h-6 min-w-6 min-h-6 rounded-full bg-gray-300" />
           </div>
         ))}
       </div>
     );
   }
+
   return (
     <div className="flex sticky top-0 z-10 bg-white min-w-full">
       {collaborators.map((collab, index) => {
@@ -71,14 +74,17 @@ export const CollaboratorsHeader: React.FC<CollaboratorsHeaderProps> = ({
               </span>
             </div>
 
-            <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#034D82] text-[12px] flex items-center justify-center">
-              {count}
-            </div>
+            {isLoadingCounts ? (
+              <div className="w-6 h-6 min-w-6 min-h-6 rounded-full bg-gray-300 animate-pulse" />
+            ) : (
+              <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#034D82] text-[12px] flex items-center justify-center">
+                {count}
+              </div>
+            )}
           </div>
         );
       })}
 
-      {/* Colunas vazias para preencher */}
       {Array(Math.max(0, minCols - collaborators.length))
         .fill(0)
         .map((_, i) => (

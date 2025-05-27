@@ -68,15 +68,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     router.push('/login'); 
   }, [router]);
 
-  useEffect(() => {
-  const handleUnauthorized = () => {
-    logout();
-  };
+    useEffect(() => {
+    const handleUnauthorized = () => {
+      logout();
+    };
 
-   window.addEventListener('unauthorized', handleUnauthorized);
+    window.addEventListener('unauthorized', handleUnauthorized);
 
-   return () => {
-     window.removeEventListener('unauthorized', handleUnauthorized);
+    return () => {
+      window.removeEventListener('unauthorized', handleUnauthorized);
     };
   }, [logout]);
 

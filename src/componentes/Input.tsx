@@ -32,7 +32,7 @@ export default function Input({
       {label && <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>}
       <div className="relative">
         <input
-          name={name} // repasse o name aqui
+          name={name}
           type={isPassword ? (visible ? 'text' : 'password') : type}
           placeholder={placeholder}
           onChange={onChange}
@@ -41,10 +41,10 @@ export default function Input({
           {...(value !== undefined && { value })}
           className={`w-full border rounded-md px-3 py-3 ${
             isPassword ? 'pr-10' : ''
-          } focus:outline-none focus:ring-2 ${
+          } focus:outline-none focus:ring-1 ${
             hasError && !isFocused
               ? 'border-red-500 focus:ring-red-500'
-              : 'border-gray-400 focus:ring-primary'
+              : 'border-gray-300 focus:border-[#00AEEF] focus:ring-[#00AEEF]'
           }`}
         />
         {isPassword && (

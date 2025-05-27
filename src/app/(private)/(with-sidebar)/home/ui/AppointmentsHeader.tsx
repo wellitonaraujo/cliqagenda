@@ -8,6 +8,17 @@ interface AppointmentsHeaderProps {
   onDateChange: (days: number) => void;
   appointmentsCount: number;
   onNewAppointment: () => void;
+  loading?: boolean;
+}
+
+function Skeleton({ width = 80, height = 20 }: { width?: number; height?: number }) {
+  return (
+    <div
+      className="bg-gray-300 rounded animate-pulse"
+      style={{ width, height }}
+      aria-label="loading"
+    />
+  );
 }
 
 export default function AppointmentsHeader({
@@ -15,6 +26,7 @@ export default function AppointmentsHeader({
   onDateChange,
   appointmentsCount,
   onNewAppointment,
+  loading = false,
 }: AppointmentsHeaderProps) {
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('pt-BR');
@@ -34,6 +46,7 @@ export default function AppointmentsHeader({
             <button
               onClick={() => onDateChange(-1)}
               className="h-10 w-10 flex items-center justify-center text-gray-400 bg-[#fafafa] rounded-md"
+              aria-label="Dia anterior"
             >
               <FiChevronLeft size={20} />
             </button>
@@ -45,13 +58,14 @@ export default function AppointmentsHeader({
             <button
               onClick={() => onDateChange(1)}
               className="h-10 w-10 flex items-center justify-center text-gray-400 bg-[#fafafa] rounded-md"
+              aria-label="Próximo dia"
             >
               <FiChevronRight size={20} />
             </button>
           </div>
 
-          <span className="text-sl text-[#5C5C5C] text-center md:text-left pt-4 md:pt-0">
-            {getAppointmentsLabel()}
+          <span className="text-sl text-[#5C5C5C] text-center md:text-left pt-4 md:pt-0 min-w-[120px]">
+            {loading ? <Skeleton width={100} height={20} /> : getAppointmentsLabel()}
           </span>
         </div>
       </div>

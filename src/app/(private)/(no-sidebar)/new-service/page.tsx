@@ -10,6 +10,7 @@ import Input from '@/componentes/Input';
 import Button from '@/componentes/Button';
 import { useCollaborators } from './hooks/useCollaborators';
 import { generateDurationOptions, Option } from '../../../../../utils/durationOptions';
+import { formatCurrency } from '../../../../../utils/formatCurrency';
 
 export default function NewService() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function NewService() {
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
   const [duracaoMin, setDuracaoMin] = useState(60);
-  const [preco, setPreco] = useState(0);
+  const [preco, setPreco] = useState('R$ 0,00');
   const [colaboradoresIds, setColaboradoresIds] = useState<number[]>([]);
 
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +34,16 @@ export default function NewService() {
     label: c.nome,
   }));
 
+  function parseCurrency(value: string): number {
+    const numeric = value.replace(/\D/g, '');
+    return Number(numeric);
+  }
+  function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const input = e.target.value;
+    const number = parseCurrency(input);
+    setPreco(formatCurrency(number));
+  }
+
   function handleDurationChange(selectedOption: Option | null) {
     setDuracaoMin(selectedOption ? Number(selectedOption.value) : 0);
   }
@@ -41,27 +52,32 @@ export default function NewService() {
     setColaboradoresIds(selectedOptions ? selectedOptions.map(o => Number(o.value)) : []);
   }
 
-  function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = Number(e.target.value);
-    if (value >= 0) setPreco(value);
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setSuccessMessage('');
-    if (!nome.trim() || duracaoMin < 15 || preco < 0 || colaboradoresIds.length === 0) {
+
+    const precoNumber = parseCurrency(preco);
+
+    if (!nome.trim() || duracaoMin < 15 || precoNumber < 0 || colaboradoresIds.length === 0) {
       setError('Preencha todos os campos obrigatórios corretamente.');
       return;
     }
 
     try {
-      await createService({ nome, descricao, duracaoMin, preco, colaboradoresIds });
+      await createService({
+        nome,
+        descricao,
+        duracaoMin,
+        preco: precoNumber,
+        colaboradoresIds,
+      });
+
       setSuccessMessage('Serviço criado com sucesso!');
       setNome('');
       setDescricao('');
       setDuracaoMin(60);
-      setPreco(0);
+      setPreco(formatCurrency(0));
       setColaboradoresIds([]);
     } catch (err) {
       setError((err as Error).message);
@@ -90,7 +106,7 @@ export default function NewService() {
           <div>
             <label className="block text-gray-700 mb-1">Descrição</label>
             <textarea
-              className="w-full border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-1 focus:ring-[#00AEEF] focus:border-[#00AEEF]"
               rows={4}
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
@@ -98,21 +114,46 @@ export default function NewService() {
             />
           </div>
 
-          <Select
-            options={durationOptions}
-            value={durationOptions.find(opt => opt.value === duracaoMin) || null}
-            onChange={handleDurationChange}
-            placeholder="Selecione a duração*"
-            classNamePrefix="react-select"
-            isClearable={false}
-          />
+          <div className="flex flex-row gap-4 w-full">
+            <div className="flex-1">
+              <label className="block text-gray-700 text-sm mb-1">Duração*</label>
+              <Select
+                options={durationOptions}
+                value={durationOptions.find(opt => opt.value === duracaoMin) || null}
+                onChange={handleDurationChange}
+                placeholder="Selecione a duração"
+                classNamePrefix="custom-select"
+                isClearable={false}
+               styles={{
+                control: (base, state) => ({
+                  ...base,
+                  minHeight: 50,
+                  borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                  boxShadow: state.isFocused ? '0 0 0 1px #00AEEF' : base.boxShadow,
+                  '&:hover': {
+                    borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                  },
+                }),
+                valueContainer: (base) => ({
+                  ...base,
+                  paddingTop: 4,
+                  paddingBottom: 4,
+                }),
+              }}
 
-          <Input
-            label="Preço (R$)*"
-            type="number"
-            value={preco}
-            onChange={handlePriceChange}
-          />
+              />
+            </div>
+
+            <div className="flex-1">
+              <Input
+                label="Preço*"
+                type="text"
+                value={preco}
+                onChange={handlePriceChange}
+              />
+            </div>
+          </div>
+
 
           <div>
             <label className="block text-gray-700 mb-1">Colaboradores*</label>
@@ -122,12 +163,31 @@ export default function NewService() {
               <p className="text-red-600">{errorColabs}</p>
             ) : (
               <Select
+                classNamePrefix="custom-select"
                 options={collaboratorOptions}
                 value={collaboratorOptions.filter(opt => colaboradoresIds.includes(opt.value as number))}
                 onChange={handleCollaboratorChange}
                 placeholder="Selecione os colaboradores"
+                noOptionsMessage={() => 'Nenhum colaborador encontrado'}
                 isMulti
                 closeMenuOnSelect={false}
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    minHeight: 50,
+                    borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                    boxShadow: state.isFocused ? '0 0 0 1px #00AEEF' : base.boxShadow,
+                    '&:hover': {
+                      borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                    },
+                  }),
+                  valueContainer: (base) => ({
+                    ...base,
+                    paddingTop: 4,
+                    paddingBottom: 4,
+                  }),
+                }}
+
               />
             )}
             <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>

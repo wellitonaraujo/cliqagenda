@@ -27,6 +27,7 @@ export default function Home() {
     handleRemoveAppointment,
     openModal,
     goToNewAppointment,
+    loading
   } = useHomePage();
 
   return (
@@ -37,6 +38,7 @@ export default function Home() {
         onDateChange={handleDayChange}
         appointmentsCount={appointmentsOfTheDay.length}
         onNewAppointment={goToNewAppointment}
+        loading={loading}
       />
       <div className="flex-1 overflow-y-auto pt-3 pr-0 pb-6 pl-6">
         <div className="flex w-full min-w-full">
@@ -46,6 +48,7 @@ export default function Home() {
               collaborators={collaborators}
               appointmentsOfTheDay={appointmentsOfTheDay}
               minCols={minCols}
+             isLoadingCounts={loading}
             />
             <div className="flex w-full min-w-full">
               {collaborators.map((collab, index) => (

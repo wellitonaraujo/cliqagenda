@@ -6,6 +6,7 @@ import Spinner from '@/componentes/Spinner';
 import { useService } from '@/context/ServiceContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { formatCurrency } from '../../../../../utils/formatCurrency';
 
 export default function Services() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export default function Services() {
               <div className="grid grid-cols-3 text-base font-semibold text-gray-800">
                 <span>{service.nome}</span>
                 <span>{service.duracaoMin} min</span>
-                <span>R$ {service.preco.toFixed(2)}</span>
+                <span>{formatCurrency(service.preco)}</span>
               </div>
             </div>
           ))}

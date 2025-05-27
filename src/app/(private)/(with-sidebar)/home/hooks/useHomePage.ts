@@ -45,44 +45,51 @@ export function useHomePage() {
     return () => window.removeEventListener("resize", updateMinCols);
   }, []);
 
-  useEffect(() => {
-    fetchAppointments();
-  }, []);
+  const [loading, setLoading] = useState(false);
 
-  const handleModalClose = () => {
-    setModalOpen(false);
-    setSelectedAppointment(null);
-    setStatus(null);
-  };
-
-  const handleStatusChange = async (newStatus: string) => {
-    if (selectedAppointment) {
-      try {
-        await updateAppointmentStatus(selectedAppointment.id, newStatus);
-        setStatus(newStatus);
-        handleModalClose();
+    useEffect(() => {
+      async function load() {
+        setLoading(true);
         await fetchAppointments();
-      } catch (err) {
-        console.error("Erro ao atualizar status:", err);
+        setLoading(false);
       }
-    }
-  };
+      load();
+    }, []);
 
-  const handleRemoveAppointment = () => {
-    if (selectedAppointment) {
-      removeAppointment(selectedAppointment.id);
-      handleModalClose();
-    }
-  };
+    const handleModalClose = () => {
+      setModalOpen(false);
+      setSelectedAppointment(null);
+      setStatus(null);
+    };
 
-  const goToNewAppointment = () => {
-    router.push("/scheduling");
-  };
+    const handleStatusChange = async (newStatus: string) => {
+      if (selectedAppointment) {
+        try {
+          await updateAppointmentStatus(selectedAppointment.id, newStatus);
+          setStatus(newStatus);
+          handleModalClose();
+          await fetchAppointments();
+        } catch (err) {
+          console.error("Erro ao atualizar status:", err);
+        }
+      }
+    };
 
-  const openModal = (a: typeof appointments[0]) => {
-    setSelectedAppointment(a);
-    setModalOpen(true);
-  };
+    const handleRemoveAppointment = () => {
+      if (selectedAppointment) {
+        removeAppointment(selectedAppointment.id);
+        handleModalClose();
+      }
+    };
+
+    const goToNewAppointment = () => {
+      router.push("/scheduling");
+    };
+
+    const openModal = (a: typeof appointments[0]) => {
+      setSelectedAppointment(a);
+      setModalOpen(true);
+    };
 
   return {
     selectedDate,
@@ -101,5 +108,6 @@ export function useHomePage() {
     handleRemoveAppointment,
     openModal,
     goToNewAppointment,
+    loading
   };
 }

@@ -1,28 +1,28 @@
 'use client';
 
+import { HiChevronRight, HiMenu } from 'react-icons/hi';
 import { useSidebar } from '@/context/SidebarContext';
+import { useAuth } from '@/context/AuthContext';
+import { HiChevronLeft } from 'react-icons/hi';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { HiChevronRight, HiMenu } from 'react-icons/hi';
-import { HiChevronLeft } from 'react-icons/hi';
-import { useAuth } from '@/context/AuthContext';
-
-const menuItems = [
-  { label: 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
-  { label: 'Atendimentos', icon: 'date-fill.svg', path: '/home' },
-  { label: 'Serviços', icon: 'list-filled.svg', path: '/services' },
-  { label: 'Combos', icon: 'package-open.svg', path: '/combos' },
-  { label: 'Clientes', icon: 'users-solid.svg', path: '/customers' },
-  { label: 'Colaboradores', icon: 'users-config.svg', path: '/collaborators' },
-  { label: 'Fluxo de caixa', icon: 'payment.svg', path: '/cash-flow' },
-  { label: 'Meu Plano', icon: 'wallet-money.svg', path: '/my-plan' },
-];
 
 export default function Sidebar() {
   const pathname = usePathname();
-   const { logout } = useAuth();
+  const { logout } = useAuth();
+
+  const menuItems = [
+    { label: 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
+    { label: 'Atendimentos', icon: 'date-fill.svg', path: '/home' },
+    { label: 'Serviços', icon: 'list-filled.svg', path: '/services' },
+    { label: 'Combos', icon: 'package-open.svg', path: '/combos' },
+    { label: 'Clientes', icon: 'users-solid.svg', path: '/customers' },
+    { label: 'Colaboradores', icon: 'users-config.svg', path: '/collaborators' },
+    { label: 'Fluxo de caixa', icon: 'payment.svg', path: '/cash-flow' },
+    { label: 'Meu Plano', icon: 'wallet-money.svg', path: '/my-plan' },
+  ];
 
   const { isCollapsed, toggleSidebar } = useSidebar();
 
@@ -64,7 +64,6 @@ export default function Sidebar() {
                 <span className="text-[#00AEEF]">Agenda</span>
               </h1>
 
-                {/* Ícone para fechar no desktop */}
                 <button
                   onClick={toggleSidebar}
                   className="text-[#034D82] text-xl md:block hidden"
@@ -72,7 +71,6 @@ export default function Sidebar() {
                   <HiChevronLeft color='#034D82' />
                 </button>
 
-                {/* Ícone para abrir/fechar no mobile */}
                 <button
                   onClick={toggleSidebar}
                   className="absolute right-4 text-[#034D82] text-xl md:hidden block"
