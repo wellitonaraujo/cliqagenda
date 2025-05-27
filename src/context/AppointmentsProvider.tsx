@@ -20,6 +20,7 @@ interface AppointmentContextType {
   fetchAppointments: (filters?: { colaboradorId?: number; data?: string; status?: string }) => Promise<void>;
   createAppointment: (payload: CreateAppointmentPayload) => Promise<void>;
   updateAppointment: (id: number, payload: Partial<CreateAppointmentPayload> & { status?: string }) => Promise<void>;
+  updateAppointmentStatus: (id: number, status: string) => Promise<void>;
   removeAppointment: (id: number) => Promise<void>;
   loading: boolean;
   error: string | null;
@@ -74,12 +75,12 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     setLoading(true);
     try {
-      const { data } = await api.put(`/appointments/${id}`, payload);
-  
+      const { data } = await api.patch(`/appointments/${id}`, payload);
+
       setAppointments(prev =>
         prev.map(appointment => (appointment.id === id ? { ...appointment, ...data } : appointment))
       );
-  
+
       toast.success('Agendamento atualizado.');
       setError(null);
     } catch (err: unknown) {
@@ -91,7 +92,28 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-  
+
+  const updateAppointmentStatus = async (id: number, status: string) => {
+    setLoading(true);
+    try {
+      const { data } = await api.patch(`/appointments/${id}/status`, { status });
+
+      setAppointments(prev =>
+        prev.map(app => (app.id === id ? { ...app, ...data } : app))
+      );
+
+      toast.success('Status atualizado.');
+      setError(null);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      const message = error.response?.data?.message ?? 'Erro ao atualizar status';
+      toast.error(message);
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const removeAppointment = async (id: number) => {
     setLoading(true);
     try {
@@ -119,6 +141,7 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
         fetchAppointments,
         createAppointment,
         updateAppointment,
+        updateAppointmentStatus,
         removeAppointment,
         loading,
         error,

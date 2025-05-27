@@ -1,14 +1,31 @@
-"use client";
+'use client';
 
-import { useCustomers } from "@/context/CustomersContext";
-import { useRouter } from "next/navigation";
-import Button from "@/componentes/Button";
-import Header from "@/componentes/Header";
-import { FiMapPin, FiPhone, FiUser } from "react-icons/fi";
+import { FiMapPin, FiPhone, FiUser } from 'react-icons/fi';
+import { useCustomers } from '@/context/CustomersContext';
+import Spinner from '@/componentes/Spinner';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Button from '@/componentes/Button';
+import Header from '@/componentes/Header';
 
-export default function Customers(){
+export default function Customers() {
   const router = useRouter();
-  const { customers } = useCustomers();
+  const { customers, fetchCustomers } = useCustomers();
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchCustomers();
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <Spinner message="Carregando clientes..." />;
+  }
 
   const hasCustomers = customers.length > 0;
 
@@ -24,11 +41,12 @@ export default function Customers(){
           <p className="mt-2 text-md text-gray-500">Cadastre um novo cliente</p>
         </div>
       ) : (
-        <div className="px-6 py-4">
-          {customers.map((customer, index) => (
+        <div className="px-6 py-4 overflow-auto flex-1">
+          {customers.map((customer) => (
             <div
-              key={index}
+              key={customer.id}
               className="border border-gray-200 hover:shadow-md transition-shadow duration-200 rounded-lg p-4 max-w-xl mx-auto cursor-pointer mb-5"
+              onClick={() => router.push(`/customers/${customer.id}`)}
             >
               <div className="flex items-center gap-2 text-base text-gray-800 font-medium">
                 <FiUser />
@@ -42,11 +60,9 @@ export default function Customers(){
 
               <div className="flex items-start gap-2 text-base text-gray-600 mt-3">
                 <FiMapPin className="mt-1" />
-                <div>
                 <p>
                   {customer.rua}, {customer.numero} - {customer.bairro}, {customer.cidade}
                 </p>
-                </div>
               </div>
             </div>
           ))}
@@ -55,9 +71,7 @@ export default function Customers(){
 
       <div
         className="mt-auto p-6 mb-20 w-full max-w-xl mx-auto"
-        onClick={() => {
-          router.push('/new-customers');
-        }}
+        onClick={() => router.push('/new-customers')}
       >
         <Button full>Novo cliente</Button>
       </div>

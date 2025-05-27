@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function useHomePage() {
-  const { updateAppointment, fetchAppointments, removeAppointment } = useAppointments();
+  const { updateAppointmentStatus, fetchAppointments, removeAppointment } = useAppointments();
   const { collaborators } = useCollaborator();
   const router = useRouter();
 
@@ -55,14 +55,16 @@ export function useHomePage() {
     setStatus(null);
   };
 
-  const handleStatusChange = (newStatus: string) => {
+  const handleStatusChange = async (newStatus: string) => {
     if (selectedAppointment) {
-      updateAppointment(selectedAppointment.id, {
-        ...selectedAppointment,
-        status: newStatus,
-      });
-      setStatus(newStatus);
-      handleModalClose();
+      try {
+        await updateAppointmentStatus(selectedAppointment.id, newStatus);
+        setStatus(newStatus);
+        handleModalClose();
+        await fetchAppointments();
+      } catch (err) {
+        console.error("Erro ao atualizar status:", err);
+      }
     }
   };
 

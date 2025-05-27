@@ -1,6 +1,5 @@
-import { hoursConfig } from "@/config/hoursConfig";
 import { HoursConfig } from "@/hooks/useTimeSlots";
-import { TimeSlot } from "@/types/Appointment";
+import { TimeSlot } from "../src/types/timeSlots";
 
 export const convertToMinutes = (time: string): number => {
     const [hours, minutes] = time.split(':').map(Number);

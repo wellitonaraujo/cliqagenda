@@ -4,7 +4,6 @@ import { FiEdit2, FiLink } from 'react-icons/fi';
 import { Switch } from '@headlessui/react';
 import Image from 'next/image';
 import Header from '@/componentes/Header';
-import { useHorarios } from '@/context/HoursProvider';
 
 const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 

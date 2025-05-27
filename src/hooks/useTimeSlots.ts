@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
 import { convertToMinutes } from '../../utils/timeUtils';
-import { TimeSlot } from '@/types/Appointment';
+import { TimeSlot } from '../types/timeSlots';
+import { useMemo } from 'react';
 
 export type TimeRange = {
-  start: string; // ex: "08:00"
-  end: string;   // ex: "18:00"
+  start: string;
+  end: string;
 };
 
 export type HoursConfig = {

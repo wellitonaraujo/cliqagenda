@@ -13,7 +13,6 @@ interface AppointmentsColumnProps {
   onOpenModal: (appointment: Appointment) => void;
 }
 
-
 export const AppointmentsColumn: React.FC<AppointmentsColumnProps> = ({
   collaboratorId,
   appointmentsOfTheDay,

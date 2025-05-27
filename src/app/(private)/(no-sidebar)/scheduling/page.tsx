@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";import api from "@/services/api";
 import { toast } from 'react-toastify';
+import { formatDateToBackend } from "../../../../../utils/formatDateToBackend";
 
 interface Cliente {
   id: number;
@@ -57,11 +58,6 @@ export default function CreateAppointmentPage() {
     fetchData();
   }, []);
 
-  const formatDateToBackend = (date: string) => {
-    const [year, month, day] = date.split("-");
-    return `${day}-${month}-${year}`;
-  };
-  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -82,13 +78,13 @@ export default function CreateAppointmentPage() {
         clienteId: parseInt(form.clienteId),
         colaboradorId: parseInt(form.colaboradorId),
         servicoId: parseInt(form.servicoId),
-        data: formatDateToBackend(form.data),
+       data: form.data, 
         hora: form.hora,
         duracaoMin: form.duracaoMin ? parseInt(form.duracaoMin) : undefined,
         preco: form.preco ? parseFloat(form.preco) : undefined,
       };
 
-      console.log("Enviando agendamento:", payload);
+      console.log("Payload do agendamento:", payload);
 
       await api.post("/appointments", payload);
 

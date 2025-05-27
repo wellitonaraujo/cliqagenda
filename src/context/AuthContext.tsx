@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import api from '@/services/api';
 
 interface User {
@@ -24,6 +25,7 @@ const AuthContext = createContext({} as AuthContextData);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -35,19 +37,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     setIsLoading(false);
-  }, []);
-
-  // Evento que escuta erro 401 para deslogar o user
-  useEffect(() => {
-    const handleUnauthorized = () => {
-      logout();
-    };
-
-    window.addEventListener('unauthorized', handleUnauthorized);
-
-    return () => {
-      window.removeEventListener('unauthorized', handleUnauthorized);
-    };
   }, []);
 
   const login = async (email: string, senha: string) => {
@@ -71,12 +60,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
     delete api.defaults.headers.common['Authorization'];
+    router.push('/login'); 
+  }, [router]);
+
+  useEffect(() => {
+  const handleUnauthorized = () => {
+    logout();
   };
+
+   window.addEventListener('unauthorized', handleUnauthorized);
+
+   return () => {
+     window.removeEventListener('unauthorized', handleUnauthorized);
+    };
+  }, [logout]);
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>

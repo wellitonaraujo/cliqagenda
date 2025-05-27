@@ -53,6 +53,7 @@ export function useScheduleLogic() {
   const labels = horarioDoDia ? generateTimeSlots(horarioDoDia) : [];
   const timeSlots = labels.map((label, index) => ({ id: index, label }));
 
+
   function handleDayChange(days: number) {
     setSelectedDate((prev) => {
       const newDate = new Date(prev);
@@ -77,7 +78,6 @@ export function useScheduleLogic() {
     fetchAppointments();
   }, []);
   
-
   return {
     selectedDate,
     setSelectedDate,

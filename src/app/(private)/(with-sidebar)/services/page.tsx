@@ -2,6 +2,7 @@
 
 import Button from '@/componentes/Button';
 import Header from '@/componentes/Header';
+import Spinner from '@/componentes/Spinner';
 import { useService } from '@/context/ServiceContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -15,18 +16,14 @@ export default function Services() {
   useEffect(() => {
     const fetchServices = async () => {
       setLoading(true);
-      await loadServices(); // reforce o carregamento aqui se quiser mais controle
+      await loadServices();
       setLoading(false);
     };
     fetchServices();
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-500 text-lg">Carregando serviços...</p>
-      </div>
-    );
+    return <Spinner message="Carregando serviços..." />;
   }
 
   return (

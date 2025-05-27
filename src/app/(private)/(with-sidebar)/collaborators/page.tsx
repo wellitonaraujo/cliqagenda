@@ -5,20 +5,16 @@ import Button from '@/componentes/Button';
 import Header from '@/componentes/Header';
 import Image from 'next/image';
 import { useCollaborator } from '@/context/CollaboratorContext';
+import Spinner from '@/componentes/Spinner';
 
 export default function Collaborators() {
   const router = useRouter();
   const { collaborators, loading } = useCollaborator();
 
-
   if (loading) {
-    return (
-      <div className="flex flex-col h-screen bg-white justify-center items-center">
-        <p className="text-lg font-semibold text-gray-700">Carregando colaboradores...</p>
-      </div>
-    );
+    return <Spinner message="Carregando colaboradores..." />;
   }
-  
+
   return (
     <div className="flex flex-col h-screen bg-white">
       <div className="flex items-center gap-2">

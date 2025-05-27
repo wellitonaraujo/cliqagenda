@@ -25,5 +25,6 @@ export function findClosestSlot(hora: string, timeSlots: string[]) {
     }
   }
 
+
   return closestSlot;
 }

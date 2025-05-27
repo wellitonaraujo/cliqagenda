@@ -56,7 +56,6 @@ export default function NewCustomer() {
               name="nome"
               value={form.nome}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -67,7 +66,6 @@ export default function NewCustomer() {
               type="email"
               value={form.email}
               onChange={handleChange}
-              required
             />
           </div>
 
