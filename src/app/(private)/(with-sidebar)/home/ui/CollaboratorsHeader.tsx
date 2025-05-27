@@ -23,6 +23,27 @@ export const CollaboratorsHeader: React.FC<CollaboratorsHeaderProps> = ({
   appointmentsOfTheDay,
   minCols = 0,
 }) => {
+  const isLoading = !collaborators || collaborators.length === 0;
+
+  if (isLoading) {
+    return (
+      <div className="flex sticky top-0 z-10 bg-white min-w-full">
+        {Array(4).fill(0).map((_, i) => (
+          <div
+            key={`skeleton-${i}`}
+            className="min-w-[220px] h-[40px] flex items-center justify-between px-3 bg-[#fcfcfc] text-xs font-medium text-gray-400 animate-pulse"
+          >
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className="w-7 h-7 rounded-full bg-gray-300" />
+              <div className="w-[110px] h-4 rounded bg-gray-300" />
+            </div>
+
+            <div className="w-6 h-6 rounded-full bg-gray-300" />
+          </div>
+        ))}
+      </div>
+    );
+  }
   return (
     <div className="flex sticky top-0 z-10 bg-white min-w-full">
       {collaborators.map((collab, index) => {
@@ -35,7 +56,6 @@ export const CollaboratorsHeader: React.FC<CollaboratorsHeaderProps> = ({
             key={`header-${collab.id ?? index}`}
             className="min-w-[220px] h-[40px] flex items-center justify-between px-3 bg-[#fcfcfc] text-xs font-medium text-gray-500"
           >
-            {/* Foto + Nome */}
             <div className="flex items-center gap-2 overflow-hidden">
               <div className="w-7 h-7 rounded-full overflow-hidden border border-gray-400">
                 <Image
@@ -51,7 +71,6 @@ export const CollaboratorsHeader: React.FC<CollaboratorsHeaderProps> = ({
               </span>
             </div>
 
-            {/* Contador */}
             <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#034D82] text-[12px] flex items-center justify-center">
               {count}
             </div>

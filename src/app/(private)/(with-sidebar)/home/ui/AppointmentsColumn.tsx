@@ -24,25 +24,26 @@ export const AppointmentsColumn: React.FC<AppointmentsColumnProps> = ({
 
   return (
     <>
-      {appointmentsOfTheDay
-        .filter((a) => a.colaborador.id === collaboratorId)
-        .map((a) => {
-          const closest = findClosestSlot(a.hora, timeSlots);
-          const index = getSlotIndex(closest, timeSlots);
-          
-          if (index === -1) return null;
-        
-          return (
-            <AppointmentItem
-              key={a.id}
-              appointment={a}
-              expandedId={expandedId}
-              setExpandedId={setExpandedId}
-              onOpenModal={onOpenModal}
-            />
-          );
-        })
-      }
+     {appointmentsOfTheDay
+      .filter((a) => a.colaborador.id === collaboratorId)
+      .map((a) => {
+        const closest = findClosestSlot(a.hora, timeSlots);
+        if (!closest) return null;
+
+        const index = getSlotIndex(closest, timeSlots);
+        if (index === -1) return null;
+
+        return (
+          <AppointmentItem
+            key={a.id}
+            appointment={a}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            onOpenModal={onOpenModal}
+          />
+        );
+      })}
+
     </>
   );
 };

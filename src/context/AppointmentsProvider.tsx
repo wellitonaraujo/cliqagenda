@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useRef } from 'react';
 import { Appointment } from '@/types/Appointment';
 import { toast } from 'react-toastify';
 import api from '@/services/api';
@@ -37,11 +37,22 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const cacheRef = useRef<Record<string, Appointment[]>>({});
+
   const fetchAppointments = async (filters = {}) => {
+    const cacheKey = JSON.stringify(filters);
+
+    if (cacheRef.current[cacheKey]) {
+      setAppointments(cacheRef.current[cacheKey]);
+      setError(null);
+      return;
+    }
+
     setLoading(true);
     try {
       const { data } = await api.get('/appointments', { params: filters });
       setAppointments(data);
+      cacheRef.current[cacheKey] = data;
       setError(null);
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'Erro ao buscar agendamentos');
@@ -55,7 +66,11 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { data } = await api.post('/appointments', payload);
   
-      setAppointments(prev => [...prev, data]);
+      setAppointments(prev => {
+        const updated = [...prev, data];
+        cacheRef.current = {};
+        return updated;
+      });
   
       toast.success('Agendamento realizado.');
       setError(null);
@@ -77,9 +92,11 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { data } = await api.patch(`/appointments/${id}`, payload);
 
-      setAppointments(prev =>
-        prev.map(appointment => (appointment.id === id ? { ...appointment, ...data } : appointment))
-      );
+      setAppointments(prev => {
+        const updated = prev.map(appointment => (appointment.id === id ? { ...appointment, ...data } : appointment));
+        cacheRef.current = {}; // limpa cache
+        return updated;
+      });
 
       toast.success('Agendamento atualizado.');
       setError(null);
@@ -98,9 +115,11 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { data } = await api.patch(`/appointments/${id}/status`, { status });
 
-      setAppointments(prev =>
-        prev.map(app => (app.id === id ? { ...app, ...data } : app))
-      );
+      setAppointments(prev => {
+        const updated = prev.map(app => (app.id === id ? { ...app, ...data } : app));
+        cacheRef.current = {}; // limpa cache
+        return updated;
+      });
 
       toast.success('Status atualizado.');
       setError(null);
@@ -119,8 +138,11 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
     try {
       await api.delete(`/appointments/${id}`);
 
-      // Remove do estado local
-      setAppointments(prev => prev.filter(appointment => appointment.id !== id));
+      setAppointments(prev => {
+        const updated = prev.filter(appointment => appointment.id !== id);
+        cacheRef.current = {}; // limpa cache
+        return updated;
+      });
 
       toast.success('Agendamento removido.');
       setError(null);

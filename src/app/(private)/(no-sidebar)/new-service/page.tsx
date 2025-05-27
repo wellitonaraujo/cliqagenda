@@ -1,28 +1,21 @@
-'use client'
+'use client';
 
-import { useService } from '@/context/ServiceContext';
-import api from '@/services/api';
-
-import React, { useEffect, useState } from 'react';
-import { HiArrowLeft } from 'react-icons/hi';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Select, { MultiValue } from 'react-select';
+import { HiArrowLeft } from 'react-icons/hi';
+
+import { useService } from '@/context/ServiceContext';
 import Input from '@/componentes/Input';
 import Button from '@/componentes/Button';
-
-interface User {
-  id: number;
-  nome: string;
-}
-
-interface Option {
-  value: number | string;
-  label: string;
-}
+import { useCollaborators } from './hooks/useCollaborators';
+import { generateDurationOptions, Option } from '../../../../../utils/durationOptions';
 
 export default function NewService() {
   const router = useRouter();
   const { createService } = useService();
+
+  const { colaboradores, loading: loadingColabs, error: errorColabs } = useCollaborators();
 
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -30,46 +23,34 @@ export default function NewService() {
   const [preco, setPreco] = useState(0);
   const [colaboradoresIds, setColaboradoresIds] = useState<number[]>([]);
 
-  const [colaboradores, setColaboradores] = useState<User[]>([]);
-  const [loadingColabs, setLoadingColabs] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const durationOptions: Option[] = [
-    { value: 5, label: '30 minutos' },
-    { value: 15, label: '30 minutos' },
-    { value: 30, label: '30 minutos' },
-    { value: 60, label: '60 minutos' },
-    { value: 90, label: '90 minutos' },
-    { value: 120, label: '120 minutos' },
-  ];
+  const durationOptions = generateDurationOptions();
 
   const collaboratorOptions: Option[] = colaboradores.map(c => ({
     value: c.id,
     label: c.nome,
   }));
 
-  useEffect(() => {
-    async function fetchColaboradores() {
-      try {
-        setLoadingColabs(true);
-        const response = await api.get<User[]>('/collaborators');
-        setColaboradores(response.data);
-      } catch (err) {
-        setError((err as Error).message || 'Erro ao carregar colaboradores');
-      } finally {
-        setLoadingColabs(false);
-      }
-    }
-  
-    fetchColaboradores();
-  }, []);
+  function handleDurationChange(selectedOption: Option | null) {
+    setDuracaoMin(selectedOption ? Number(selectedOption.value) : 0);
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  function handleCollaboratorChange(selectedOptions: MultiValue<Option>) {
+    setColaboradoresIds(selectedOptions ? selectedOptions.map(o => Number(o.value)) : []);
+  }
+
+  function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = Number(e.target.value);
+    if (value >= 0) setPreco(value);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setSuccessMessage('');
-    if (!nome || duracaoMin < 1 || preco < 0 || colaboradoresIds.length === 0) {
+    if (!nome.trim() || duracaoMin < 15 || preco < 0 || colaboradoresIds.length === 0) {
       setError('Preencha todos os campos obrigatórios corretamente.');
       return;
     }
@@ -85,29 +66,13 @@ export default function NewService() {
     } catch (err) {
       setError((err as Error).message);
     }
-  };
-
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
-    if (value >= 0) setPreco(value);
-  };
-
-  const handleDurationChange = (selectedOption: Option | null) => {
-    setDuracaoMin(selectedOption ? Number(selectedOption.value) : 0);
-  };
-
-  const handleCollaboratorChange = (selectedOptions: MultiValue<Option>) => {
-    setColaboradoresIds(selectedOptions ? selectedOptions.map(o => Number(o.value)) : []);
-  };
+  }
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-white p-4">
       <div className="w-full max-w-2xl bg-white rounded-lg p-6 shadow-md relative">
         <div className="flex justify-between items-center mb-8">
-          <button
-            onClick={() => router.back()}
-            className="text-gray-600 hover:text-gray-800"
-          >
+          <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
           </button>
           <h1 className="text-xl font-semibold mx-auto">Novo serviço</h1>
@@ -152,7 +117,9 @@ export default function NewService() {
           <div>
             <label className="block text-gray-700 mb-1">Colaboradores*</label>
             {loadingColabs ? (
-              <p>...</p>
+              <p>Carregando colaboradores...</p>
+            ) : errorColabs ? (
+              <p className="text-red-600">{errorColabs}</p>
             ) : (
               <Select
                 options={collaboratorOptions}
@@ -163,7 +130,7 @@ export default function NewService() {
                 closeMenuOnSelect={false}
               />
             )}
-             <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
+            <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
           </div>
 
           {error && <p className="text-red-600">{error}</p>}

@@ -27,7 +27,7 @@ export const AppointmentModal = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-30 bg-black/30">
+    <div className="fixed inset-0 flex items-center justify-center z-30 bg-black/5">
       <div className="relative bg-white w-80 p-5 rounded-xl shadow-2xl">
         <button
           onClick={onClose}
