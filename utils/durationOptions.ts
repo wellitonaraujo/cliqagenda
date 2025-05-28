@@ -1,7 +1,8 @@
 export interface Option {
-  value: number;
-  label: string;
+  value: string | number;
+  label: string | number;
 }
+
 
 export function generateDurationOptions(): Option[] {
   const options: Option[] = [];

@@ -1,8 +1,9 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import api from '@/services/api';
 import { toast } from "react-toastify";
+import api from '@/services/api';
+
 interface Customer {
   id: number;
   nome: string;

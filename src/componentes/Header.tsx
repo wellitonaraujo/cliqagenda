@@ -11,7 +11,6 @@ export default function Header() {
   return (
     <div className="flex items-center justify-between p-4 bg-white w-full">
       <div className="flex items-center gap-2">
-        {/* Exibe o botão de toggle apenas em telas pequenas */}
         <button
           className="text-3xl text-gray-700 md:hidden"
           onClick={toggleSidebar}
@@ -19,7 +18,6 @@ export default function Header() {
           <HiMenu color='#5C5C5C'/>
         </button>
 
-        {/* Exibe o título do header */}
         <h2 className="text-lg font-semibold text-[#252525]">{headerTitle}</h2>
       </div>
     </div>

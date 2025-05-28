@@ -32,23 +32,23 @@ export default function NewCustomer() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-white">
-      <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
-        <div className="flex justify-between items-center mb-8">
+   <div className="flex items-center justify-center min-h-screen bg-white px-4">
+    <div className="w-full max-w-xl bg-white p-6 rounded border border-gray-100 shadow-xs">
+        <div className="flex justify-between items-center mb-5">
           <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
           </button>
-          <h1 className="text-xl font-semibold mx-auto">Novo Cliente</h1>
+          <h1 className="text-xl text-[#252525] font-medium mx-auto">Novo Cliente</h1>
         </div>
 
         <div className="flex justify-end mb-4">
-          <button className="bg-purple-500 p-2 rounded-full text-white">
+          <button className="bg-[#00AEEF] p-2 rounded-full text-white">
             <HiCamera size={20} />
           </button>
         </div>
 
         <section className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Informações pessoais</h2>
+          <h2 className="text-sd font-semibold mb-2 text-[#252525]">Informações pessoais</h2>
 
           <div className="mb-6">
             <Input
@@ -79,8 +79,8 @@ export default function NewCustomer() {
           </div>
         </section>
 
-        <section className="mt-28 mb-6">
-          <h2 className="text-lg font-semibold mb-2">Endereço</h2>
+        <section className="mt-10 mb-6">
+          <h2 className="text-sd font-semibold mb-2 text-[#252525]">Endereço</h2>
 
           <div className="mb-6">
             <Input
@@ -119,7 +119,7 @@ export default function NewCustomer() {
         <div className="flex justify-end gap-4">
           <button
             onClick={() => router.back()}
-            className="text-gray-600 font-medium hover:underline"
+            className="text-[#252525] font-medium hover:underline"
           >
             Cancelar
           </button>

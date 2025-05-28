@@ -5,13 +5,13 @@ import { useAuth } from './AuthContext';
 import api from '@/services/api';
 
 export enum DiaSemana {
-  DOMINGO = 'DOMINGO',
   SEGUNDA = 'SEGUNDA',
   TERCA = 'TERCA',
   QUARTA = 'QUARTA',
   QUINTA = 'QUINTA',
   SEXTA = 'SEXTA',
   SABADO = 'SABADO',
+  DOMINGO = 'DOMINGO',
 }
 
 export interface Horario {
@@ -72,7 +72,6 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (user?.empresaId) {
       fetchSchedules(user.empresaId);
-      console.log('EmpresaId carregado:', user.empresaId);
     }
   }, [user?.empresaId]);
 
