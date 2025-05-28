@@ -51,18 +51,18 @@ export function useNewCollaborator() {
     setError('');
 
     if (!nome || !email || !telefone || !rua || !numero || !bairro || !cidade) {
-      setError('Preencha todos os campos obrigatórios');
+      toast.warning('Preencha todos os campos obrigatórios');
       return;
     }
 
     if (horarios.length === 0) {
-      setError('Adicione pelo menos um horário');
+      toast.warning('Adicione pelo menos um horário');
       return;
     }
 
     for (const h of horarios) {
       if (!h.horaInicio || !h.horaFim) {
-        setError('Preencha os horários corretamente');
+        toast.warning('Preencha os horários corretamente');
         return;
       }
     }

@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useService } from '@/context/ServiceContext';
-import { useHorarioMensagem } from '@/hooks/useHorarioMensagem';
-import { useAvailableHours } from '@/hooks/useAvailableHours';
-import api from '@/services/api';
-import { toast } from 'react-toastify';
-import { SingleValue } from 'react-select';
 import { generateDurationOptions, Option } from '../../../../../../utils/durationOptions';
 import { formatCurrency } from '../../../../../../utils/formatCurrency';
-
+import { useHorarioMensagem } from '@/hooks/useHorarioMensagem';
+import { useAvailableHours } from '@/hooks/useAvailableHours';
+import { useService } from '@/context/ServiceContext';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { SingleValue } from 'react-select';
+import { toast } from 'react-toastify';
+import api from '@/services/api';
+import { AxiosError } from 'axios';
 
 interface FormState {
   cliente: Option | null;
@@ -109,7 +109,7 @@ export function useAppointmentForm() {
     setError('');
 
     if (!form.data || !form.hora || !form.cliente || !form.colaborador || !form.servico) {
-      setError('Preencha todos os campos obrigatórios.');
+      toast.warning('Preencha todos os campos obrigatórios.');
       return;
     }
 
@@ -124,9 +124,9 @@ export function useAppointmentForm() {
         preco: numericPrice,
       });
       router.push('/home');
-    } catch (err: any) {
-      console.error('Erro ao criar agendamento:', err);
-      setError(err.response?.data?.message || 'Erro ao criar agendamento.');
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      toast.error(error.response?.data?.message || 'Erro ao criar agendamento.');
     }
   };
 

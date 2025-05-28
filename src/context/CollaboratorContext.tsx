@@ -70,10 +70,7 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
     try {
       await api.post('/collaborators', data);
       await fetchCollaborators();
-      toast.success('Colaborador criado com sucesso!');
     } catch (error: any) {
-      toast.error('Erro ao criar colaborador', error);
-    
       if (error.response?.status === 409) {
         toast.error('Já existe um colaborador com este e-mail.');
       }
