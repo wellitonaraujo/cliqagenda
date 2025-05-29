@@ -4,6 +4,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { toast } from "react-toastify";
 import api from '../services/api';
+import { useAuth } from './AuthContext';
 
 type DiaSemana = 'DOMINGO' | 'SEGUNDA' | 'TERCA' | 'QUARTA' | 'QUINTA' | 'SEXTA' | 'SABADO';
 
@@ -53,17 +54,23 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+
   const fetchCollaborators = async () => {
     setLoading(true);
     try {
       const response = await api.get<Collaborator[]>('/collaborators');
       setCollaborators(response.data);
     } catch (error) {
-       toast.error('Erro ao buscar colaboradores');
+      toast.error('Erro ao buscar colaboradores');
+      if ((error as any)?.response?.status === 401) {
+        window.dispatchEvent(new Event('unauthorized'));
+      }
     } finally {
       setLoading(false);
     }
   };
+
 
   const createCollaborator = async (data: CreateCollaboratorInput) => {
     setLoading(true);
@@ -79,9 +86,11 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
     
   };
 
-  useEffect(() => {
+ useEffect(() => {
+    if (!isAuthenticated || authLoading) return;
     fetchCollaborators();
-  }, []);
+  }, [isAuthenticated, authLoading]);
+
   
   return (
     <CollaboratorContext.Provider

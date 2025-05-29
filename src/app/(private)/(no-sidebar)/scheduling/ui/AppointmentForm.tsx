@@ -1,12 +1,11 @@
 'use client';
 
 import { useAppointmentForm } from '../hooks/useAppointmentForm';
-import { HiArrowLeft } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
 import Button from '@/componentes/Button';
 import Input from '@/componentes/Input';
-import SelectField from '@/componentes/SelectField';
 import HeaderWithBackButton from '@/componentes/HeaderWithBackButton';
+import { SelectField } from '@/componentes/SelectField';
 
 
 export default function AppointmentForm() {
@@ -32,7 +31,7 @@ export default function AppointmentForm() {
     <>
       <HeaderWithBackButton title="Novo agendamento" />
       <form onSubmit={handleSubmit} className="space-y-4">
-        <SelectField 
+        <SelectField
           label="Cliente*"
           options={clientes} 
           value={form.cliente} 
@@ -59,7 +58,7 @@ export default function AppointmentForm() {
               onChange={(opt) => handleSelectHoraChange(opt?.value?.toString() || '')}
               placeholder="Selecione um horário"
               isDisabled={!form.data || hourOptions.length === 0}
-              noOptionsMessage={mensagem}
+              noOptionsMessage={() => mensagem}
             />
           </div>
         </div>

@@ -1,7 +1,8 @@
-"use client"
+'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { toast } from "react-toastify";
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'react-toastify';
 import api from '@/services/api';
 
 interface Customer {
@@ -35,11 +36,21 @@ const CustomerContext = createContext<CustomerContextData>({} as CustomerContext
 
 export const CustomerProvider = ({ children }: { children: React.ReactNode }) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   const fetchCustomers = async () => {
-    const res = await api.get('/customers');
-    setCustomers(res.data);
-  }; 
+    try {
+      const res = await api.get('/customers');
+      setCustomers(res.data);
+    } catch (error: any) {
+      console.error('Erro ao buscar clientes:', error);
+      if (error.response?.status === 401) {
+        window.dispatchEvent(new Event('unauthorized'));
+      } else {
+        toast.error('Erro ao buscar clientes.');
+      }
+    }
+  };
 
   const createCustomer = async (data: CreateCustomerInput) => {
     try {
@@ -47,16 +58,17 @@ export const CustomerProvider = ({ children }: { children: React.ReactNode }) =>
       await fetchCustomers();
     } catch (error: any) {
       if (error.response?.status === 409) {
-       toast.error('Cliente já cadastrado com esse CPF ou dados duplicados.');
+        toast.error('Cliente já cadastrado com esse CPF ou dados duplicados.');
       } else {
         toast.error('Erro ao cadastrar cliente.');
       }
     }
   };
-  
+
   useEffect(() => {
+    if (!isAuthenticated || authLoading) return; 
     fetchCustomers();
-  }, []);
+  }, [isAuthenticated, authLoading]);
 
   return (
     <CustomerContext.Provider value={{ customers, fetchCustomers, createCustomer }}>

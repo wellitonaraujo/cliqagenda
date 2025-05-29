@@ -1,6 +1,6 @@
 'use client';
 
-import { HiChevronRight, HiMenu } from 'react-icons/hi';
+import { HiChevronRight, HiMenu, HiLogout } from 'react-icons/hi';
 import { useSidebar } from '@/context/SidebarContext';
 import { useAuth } from '@/context/AuthContext';
 import { HiChevronLeft } from 'react-icons/hi';
@@ -11,10 +11,10 @@ import clsx from 'clsx';
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { logout, empresa } = useAuth();
 
   const menuItems = [
-    { label: 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
+    { label: empresa?.nome ?? 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
     { label: 'Atendimentos', icon: 'date-fill.svg', path: '/home' },
     { label: 'Serviços', icon: 'list-filled.svg', path: '/services' },
     { label: 'Combos', icon: 'package-open.svg', path: '/combos' },
@@ -55,14 +55,14 @@ export default function Sidebar() {
                 onClick={toggleSidebar}
                 className="text-2xl font-bold text-[#5C5C5C]"
               >
-                <HiMenu color='#034D82'/>
+                <HiMenu color='#034D82' />
               </button>
             ) : (
               <div className="flex items-center justify-between w-full">
-               <h1 className="text-2xl font-bold">
-                <span className="text-[#034D82]">Cliq</span>
-                <span className="text-[#00AEEF]">Agenda</span>
-              </h1>
+                <h1 className="text-2xl font-bold">
+                  <span className="text-[#034D82]">Cliq</span>
+                  <span className="text-[#00AEEF]">Agenda</span>
+                </h1>
 
                 <button
                   onClick={toggleSidebar}
@@ -77,11 +77,10 @@ export default function Sidebar() {
                 >
                   {isCollapsed ? <HiChevronRight color='#034D82' /> : <HiChevronLeft color='#034D82' />}
                 </button>
-
               </div>
             )}
           </div>
-          {/* Menu */}
+
           <nav className="flex flex-col gap-1">
             {menuItems.map(({ label, icon, path }) => {
               const isActive = pathname === path;
@@ -103,17 +102,29 @@ export default function Sidebar() {
                     if (window.innerWidth < 768) toggleSidebar();
                   }}
                 >
-                 <Image src={icon} alt={label} width={24} height={24} />
-
+                  <Image src={icon} alt={label} width={24} height={24} />
                   {!isCollapsed && (
-                  <span className="text-base text-[#034D82] font-medium whitespace-nowrap">{label}</span>
+                    <span className="text-base text-[#034D82] font-medium whitespace-nowrap">{label}</span>
                   )}
-          
                 </Link>
               );
             })}
-              <button onClick={logout}>Sair</button>
           </nav>
+        </div>
+
+        <div className="p-4">
+          <button
+            onClick={logout}
+            className={clsx(
+              'flex items-center gap-2 text-sm font-medium text-[#034D82] hover:text-red-500',
+              {
+                'justify-center w-full': isCollapsed,
+              }
+            )}
+          >
+            <HiLogout size={24} />
+            {!isCollapsed && <span>Sair</span>}
+          </button>
         </div>
       </div>
     </>

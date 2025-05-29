@@ -7,8 +7,8 @@ import { HiArrowLeft } from 'react-icons/hi';
 import Input from '@/componentes/Input';
 import Button from '@/componentes/Button';
 import { useNewServiceForm } from './hooks/useNewServiceForm';
-import SelectField from '@/componentes/SelectField';
 import HeaderWithBackButton from '@/componentes/HeaderWithBackButton';
+import { SelectField } from '@/componentes/SelectField';
 
 export default function NewService() {
   const {

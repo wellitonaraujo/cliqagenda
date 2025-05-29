@@ -2,6 +2,7 @@
 
 import api from '@/services/api';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 interface Service {
   id: number;
@@ -30,6 +31,7 @@ const ServiceContext = createContext<ServiceContextData | undefined>(undefined);
 
 export const ServiceProvider = ({ children }: { children: ReactNode }) => {
   const [services, setServices] = useState<Service[]>([]);
+  const { isAuthenticated, isLoading: authLoading } = useAuth(); 
 
   const loadServices = async () => {
     try {
@@ -37,6 +39,10 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
       setServices(data);
     } catch (error) {
       console.error('Erro ao carregar serviços:', error);
+
+    if ((error as any)?.response?.status === 401) {
+      window.dispatchEvent(new Event('unauthorized'));
+    }
     }
   };
 
@@ -52,9 +58,11 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
+    if (!isAuthenticated || authLoading) return; 
     loadServices();
-  }, []);
+  }, [isAuthenticated, authLoading]);
+
 
   return (
     <ServiceContext.Provider value={{ services, createService, loadServices }}>
