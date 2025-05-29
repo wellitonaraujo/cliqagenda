@@ -94,6 +94,20 @@ export function useNewCollaborator() {
     }
   }
 
+  function loadHorariosFromEmpresa() {
+    if (!empresaHorarios) return [];
+    return empresaHorarios.map(h => ({
+      diaSemana: h.diaSemana,
+      horaInicio: h.horaAbertura || '',
+      horaFim: h.horaFechamento || '',
+      ativo: h.aberto,
+    }));
+  }
+
+  useEffect(() => {
+    setHorarios(loadHorariosFromEmpresa());
+  }, [empresaHorarios]);
+
   function resetForm() {
     setNome('');
     setEmail('');
@@ -102,7 +116,7 @@ export function useNewCollaborator() {
     setNumero('');
     setBairro('');
     setCidade('');
-    setHorarios([]);
+    setHorarios(loadHorariosFromEmpresa());
   }
 
   return {

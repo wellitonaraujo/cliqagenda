@@ -2,12 +2,12 @@
 
 import { FiMapPin, FiPhone, FiUser } from 'react-icons/fi';
 import { useCustomers } from '@/context/CustomersContext';
+import EmptyState from '@/componentes/EmptyState';
 import Spinner from '@/componentes/Spinner';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Button from '@/componentes/Button';
 import Header from '@/componentes/Header';
-import EmptyState from '@/componentes/EmptyState';
 
 export default function Customers() {
   const router = useRouter();

@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import Button from "@/componentes/Button";
 import Input from "@/componentes/Input";
 import { useCombos } from '@/context/ComboContext';
-import { useServices } from '@/context/ServiceContext';
 import { v4 } from 'uuid';
 import { HiArrowLeft } from 'react-icons/hi';
 import { useCollaborator } from '@/context/CollaboratorContext';
+import { useService } from '@/context/ServiceContext';
 
 export default function NewCombo() {
   const { addCombo } = useCombos();
-  const { services: availableServices } = useServices();
+  const { services: availableServices } = useService();
   const { collaborators } = useCollaborator();
   const router = useRouter();
 
@@ -130,7 +130,7 @@ export default function NewCombo() {
               </option>
               {collaborators.map((colab) => (
                 <option key={colab.id} value={colab.id}>
-                  {colab.name}
+                  {colab.nome}
                 </option>
               ))}
             </select>

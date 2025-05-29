@@ -42,6 +42,7 @@ export interface CreateCollaboratorInput {
 interface CollaboratorContextData {
   collaborators: Collaborator[];
   loading: boolean;
+  setLoading: (loading: boolean) => void;
   createCollaborator: (data: CreateCollaboratorInput) => Promise<void>;
   fetchCollaborators: () => Promise<void>;
 }
@@ -71,7 +72,6 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-
   const createCollaborator = async (data: CreateCollaboratorInput) => {
     setLoading(true);
     try {
@@ -91,12 +91,12 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
     fetchCollaborators();
   }, [isAuthenticated, authLoading]);
 
-  
   return (
     <CollaboratorContext.Provider
       value={{
         collaborators,
         loading,
+        setLoading,
         createCollaborator,
         fetchCollaborators,
       }}

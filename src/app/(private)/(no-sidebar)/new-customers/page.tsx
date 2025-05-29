@@ -16,7 +16,7 @@ export default function NewCustomer() {
           <button onClick={handleCancel} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
           </button>
-          <h1 className="text-xl text-[#252525] font-medium mx-auto">Novo Cliente</h1>
+          <h1 className="text-xl font-semibold mx-auto">Novo Cliente</h1>
         </div>
 
         <div className="flex justify-end mb-4">

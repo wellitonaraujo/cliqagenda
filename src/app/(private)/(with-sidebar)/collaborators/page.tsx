@@ -7,10 +7,21 @@ import Image from 'next/image';
 import { useCollaborator } from '@/context/CollaboratorContext';
 import Spinner from '@/componentes/Spinner';
 import EmptyState from '@/componentes/EmptyState';
+import { useEffect } from 'react';
 
 export default function Collaborators() {
   const router = useRouter();
-  const { collaborators, loading } = useCollaborator();
+  const { collaborators, loading, setLoading, fetchCollaborators } = useCollaborator();
+
+   useEffect(() => {
+      const fetchData = async () => {
+        setLoading(true);
+        await fetchCollaborators();
+        setLoading(false);
+      };
+      fetchData();
+    }, []);
+  
 
   if (loading) {
     return <Spinner message="Carregando colaboradores..." />;
