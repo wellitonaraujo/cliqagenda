@@ -36,7 +36,8 @@ export default function AppointmentForm() {
           options={clientes} 
           value={form.cliente} 
           onChange={handleSelectChange('cliente')} 
-          placeholder="Selecione um cliente" 
+          placeholder="Selecione um cliente"
+          noOptionsMessage={() => 'Nenhum cliente encontrado'}
         />
         <SelectField 
           label="Serviço*" 
@@ -44,6 +45,7 @@ export default function AppointmentForm() {
           value={form.servico} 
           onChange={handleSelectChange('servico')} 
           placeholder="Selecione um serviço" 
+          noOptionsMessage={() => 'Nenhum serviço encontrado'}
         />
         <div className="flex gap-4">
           <div className="w-1/2">
@@ -58,7 +60,7 @@ export default function AppointmentForm() {
               onChange={(opt) => handleSelectHoraChange(opt?.value?.toString() || '')}
               placeholder="Selecione um horário"
               isDisabled={!form.data || hourOptions.length === 0}
-              noOptionsMessage={() => mensagem}
+              noOptionsMessage={() => 'Nenhum horário disponível'}
             />
           </div>
         </div>
@@ -70,6 +72,7 @@ export default function AppointmentForm() {
               value={form.duracaoMin} 
               onChange={(opt) => handleSelectChange('duracaoMin')(opt)} 
               placeholder="Duração"
+              noOptionsMessage={() => 'Nenhuma duração disponível'}
             />
           </div>
 
@@ -89,6 +92,7 @@ export default function AppointmentForm() {
           value={form.colaborador} 
           onChange={handleSelectChange('colaborador')} 
           placeholder="Selecione um colaborador" 
+          noOptionsMessage={() => 'Nenhum colaborador encontrado'}
         />
         <div className="flex justify-end gap-4 mt-6">
           <button

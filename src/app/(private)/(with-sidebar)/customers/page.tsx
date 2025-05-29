@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Button from '@/componentes/Button';
 import Header from '@/componentes/Header';
+import EmptyState from '@/componentes/EmptyState';
 
 export default function Customers() {
   const router = useRouter();
@@ -36,10 +37,10 @@ export default function Customers() {
       </div>
 
       {!hasCustomers ? (
-        <div className="flex flex-col justify-center items-center flex-1 text-center">
-          <p className="text-lg font-semibold text-gray-700">Sem clientes cadastrados</p>
-          <p className="mt-2 text-md text-gray-500">Cadastre um novo cliente</p>
-        </div>
+       <EmptyState
+        title="Sem clientes cadastrados"
+        subtitle="Cadastre um novo cliente"
+      />
       ) : (
         <div className="px-6 py-4 overflow-auto flex-1">
           {customers.map((customer) => (
@@ -48,7 +49,7 @@ export default function Customers() {
               className="border border-gray-200 hover:shadow-md transition-shadow duration-200 rounded-lg p-4 max-w-xl mx-auto cursor-pointer mb-5"
               onClick={() => router.push(`/customers/${customer.id}`)}
             >
-              <div className="flex items-center gap-2 text-base text-gray-800 font-medium">
+              <div className="flex items-center gap-2 text-base text-gray-700 font-semibold">
                 <FiUser />
                 <span>{customer.nome}</span>
               </div>

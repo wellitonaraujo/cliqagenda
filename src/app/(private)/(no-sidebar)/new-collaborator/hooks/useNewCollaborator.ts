@@ -1,4 +1,5 @@
-import { useCollaborator } from '@/context/CollaboratorContext';
+
+import { useCollaboratorStore } from '@/app/store/useCollaboratorStore';
 import { useBusiness } from '@/context/BusinessContext';
 import { DiaSemana, Horario } from '@/types/DiaSemana';
 import { useEffect, useState } from 'react';
@@ -15,7 +16,7 @@ const diaSemanaMap: Record<DiaSemana, string> = {
 };
 
 export function useNewCollaborator() {
-  const { createCollaborator, loading } = useCollaborator();
+  const { createCollaborator, loading } = useCollaboratorStore();
   const { horarios: empresaHorarios } = useBusiness();
 
   const [nome, setNome] = useState('');
@@ -27,6 +28,7 @@ export function useNewCollaborator() {
   const [cidade, setCidade] = useState('');
   const [error, setError] = useState('');
   const [horarios, setHorarios] = useState<Horario[]>([]);
+  const [localLoading, setLocalLoading] = useState(false);
 
   useEffect(() => {
     if (empresaHorarios) {
@@ -49,20 +51,24 @@ export function useNewCollaborator() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    setLocalLoading(true);
 
     if (!nome || !email || !telefone || !rua || !numero || !bairro || !cidade) {
       toast.warning('Preencha todos os campos obrigatórios');
+      setLocalLoading(false);
       return;
     }
 
     if (horarios.length === 0) {
       toast.warning('Adicione pelo menos um horário');
+      setLocalLoading(false);
       return;
     }
 
     for (const h of horarios) {
       if (!h.horaInicio || !h.horaFim) {
         toast.warning('Preencha os horários corretamente');
+        setLocalLoading(false);
         return;
       }
     }
@@ -81,8 +87,10 @@ export function useNewCollaborator() {
 
       toast.success('Colaborador criado com sucesso!');
       resetForm();
-    } catch {
-      setError('Erro ao criar colaborador');
+    } catch (err: any) {
+      setError(err?.message || 'Erro ao criar colaborador');
+    } finally {
+      setLocalLoading(false);
     }
   }
 
@@ -106,7 +114,7 @@ export function useNewCollaborator() {
     bairro,
     cidade,
     horarios,
-    loading,
+    loading: localLoading || loading,
     error,
     diaSemanaMap,
     setNome,

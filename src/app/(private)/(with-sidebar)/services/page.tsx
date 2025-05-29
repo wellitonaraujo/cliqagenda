@@ -7,6 +7,7 @@ import { useService } from '@/context/ServiceContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { formatCurrency } from '../../../../../utils/formatCurrency';
+import EmptyState from '@/componentes/EmptyState';
 
 export default function Services() {
   const router = useRouter();
@@ -34,10 +35,10 @@ export default function Services() {
       </div>
 
       {services.length === 0 ? (
-        <div className="flex flex-col justify-center items-center flex-1 text-center">
-          <p className="text-lg font-semibold text-gray-700">Sem serviços cadastrados</p>
-          <p className="mt-2 text-md text-gray-500">Cadastre um novo serviço</p>
-        </div>
+        <EmptyState
+          title="Sem serviços cadastrados"
+          subtitle="Cadastre um novo serviço"
+        />
       ) : (
         <div className="p-4 flex flex-col gap-4 overflow-auto flex-1 items-center">
           {services.map((service) => (
@@ -46,12 +47,12 @@ export default function Services() {
               className="w-full max-w-xl rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 bg-white cursor-pointer"
               onClick={() => router.push(`/services/${service.id}`)}
             >
-              <div className="grid grid-cols-3 text-md font-medium text-gray-500 mb-1">
+              <div className="grid grid-cols-3 text-md font-medium text-gray-400 mb-1">
                 <span>Serviço</span>
                 <span>Duração</span>
                 <span>Preço</span>
               </div>
-              <div className="grid grid-cols-3 text-base font-semibold text-gray-800">
+              <div className="grid grid-cols-3 text-base font-semibold text-gray-700">
                 <span>{service.nome}</span>
                 <span>{service.duracaoMin} min</span>
                 <span>{formatCurrency(service.preco)}</span>

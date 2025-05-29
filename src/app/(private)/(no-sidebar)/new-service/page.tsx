@@ -1,14 +1,12 @@
 'use client';
 
-import React from 'react';
-import Select from 'react-select';
-import { HiArrowLeft } from 'react-icons/hi';
-
-import Input from '@/componentes/Input';
-import Button from '@/componentes/Button';
-import { useNewServiceForm } from './hooks/useNewServiceForm';
 import HeaderWithBackButton from '@/componentes/HeaderWithBackButton';
+import { useNewServiceForm } from './hooks/useNewServiceForm';
 import { SelectField } from '@/componentes/SelectField';
+import Button from '@/componentes/Button';
+import Input from '@/componentes/Input';
+import Select from 'react-select';
+import React from 'react';
 
 export default function NewService() {
   const {
@@ -20,9 +18,8 @@ export default function NewService() {
     handleDurationChange,
     handleCollaboratorChange,
     handleSubmit,
-    loadingColabs, errorColabs,
-    error, successMessage,
-    router
+    router,
+    isSubmitting
   } = useNewServiceForm();
 
   return (
@@ -56,6 +53,7 @@ export default function NewService() {
                 value={durationOptions.find(opt => opt.value === duracaoMin) || null}
                 onChange={handleDurationChange}
                 placeholder="Selecione a duração"
+                noOptionsMessage={() => 'Nenhuma duração encontrada'}
               />
             </div>
 
@@ -71,47 +69,35 @@ export default function NewService() {
 
           <div>
             <label className="block text-gray-700 mb-1">Colaboradores*</label>
-              {loadingColabs ? (
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <div className="w-4 h-4 border-2 border-t-transparent border-[#00AEEF] rounded-full animate-spin" />
-                  <span>Carregando colaboradores...</span>
-                </div>
-              ) : errorColabs ? (
-                <p className="text-red-600">{errorColabs}</p>
-              ) : (
-                <Select
-                  classNamePrefix="custom-select"
-                  options={collaboratorOptions}
-                  value={collaboratorOptions.filter(opt => colaboradoresIds.includes(opt.value as number))}
-                  onChange={handleCollaboratorChange}
-                  placeholder="Selecione os colaboradores"
-                  noOptionsMessage={() => 'Nenhum colaborador encontrado'}
-                  isMulti
-                  closeMenuOnSelect={false}
-                  styles={{
-                    control: (base, state) => ({
-                      ...base,
-                      minHeight: 50,
-                      borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
-                      boxShadow: state.isFocused ? '0 0 0 1px #00AEEF' : base.boxShadow,
-                      '&:hover': {
-                        borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
-                      },
-                    }),
-                    valueContainer: (base) => ({
-                      ...base,
-                      paddingTop: 4,
-                      paddingBottom: 4,
-                    }),
-                  }}
-                />
-              )}
+            <Select
+              classNamePrefix="custom-select"
+              options={collaboratorOptions}
+              value={collaboratorOptions.filter(opt => colaboradoresIds.includes(opt.value as number))}
+              onChange={handleCollaboratorChange}
+              placeholder="Selecione os colaboradores"
+              noOptionsMessage={() => 'Nenhum colaborador encontrado'}
+              isMulti
+              closeMenuOnSelect={false}
+              styles={{
+                control: (base, state) => ({
+                  ...base,
+                  minHeight: 50,
+                  borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                  boxShadow: state.isFocused ? '0 0 0 1px #00AEEF' : base.boxShadow,
+                  '&:hover': {
+                    borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                  },
+                }),
+                valueContainer: (base) => ({
+                  ...base,
+                  paddingTop: 4,
+                  paddingBottom: 4,
+                }),
+              }}
+            />
 
             <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
           </div>
-
-          {error && <p className="text-red-600">{error}</p>}
-          {successMessage && <p className="text-green-600">{successMessage}</p>}
 
           <div className="flex justify-end gap-4 mt-6">
             <button
@@ -121,7 +107,9 @@ export default function NewService() {
             >
               Cancelar
             </button>
-            <Button type="submit">Criar Serviço</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Salvando...' : 'Criar Serviço'}
+            </Button>
           </div>
         </form>
       </div>

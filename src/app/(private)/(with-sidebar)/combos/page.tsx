@@ -4,6 +4,7 @@ import Button from "@/componentes/Button";
 import Header from "@/componentes/Header";
 import { useRouter } from "next/navigation";
 import { useCombos } from "@/context/ComboContext";
+import EmptyState from "@/componentes/EmptyState";
 
 export default function Combos() {
   const router = useRouter();
@@ -18,10 +19,10 @@ export default function Combos() {
       </div>
 
       {!hasCombos ? (
-        <div className="flex flex-col justify-center items-center flex-1 text-center">
-          <p className="text-lg font-semibold text-gray-700">Nenhum combo cadastrado</p>
-          <p className="mt-2 text-md text-gray-500">Cadastre um novo combo</p>
-        </div>
+        <EmptyState
+          title="Sem combos cadastrados"
+          subtitle="Cadastre um novo combo"
+        />
       ) : (
         <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
           {combos.map((combo) => (
