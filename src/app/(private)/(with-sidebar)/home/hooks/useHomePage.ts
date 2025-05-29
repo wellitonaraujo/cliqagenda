@@ -6,9 +6,11 @@ import { useCollaborator } from "@/context/CollaboratorContext";
 import { useScheduleLogic } from "../hooks/useScheduleLogic";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export function useHomePage() {
   const { updateAppointmentStatus, fetchAppointments, removeAppointment } = useAppointments();
+
   const { collaborators } = useCollaborator();
   const router = useRouter();
 
@@ -28,6 +30,7 @@ export function useHomePage() {
   const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: number; timeSlotIndex: number } | null>(null);
   const [expandedId, setExpandedId] = useState<string | number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const appointmentsOfTheDay = appointments.filter((a) => {
     const appointmentDate = parseAppointmentDate(a.data);
@@ -45,51 +48,50 @@ export function useHomePage() {
     return () => window.removeEventListener("resize", updateMinCols);
   }, []);
 
-  const [loading, setLoading] = useState(false);
+ 
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      await fetchAppointments();
+      setLoading(false);
+    }
+    load();
+  }, []);
 
-    useEffect(() => {
-      async function load() {
-        setLoading(true);
-        await fetchAppointments();
-        setLoading(false);
-      }
-      load();
-    }, []);
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedAppointment(null);
+    setStatus(null);
+  };
 
-    const handleModalClose = () => {
-      setModalOpen(false);
-      setSelectedAppointment(null);
-      setStatus(null);
-    };
-
-    const handleStatusChange = async (newStatus: string) => {
-      if (selectedAppointment) {
-        try {
-          await updateAppointmentStatus(selectedAppointment.id, newStatus);
-          setStatus(newStatus);
-          handleModalClose();
-          await fetchAppointments();
-        } catch (err) {
-          console.error("Erro ao atualizar status:", err);
-        }
-      }
-    };
-
-    const handleRemoveAppointment = () => {
-      if (selectedAppointment) {
-        removeAppointment(selectedAppointment.id);
+  const handleStatusChange = async (newStatus: string) => {
+    if (selectedAppointment) {
+      try {
+        await updateAppointmentStatus(selectedAppointment.id, newStatus);
+        setStatus(newStatus);
         handleModalClose();
+          await fetchAppointments();
+      } catch (err) {
+        toast.error("Erro ao atualizar status:");
       }
-    };
+    }
+  };
 
-    const goToNewAppointment = () => {
-      router.push("/scheduling");
-    };
+  const handleRemoveAppointment = () => {
+    if (selectedAppointment) {
+      removeAppointment(selectedAppointment.id);
+      handleModalClose();
+    }
+  };
 
-    const openModal = (a: typeof appointments[0]) => {
-      setSelectedAppointment(a);
-      setModalOpen(true);
-    };
+  const goToNewAppointment = () => {
+    router.push("/scheduling");
+  };
+
+  const openModal = (a: typeof appointments[0]) => {
+    setSelectedAppointment(a);
+    setModalOpen(true);
+  };
 
   return {
     selectedDate,

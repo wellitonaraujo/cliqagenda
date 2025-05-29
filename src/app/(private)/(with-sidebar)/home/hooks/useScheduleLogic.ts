@@ -1,10 +1,12 @@
 import { DiaSemana, Horario, useBusiness } from '@/context/BusinessContext';
+import { useAppointmentStore } from '@/app/store/useAppointmentStore';
 import { useAppointments } from '@/context/AppointmentsProvider';
 import { useEffect, useState } from 'react';
 
 export function useScheduleLogic() {
   const { horarios } = useBusiness();
   const { appointments, fetchAppointments } = useAppointments();
+  const { shouldRefetch, resetRefetch } = useAppointmentStore();
 
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
@@ -74,9 +76,13 @@ export function useScheduleLogic() {
     return () => window.removeEventListener('resize', updateMinCols);
   }, []);
 
+
   useEffect(() => {
-    fetchAppointments();
-  }, []);
+    if (shouldRefetch) {
+      fetchAppointments();
+      resetRefetch();
+    }
+  }, [shouldRefetch]);
   
   return {
     selectedDate,

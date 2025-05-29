@@ -11,6 +11,7 @@ import { SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
 import api from '@/services/api';
 import { AxiosError } from 'axios';
+import { useAppointmentStore } from '@/app/store/useAppointmentStore';
 
 interface FormState {
   cliente: Option | null;
@@ -26,6 +27,7 @@ export function useAppointmentForm() {
   const router = useRouter();
   const { services } = useService();
   const durationOptions = generateDurationOptions();
+  const { triggerRefetch } = useAppointmentStore();
 
   const [form, setForm] = useState<FormState>({
     cliente: null,
@@ -123,6 +125,7 @@ export function useAppointmentForm() {
         duracaoMin: form.duracaoMin?.value,
         preco: numericPrice,
       });
+      triggerRefetch();
       router.push('/home');
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
