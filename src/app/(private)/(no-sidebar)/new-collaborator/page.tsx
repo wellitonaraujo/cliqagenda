@@ -1,21 +1,18 @@
 'use client'; 
 
-import Input from '@/componentes/Input';
-import React from 'react';
-import { Switch } from '@headlessui/react'
 import HeaderWithBackButton from '@/componentes/HeaderWithBackButton';
 import { useNewCollaborator } from './hooks/useNewCollaborator';
-import Skeleton from './ui/Skeleton';
-import HorarioItem from '@/componentes/ScheduleItem';
 import PersonalInfoSection from './ui/PersonalInfoSection';
+import HorarioItem from '@/componentes/ScheduleItem';
 import AddressSection from './ui/AddressSection';
-
+import Skeleton from './ui/Skeleton';
+import React from 'react';
 
 export default function NewCollaborator() {
   const {
     nome, email, telefone, rua, numero, bairro, cidade, horarios,
     setNome, setEmail, setTelefone, setRua, setNumero, setBairro, setCidade,
-    handleHorarioChange, handleSubmit, loading, error, diaSemanaMap,
+    handleHorarioChange, handleSubmit, loading, diaSemanaMap,
   } = useNewCollaborator();
 
   return (

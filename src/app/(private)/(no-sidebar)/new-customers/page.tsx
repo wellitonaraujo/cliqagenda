@@ -1,41 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNewCustomer } from './hooks/useNewCustomer';
 import { HiArrowLeft, HiCamera } from 'react-icons/hi';
 import Button from '@/componentes/Button';
 import Input from '@/componentes/Input';
-import { useCustomers } from '@/context/CustomersContext';
+
 
 export default function NewCustomer() {
-  const router = useRouter();
-  const { createCustomer } = useCustomers();
-
-  const [form, setForm] = useState({
-    nome: '',
-    email: '',
-    telefone: '',
-    rua: '',
-    numero: '',
-    bairro: '',
-    cidade: '',
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async () => {
-    await createCustomer(form);
-    router.push('/customers');
-  };
+  const { form, handleChange, handleSubmit, handleCancel } = useNewCustomer();
 
   return (
-   <div className="flex items-center justify-center min-h-screen bg-white px-4">
+   <div className="flex items-center justify-center min-h-screen bg-white">
     <div className="w-full max-w-xl bg-white p-6 rounded border border-gray-100 shadow-xs">
         <div className="flex justify-between items-center mb-5">
-          <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
+          <button onClick={handleCancel} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
           </button>
           <h1 className="text-xl text-[#252525] font-medium mx-auto">Novo Cliente</h1>
@@ -118,7 +96,7 @@ export default function NewCustomer() {
 
         <div className="flex justify-end gap-4">
           <button
-            onClick={() => router.back()}
+            onClick={handleCancel}
             className="text-[#252525] font-medium hover:underline"
           >
             Cancelar
