@@ -1,28 +1,26 @@
 'use client';
 
+import HeaderWithBackButton from '@/componentes/HeaderWithBackButton';
 import { useAppointmentForm } from '../hooks/useAppointmentForm';
+import { SelectField } from '@/componentes/SelectField';
 import { useRouter } from 'next/navigation';
 import Button from '@/componentes/Button';
 import Input from '@/componentes/Input';
-import HeaderWithBackButton from '@/componentes/HeaderWithBackButton';
-import { SelectField } from '@/componentes/SelectField';
-
 
 export default function AppointmentForm() {
   const {
     form,
-    error,
     clientes,
     colaboradores,
     servicos,
     durationOptions,
     hourOptions,
-    mensagem,
     handleInputChange,
     handleInputBlur,
     handleSelectChange,
     handleSelectHoraChange,
-    handleSubmit
+    handleSubmit,
+    isSubmitting
   } = useAppointmentForm();
 
   const router = useRouter();
@@ -98,11 +96,16 @@ export default function AppointmentForm() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="text-gray-700 font-medium hover:underline"
+            className="text-gray-700 text-sm font-medium hover:underline"
             >
             Cancelar
             </button>
-          <Button type="submit">Agendar</Button>
+
+            <Button 
+              type="submit"
+              disabled={isSubmitting}>
+                {isSubmitting ? 'Salvando...' : 'Agendar'}
+            </Button>
         </div>
       </form>
     </>

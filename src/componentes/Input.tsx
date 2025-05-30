@@ -58,7 +58,7 @@ export default function Input({
           } focus:outline-none focus:ring-1 ${
             hasError && !isFocused
               ? 'border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-[#00AEEF] focus:ring-[#00AEEF]'
+              : 'border-gray-300 focus:border-[#1195FF] focus:ring-[#1195FF]'
           }`}
         />
         {isPassword && (

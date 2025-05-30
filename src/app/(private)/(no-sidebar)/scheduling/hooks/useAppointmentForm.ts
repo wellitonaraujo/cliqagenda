@@ -28,6 +28,7 @@ export function useAppointmentForm() {
   const { services } = useService();
   const durationOptions = generateDurationOptions();
   const { triggerRefetch } = useAppointmentStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState<FormState>({
     cliente: null,
@@ -116,6 +117,7 @@ export function useAppointmentForm() {
     }
 
     try {
+      setIsSubmitting(true);
       await api.post('/appointments', {
         clienteId: form.cliente.value,
         colaboradorId: form.colaborador.value,
@@ -130,6 +132,8 @@ export function useAppointmentForm() {
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       toast.error(error.response?.data?.message || 'Erro ao criar agendamento.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -146,6 +150,7 @@ export function useAppointmentForm() {
     handleInputBlur,
     handleSelectChange,
     handleSelectHoraChange,
-    handleSubmit
+    handleSubmit,
+    isSubmitting
   };
 }

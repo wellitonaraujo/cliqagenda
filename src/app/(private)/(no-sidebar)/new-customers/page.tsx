@@ -97,7 +97,7 @@ export default function NewCustomer() {
         <div className="flex justify-end gap-4">
           <button
             onClick={handleCancel}
-            className="text-[#252525] font-medium hover:underline"
+            className="text-gray-700 text-sm font-medium hover:underline"
           >
             Cancelar
           </button>

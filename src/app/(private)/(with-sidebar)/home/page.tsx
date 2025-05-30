@@ -8,6 +8,7 @@ import TimeSlotsColumn from "./ui/TimeSlotsColumn";
 import { useHomePage } from "./hooks/useHomePage";
 import { EmptyColumns } from "./ui/EmptyColumns";
 import HomeHeader from "./ui/Header";
+import { useEffect } from "react";
 
 export default function Home() {
   const {
@@ -27,7 +28,7 @@ export default function Home() {
     handleRemoveAppointment,
     openModal,
     goToNewAppointment,
-    loading
+    loading,
   } = useHomePage();
 
   return (

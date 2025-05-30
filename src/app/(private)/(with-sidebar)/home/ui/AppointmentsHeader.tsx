@@ -64,7 +64,7 @@ export default function AppointmentsHeader({
             </button>
           </div>
 
-          <span className="text-sl text-[#5C5C5C] text-center md:text-left pt-4 md:pt-0 min-w-[120px]">
+          <span className="text-sl text-[#1195FF] text-center font-semibold md:text-left pt-4 md:pt-0 min-w-[120px]">
             {loading ? <Skeleton width={100} height={20} /> : getAppointmentsLabel()}
           </span>
         </div>

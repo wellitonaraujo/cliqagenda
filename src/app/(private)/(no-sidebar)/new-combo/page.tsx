@@ -142,7 +142,7 @@ export default function NewCombo() {
         <div className="flex justify-end gap-4">
           <button
             onClick={() => router.push('/combos')}
-            className="text-gray-600 font-medium hover:underline"
+            className="text-gray-600 font-medium text-sm hover:underline"
           >
             Cancelar
           </button>

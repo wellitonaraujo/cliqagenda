@@ -4,7 +4,7 @@ import { useAppointments } from "@/context/AppointmentsProvider";
 import { formatDate, parseAppointmentDate } from "../utils/date";
 import { useCollaborator } from "@/context/CollaboratorContext";
 import { useScheduleLogic } from "../hooks/useScheduleLogic";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
@@ -32,11 +32,6 @@ export function useHomePage() {
   const [expandedId, setExpandedId] = useState<string | number | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const appointmentsOfTheDay = appointments.filter((a) => {
-    const appointmentDate = parseAppointmentDate(a.data);
-    return formatDate(appointmentDate) === formatDate(selectedDate);
-  });
-
   useEffect(() => {
     function updateMinCols() {
       const cols = Math.floor(window.innerWidth / COL_WIDTH);
@@ -47,7 +42,6 @@ export function useHomePage() {
     window.addEventListener("resize", updateMinCols);
     return () => window.removeEventListener("resize", updateMinCols);
   }, []);
-
  
   useEffect(() => {
     async function load() {
@@ -93,6 +87,16 @@ export function useHomePage() {
     setModalOpen(true);
   };
 
+  
+
+const appointmentsOfTheDay = useMemo(() => {
+  return appointments.filter((a) => {
+    const appointmentDate = parseAppointmentDate(a.data);
+    return formatDate(appointmentDate) === formatDate(selectedDate);
+  });
+}, [appointments, selectedDate]);
+
+
   return {
     selectedDate,
     handleDayChange,
@@ -110,6 +114,6 @@ export function useHomePage() {
     handleRemoveAppointment,
     openModal,
     goToNewAppointment,
-    loading
+    loading,
   };
 }

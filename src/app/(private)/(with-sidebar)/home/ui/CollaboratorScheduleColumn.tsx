@@ -45,7 +45,7 @@ interface CollaboratorScheduleColumnProps {
               }`}
             >
               <span
-                className={`text-xs font-bold text-[#00AEEF] ${
+                className={`text-xs font-bold text-[#1195FF] ${
                   isSelected ? 'block' : 'hidden group-hover:block'
                 }`}
               >

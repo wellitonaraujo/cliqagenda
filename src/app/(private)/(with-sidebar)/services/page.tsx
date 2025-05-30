@@ -52,7 +52,7 @@ export default function Services() {
                 <span>Duração</span>
                 <span>Preço</span>
               </div>
-              <div className="grid grid-cols-3 text-base font-semibold text-gray-700">
+              <div className="grid grid-cols-3 text-base font-semibold text-[#292929]">
                 <span>{service.nome}</span>
                 <span>{service.duracaoMin} min</span>
                 <span>{formatCurrency(service.preco)}</span>

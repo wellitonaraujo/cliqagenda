@@ -23,7 +23,7 @@ export default function HorarioItem({
             checked={ativo}
             onChange={(val) => onChange('ativo', val)}
             className={`${
-              ativo ? 'bg-[#00AEEF]' : 'bg-gray-300'
+              ativo ? 'bg-[#1195FF]' : 'bg-gray-300'
             } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
           >
             <span

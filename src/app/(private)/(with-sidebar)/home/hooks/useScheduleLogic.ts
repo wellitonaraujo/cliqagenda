@@ -76,13 +76,13 @@ export function useScheduleLogic() {
     return () => window.removeEventListener('resize', updateMinCols);
   }, []);
 
-
   useEffect(() => {
     if (shouldRefetch) {
       fetchAppointments();
       resetRefetch();
     }
   }, [shouldRefetch]);
+  
   
   return {
     selectedDate,

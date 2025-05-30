@@ -22,7 +22,7 @@ export default function CollaboratorHeaderColumn({ nome, fotoUrl = "/image.png",
         <span className="truncate max-w-[110px] text-[#5C5C5C]">{nome}</span>
       </div>
       <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#5C5C5C] text-[12px] flex items-center justify-center">
-        {count}
+        <span></span>{count}
       </div>
     </div>
   );

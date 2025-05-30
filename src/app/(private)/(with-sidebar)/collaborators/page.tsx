@@ -8,6 +8,7 @@ import { useCollaborator } from '@/context/CollaboratorContext';
 import Spinner from '@/componentes/Spinner';
 import EmptyState from '@/componentes/EmptyState';
 import { useEffect } from 'react';
+import { formatTelefone } from '../../../../../utils/formatPhone';
 
 export default function Collaborators() {
   const router = useRouter();
@@ -55,8 +56,8 @@ export default function Collaborators() {
                 />
               </div>
               <div>
-                <p className="font-semibold text-md text-gray-700">{colab.nome}</p>
-                <p className="text-md text-gray-600">{colab.telefone}</p>
+                <p className="text-base text-gray-700 font-semibold">{colab.nome}</p>
+                <p className="text-base text-gray-600">{formatTelefone(colab.telefone)}</p>
               </div>
             </div>
           ))}

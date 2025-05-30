@@ -103,7 +103,7 @@ export default function NewService() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="text-gray-700 font-medium hover:underline"
+              className="text-gray-700 text-sm font-medium hover:underline"
             >
               Cancelar
             </button>

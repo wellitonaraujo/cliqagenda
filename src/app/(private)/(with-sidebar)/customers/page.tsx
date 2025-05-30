@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Button from '@/componentes/Button';
 import Header from '@/componentes/Header';
+import { formatTelefone } from '../../../../../utils/formatPhone';
 
 export default function Customers() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export default function Customers() {
 
               <div className="flex items-center gap-2 text-base text-gray-600 mt-3">
                 <FiPhone />
-                <span>{customer.telefone}</span>
+                <span>{ formatTelefone(customer.telefone ?? '')}</span>
               </div>
 
               <div className="flex items-start gap-2 text-base text-gray-600 mt-3">

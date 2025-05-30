@@ -1,5 +1,6 @@
 import Input from '@/componentes/Input';
 import React from 'react';
+import { formatTelefone } from '../../../../../../utils/formatPhone';
 
 
 interface PersonalInfoSectionProps {
@@ -33,7 +34,15 @@ export default function PersonalInfoSection({
       </div>
 
       <div className="mb-6">
-        <Input placeholder="Telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+      <Input
+        placeholder="Telefone"
+        value={telefone}
+        onChange={(e) => {
+          const rawValue = e.target.value.replace(/\D/g, '').slice(0, 11);
+          const formatted = formatTelefone(rawValue);
+          setTelefone(formatted);
+        }}
+      />
       </div>
     </section>
   );

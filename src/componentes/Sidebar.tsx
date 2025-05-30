@@ -14,9 +14,9 @@ export default function Sidebar() {
   const { logout, empresa } = useAuth();
 
   const menuItems = [
-    { label: empresa?.nome ?? 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
+    { label: empresa?.nome ?? 'Meu Negócio', icon: 'home.svg', path: '/my-business' },
     { label: 'Atendimentos', icon: 'date-fill.svg', path: '/home' },
-    { label: 'Serviços', icon: 'list-filled.svg', path: '/services' },
+    { label: 'Serviços', icon: 'service.svg', path: '/services' },
     { label: 'Combos', icon: 'package-open.svg', path: '/combos' },
     { label: 'Clientes', icon: 'users-solid.svg', path: '/customers' },
     { label: 'Colaboradores', icon: 'users-config.svg', path: '/collaborators' },
@@ -61,7 +61,7 @@ export default function Sidebar() {
               <div className="flex items-center justify-between w-full">
                 <h1 className="text-2xl font-bold">
                   <span className="text-[#034D82]">Cliq</span>
-                  <span className="text-[#00AEEF]">Agenda</span>
+                  <span className="text-[#1195FF]">Agenda</span>
                 </h1>
 
                 <button
@@ -84,7 +84,9 @@ export default function Sidebar() {
           <nav className="flex flex-col gap-1">
             {menuItems.map(({ label, icon, path }) => {
               const isActive = pathname === path;
-
+              const iconPath = isActive
+                ? icon.replace('.svg', '-ative.svg')
+                : icon;
               return (
                 <Link
                   key={path}
@@ -92,7 +94,7 @@ export default function Sidebar() {
                   className={clsx(
                     'flex items-center px-6 py-3 text-sm font-medium transition-all gap-3',
                     {
-                      'bg-[#EFFBFF] border-r-4 border-[#00AEEF] text-[#00AEEF]': isActive,
+                      'bg-[#E9F5FE] border-r-4 border-[#1195FF] text-[#1195FF]': isActive,
                       'text-gray-800 hover:bg-gray-50': !isActive,
                       'justify-center': isCollapsed,
                       'justify-start': !isCollapsed,
@@ -102,9 +104,23 @@ export default function Sidebar() {
                     if (window.innerWidth < 768) toggleSidebar();
                   }}
                 >
-                  <Image src={icon} alt={label} width={24} height={24} />
-                  {!isCollapsed && (
-                    <span className="text-base text-[#034D82] font-medium whitespace-nowrap">{label}</span>
+               <img
+                  src={`/${isActive ? icon.replace('.svg', '-ative.svg') : icon}`}
+                  alt={label}
+                  width={24}
+                  height={24}
+                />
+
+
+                      {!isCollapsed && (
+                   <span
+                      className={clsx(
+                        'text-sm font-medium whitespace-nowrap',
+                        isActive ? 'text-[#1195FF]' : 'text-[#034D82]'
+                      )}
+                    >
+                      {label}
+                    </span>
                   )}
                 </Link>
               );

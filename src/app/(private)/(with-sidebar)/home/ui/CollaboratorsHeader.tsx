@@ -77,7 +77,7 @@ export const CollaboratorsHeader: React.FC<CollaboratorsHeaderProps> = ({
             {isLoadingCounts ? (
               <div className="w-6 h-6 min-w-6 min-h-6 rounded-full bg-gray-300 animate-pulse" />
             ) : (
-              <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#034D82] text-[12px] flex items-center justify-center">
+              <div className="w-6 h-6 min-w-6 min-h-6 rounded-full text-[#1195FF] text-sm font-extrabold flex items-center justify-center">
                 {count}
               </div>
             )}

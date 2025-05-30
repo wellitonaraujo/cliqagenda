@@ -8,7 +8,7 @@ interface SpinnerProps {
 
 const Spinner: React.FC<SpinnerProps> = ({
   message = 'Carregando...',
-  color = '#00AEEF',
+  color = '#1195FF',
   className = '',
 }) => {
   return (
@@ -41,7 +41,7 @@ const Spinner: React.FC<SpinnerProps> = ({
         ></path>
       </svg>
       <p
-        className="text-xl font-semibold tracking-wide"
+        className="text-md font-medium tracking-wide"
         style={{ color }}
       >
         {message}
