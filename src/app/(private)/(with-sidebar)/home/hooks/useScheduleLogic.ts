@@ -93,5 +93,6 @@ export function useScheduleLogic() {
     appointments,
     minCols,
     setMinCols,
+    horarioDoDia
   };
 }

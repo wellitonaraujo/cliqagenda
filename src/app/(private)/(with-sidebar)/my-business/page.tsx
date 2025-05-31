@@ -7,10 +7,11 @@ import { useOpeningHours } from './hooks/useOpeningHours';
 import { useAuth } from '@/context/AuthContext';
 import OpeningHours from './ui/OpeningHours';
 import Header from '@/componentes/Header';
+import Button from '@/componentes/Button';
 
 export default function MeuNegocioPage() {
   const { empresa } = useAuth();
-  const { editableHorarios, toggleDay, handleTimeChange } = useOpeningHours();
+  const { editableHorarios, toggleDay, handleTimeChange, saveSchedules } = useOpeningHours();
 
   return (
     <div className="bg-white min-h-screen">
@@ -24,6 +25,12 @@ export default function MeuNegocioPage() {
           onToggleDay={toggleDay}
           onTimeChange={handleTimeChange}
         />
+       <Button onClick={() => {
+          saveSchedules();
+        }}>
+          Atualizar horários
+        </Button>
+
       </div>
     </div>
   );

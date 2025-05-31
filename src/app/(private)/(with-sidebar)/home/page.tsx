@@ -9,6 +9,7 @@ import { useHomePage } from "./hooks/useHomePage";
 import { EmptyColumns } from "./ui/EmptyColumns";
 import HomeHeader from "./ui/Header";
 import { useEffect } from "react";
+import NowLine from "./ui/NowLine";
 
 export default function Home() {
   const {
@@ -29,7 +30,9 @@ export default function Home() {
     openModal,
     goToNewAppointment,
     loading,
+    horarioDoDia
   } = useHomePage();
+  
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -51,6 +54,13 @@ export default function Home() {
               minCols={minCols}
              isLoadingCounts={loading}
             />
+             <NowLine 
+              timeSlots={timeSlots} 
+              startTime={horarioDoDia?.horaAbertura ?? "00:00"} 
+              endTime={horarioDoDia?.horaFechamento ?? "23:59"} 
+              offsetTop={-20}
+            />
+
             <div className="flex w-full min-w-full">
               {collaborators.map((collab, index) => (
                 <CollaboratorScheduleColumn

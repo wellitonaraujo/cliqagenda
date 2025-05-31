@@ -21,6 +21,7 @@ export function useHomePage() {
     appointments,
     minCols,
     setMinCols,
+    horarioDoDia,
   } = useScheduleLogic();
 
   const COL_WIDTH = 180;
@@ -87,15 +88,12 @@ export function useHomePage() {
     setModalOpen(true);
   };
 
-  
-
-const appointmentsOfTheDay = useMemo(() => {
-  return appointments.filter((a) => {
-    const appointmentDate = parseAppointmentDate(a.data);
-    return formatDate(appointmentDate) === formatDate(selectedDate);
-  });
-}, [appointments, selectedDate]);
-
+  const appointmentsOfTheDay = useMemo(() => {
+    return appointments.filter((a) => {
+      const appointmentDate = parseAppointmentDate(a.data);
+      return formatDate(appointmentDate) === formatDate(selectedDate);
+    });
+  }, [appointments, selectedDate]);
 
   return {
     selectedDate,
@@ -115,5 +113,6 @@ const appointmentsOfTheDay = useMemo(() => {
     openModal,
     goToNewAppointment,
     loading,
+    horarioDoDia
   };
 }

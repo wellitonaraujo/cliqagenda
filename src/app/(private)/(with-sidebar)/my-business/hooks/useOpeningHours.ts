@@ -4,10 +4,11 @@ import { Horario, useBusiness } from '@/context/BusinessContext';
 import { useAuth } from '@/context/AuthContext';
 import { DiaSemana } from '@/types/DiaSemana';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export function useOpeningHours() {
   const { user } = useAuth();
-  const { horarios, fetchSchedules } = useBusiness();
+  const { horarios, fetchSchedules, updateSchedules } = useBusiness();
   const [editableHorarios, setEditableHorarios] = useState<Horario[]>([]);
 
   useEffect(() => {
@@ -42,9 +43,21 @@ export function useOpeningHours() {
     );
   };
 
+  const saveSchedules = async () => {
+    if (!user?.empresaId) return;
+
+    try {
+      await updateSchedules(user.empresaId, { horarios: editableHorarios });
+      toast.success('Horários atualizados com sucesso!');
+    } catch (error) {
+      toast.error('Erro ao atualizar horários');
+    }
+  };
+
   return {
     editableHorarios,
     toggleDay,
     handleTimeChange,
+    saveSchedules,
   };
 }
