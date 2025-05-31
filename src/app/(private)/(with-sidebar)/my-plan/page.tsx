@@ -25,7 +25,11 @@ export default function MyPlan() {
 
           {cardInfo && (
             <>
-              <PaymentInfo number={cardInfo.number} validity={cardInfo.validity} />
+              <PaymentInfo
+                number={cardInfo.number}
+                validity={cardInfo.validity}
+                paymentDate={new Date().toISOString()}
+              />
               <ChangePaymentButton />
             </>
           )}

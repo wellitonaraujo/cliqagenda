@@ -1,24 +1,25 @@
 type Props = {
   number: string;
   validity: string;
+  paymentDate: string;
 };
 
-export default function PaymentInfo({ number, validity }: Props) {
- const formatDate = (raw: string) => {
-  if (!raw.includes('/')) return 'Data inválida';
+export default function PaymentInfo({ number, validity, paymentDate }: Props) {
+  const formatNextChargeDate = (rawDate: string) => {
+    const date = new Date(rawDate);
 
-  const [month, year] = raw.split('/');
+    if (isNaN(date.getTime())) return 'Data inválida';
 
-  const normalizedMonth = month.padStart(2, '0');
-  const normalizedYear = year.length === 2 ? `20${year}` : year;
+    // Soma 30 dias
+    date.setDate(date.getDate() + 30);
 
-  if (!/^\d{2}$/.test(normalizedMonth) || !/^\d{4}$/.test(normalizedYear)) {
-    return 'Data inválida';
-  }
+    // Formata como dd/mm/yyyy
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
 
-  return `01/${normalizedMonth}/${normalizedYear}`;
-};
-
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <>
@@ -29,7 +30,7 @@ export default function PaymentInfo({ number, validity }: Props) {
       </div>
 
       <p className="text-sm text-gray-700 mb-4">
-        Próxima cobrança: <strong>{formatDate(validity)}</strong>
+        Próxima cobrança: <strong>{formatNextChargeDate(paymentDate)}</strong>
       </p>
     </>
   );
