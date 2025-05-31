@@ -30,7 +30,8 @@ export default function MyPlan() {
                 validity={cardInfo.validity}
                 paymentDate={new Date().toISOString()}
               />
-              <ChangePaymentButton />
+             <ChangePaymentButton onClick={() => router.push('/payment')} />
+
             </>
           )}
         </div>
