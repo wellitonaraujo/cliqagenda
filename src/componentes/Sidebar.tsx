@@ -49,11 +49,11 @@ export default function Sidebar() {
         )}
       >
         <div>
-          <div className="px-6 py-5 flex items-center justify-between">
+          <div className="px-7 py-5 flex items-center justify-between">
             {isCollapsed ? (
               <button
                 onClick={toggleSidebar}
-                className="text-2xl font-bold text-[#5C5C5C]"
+                className="text-2xl font-bold text-[#5c5c5c]"
               >
                 <HiMenu color='#034D82' />
               </button>

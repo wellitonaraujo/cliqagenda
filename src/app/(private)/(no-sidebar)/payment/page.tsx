@@ -1,21 +1,29 @@
 "use client";
 
 import { usePlanStore } from '@/app/store/usePlanStore';
-import { useRouter } from 'next/navigation';
-import { HiArrowLeft } from 'react-icons/hi';
-import { useState } from 'react';
 import { useCardForm } from './hooks/useCardForm';
+import { HiArrowLeft } from 'react-icons/hi';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function Payment() {
-
+  const { cardData, handleChange, errors } = useCardForm();
   const { setHasSubscribed, setCardInfo } = usePlanStore()
   const router = useRouter();
 
-  const { cardData, handleChange } = useCardForm();
 
   function handlePayment(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    const hasErrors = Object.values(errors).some(error => error);
+
+    if (hasErrors) {
+      toast.warning('Por favor, corrija os erros antes de continuar.');
+      return;
+    }
+
     setCardInfo(cardData);
+    toast.success('Pagamento realizado com sucesso!');
     setHasSubscribed(true);
     router.push('/my-plan');
   }
@@ -86,6 +94,13 @@ export default function Payment() {
               value={cardData.validity}
               onChange={handleChange}
             />
+           <p
+            className={`text-xs mt-1 min-h-[1rem] ${
+              errors.validity ? 'text-red-500' : 'text-transparent'
+            }`}
+          >
+            {errors.validity ?? 'Validade inválida'}
+          </p>
           </div>
 
           <div className="flex-1">
@@ -104,18 +119,27 @@ export default function Payment() {
         </div>
 
         {/* Documento */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            CPF/CNPJ<span className="text-red-500">*</span>
-          </label>
-          <input
-            name="document"
-            type="text"
-            className="w-full border rounded-md p-2 text-sm"
-            value={cardData.document}
-            onChange={handleChange}
-          />
-        </div>
+{/* Documento */}
+<div>
+  <label className="block text-sm font-medium mb-1">
+    CPF/CNPJ<span className="text-red-500">*</span>
+  </label>
+  <input
+    name="document"
+    type="text"
+    className="w-full border rounded-md p-2 text-sm"
+    value={cardData.document}
+    onChange={handleChange}
+  />
+  <p
+    className={`text-xs mt-1 min-h-[1rem] ${
+      errors.document ? 'text-red-500' : 'text-transparent'
+    }`}
+  >
+    {errors.document ?? 'CPF ou CNPJ inválido'}
+  </p>
+</div>
+
 
         {/* Email */}
         <div>

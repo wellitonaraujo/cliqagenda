@@ -4,10 +4,21 @@ type Props = {
 };
 
 export default function PaymentInfo({ number, validity }: Props) {
-  const formatDate = (raw: string) => {
-    const [month, year] = raw.split('/');
-    return `01/${month}/${year}`;
-  };
+ const formatDate = (raw: string) => {
+  if (!raw.includes('/')) return 'Data inválida';
+
+  const [month, year] = raw.split('/');
+
+  const normalizedMonth = month.padStart(2, '0');
+  const normalizedYear = year.length === 2 ? `20${year}` : year;
+
+  if (!/^\d{2}$/.test(normalizedMonth) || !/^\d{4}$/.test(normalizedYear)) {
+    return 'Data inválida';
+  }
+
+  return `01/${normalizedMonth}/${normalizedYear}`;
+};
+
 
   return (
     <>

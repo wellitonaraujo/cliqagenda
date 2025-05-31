@@ -1,8 +1,9 @@
-'use client';
-
 import { useState } from 'react';
+import { isValidCPF } from '../../../../../../utils/isValidCPF';
+import { isValidCNPJ } from '../../../../../../utils/isValidCNPJ';
 
 export function useCardForm() {
+  const [errors, setErrors] = useState<{ validity?: string; document?: string }>({});
   const [cardData, setCardData] = useState({
     number: '',
     name: '',
@@ -13,39 +14,56 @@ export function useCardForm() {
   });
 
   const formatCardNumber = (value: string) =>
-    value
-      .replace(/\D/g, '')
-      .replace(/(\d{4})(?=\d)/g, '$1 ')
-      .trim();
+    value.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ').trim();
 
-  const formatValidity = (value: string) =>
-    value
-      .replace(/\D/g, '')
-      .replace(/^(\d{2})(\d{1,2})/, '$1/$2')
-      .slice(0, 5);
+  const formatValidity = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    const formatted = digits.replace(/^(\d{2})(\d{1,2})/, '$1/$2');
 
-  const formatCVV = (value: string) =>
-    value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length >= 2) {
+      const month = parseInt(digits.slice(0, 2), 10);
+      if (month < 1 || month > 12) {
+        setErrors((prev) => ({ ...prev, validity: 'Validade inválida' }));
+      } else {
+        setErrors((prev) => ({ ...prev, validity: undefined }));
+      }
+    } else {
+      setErrors((prev) => ({ ...prev, validity: undefined }));
+    }
+
+    return formatted.slice(0, 5);
+  };
+
+  const formatCVV = (value: string) => value.replace(/\D/g, '').slice(0, 4);
 
   const formatDocument = (value: string) => {
-    const digits = value.replace(/\D/g, '');
+    const digits = value.replace(/\D/g, '').slice(0, 14);
+
+    let formatted = digits;
     if (digits.length <= 11) {
-      return digits
+      formatted = digits
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+      const valid = isValidCPF(digits);
+      setErrors((prev) => ({ ...prev, document: valid ? undefined : 'CPF inválido' }));
     } else {
-      return digits
+      formatted = digits
         .replace(/^(\d{2})(\d)/, '$1.$2')
         .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
         .replace(/\.(\d{3})(\d)/, '.$1/$2')
         .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+
+      const valid = isValidCNPJ(digits);
+      setErrors((prev) => ({ ...prev, document: valid ? undefined : 'CNPJ inválido' }));
     }
+
+    return formatted;
   };
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-
     let formattedValue = value;
 
     switch (name) {
@@ -75,5 +93,6 @@ export function useCardForm() {
     cardData,
     handleChange,
     setCardData,
+    errors,
   };
 }

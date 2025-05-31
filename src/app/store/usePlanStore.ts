@@ -37,7 +37,7 @@ export const usePlanStore = create<PlanState>()(
         }),
     }),
     {
-      name: 'plan-storage-1',
+      name: 'plan-storage-5',
     }
   )
 )
