@@ -33,7 +33,7 @@ export default function Home() {
     horarioDoDia
   } = useHomePage();
   
-
+console.log(appointmentsOfTheDay   )
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <HomeHeader />
@@ -58,7 +58,7 @@ export default function Home() {
               timeSlots={timeSlots} 
               startTime={horarioDoDia?.horaAbertura ?? "00:00"} 
               endTime={horarioDoDia?.horaFechamento ?? "23:59"} 
-              offsetTop={-20}
+              offsetTop={20}
             />
 
             <div className="flex w-full min-w-full">

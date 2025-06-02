@@ -8,7 +8,7 @@ interface NowLineProps {
   timeSlots: TimeSlot[];
   startTime: string;
   endTime: string;
-  offsetTop?: number; // nova prop para ajustar o deslocamento
+  offsetTop?: number;
 }
 
 export default function NowLine({
@@ -37,11 +37,9 @@ export default function NowLine({
     const now = new Date();
     setCurrentTime(formatTime(now));
 
-    const nowTotalMins =
-      now.getHours() * 60 +
-      now.getMinutes() +
-      now.getSeconds() / 60 +
-      now.getMilliseconds() / 60000;
+  const nowTotalMins =
+    now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+
 
     const firstMinutes = toMinutes(startTime);
     const lastMinutes = toMinutes(endTime);
@@ -57,7 +55,7 @@ export default function NowLine({
 
     const position = (nowOffsetMinutes / totalRangeMinutes) * totalHeight;
 
-    return position + offsetTop; // ajusta a posição somando o offset
+    return position + offsetTop;
   }
 
   useEffect(() => {
@@ -66,7 +64,8 @@ export default function NowLine({
     }
     update();
 
-    const interval = setInterval(update, 60 * 1000);
+    const interval = setInterval(update, 10 * 1000);
+
     return () => clearInterval(interval);
   }, [timeSlots, startTime, endTime, offsetTop]);
 

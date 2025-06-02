@@ -43,6 +43,8 @@ export default function Collaborators() {
         <div className="flex flex-col gap-4 p-4 flex-1 overflow-y-auto w-full max-w-xl mx-auto">
           {collaborators.map((colab) => (
             <div
+            onClick={() => router.push(`/collaborator-profile/${colab.id}`)}
+
               key={colab.id}
               className="flex items-center gap-4 p-4 rounded-lg bg-white border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer"
             >

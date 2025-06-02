@@ -19,7 +19,7 @@ export default function HeaderWithBackButton({ title, onBack }: Props) {
       >
         <HiArrowLeft size={24} />
       </button>
-      <h1 className="text-xl font-semibold mx-auto">{title}</h1>
+      <h1 className="text-base font-semibold mx-auto">{title}</h1>
       <div style={{ width: 24 }} />
     </div>
   );
