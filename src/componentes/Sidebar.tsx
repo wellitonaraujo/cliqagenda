@@ -1,28 +1,28 @@
 'use client';
 
+import { HiChevronRight, HiMenu, HiLogout } from 'react-icons/hi';
 import { useSidebar } from '@/context/SidebarContext';
+import { useAuth } from '@/context/AuthContext';
+import { HiChevronLeft } from 'react-icons/hi';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { HiChevronRight, HiMenu } from 'react-icons/hi';
-import { HiChevronLeft } from 'react-icons/hi';
-import { useAuth } from '@/context/AuthContext';
-
-const menuItems = [
-  { label: 'Meu Negócio', icon: 'office.svg', path: '/my-business' },
-  { label: 'Atendimentos', icon: 'date-fill.svg', path: '/home' },
-  { label: 'Serviços', icon: 'list-filled.svg', path: '/services' },
-  { label: 'Combos', icon: 'package-open.svg', path: '/combos' },
-  { label: 'Clientes', icon: 'users-solid.svg', path: '/customers' },
-  { label: 'Colaboradores', icon: 'users-config.svg', path: '/collaborators' },
-  { label: 'Fluxo de caixa', icon: 'payment.svg', path: '/cash-flow' },
-  { label: 'Meu Plano', icon: 'wallet-money.svg', path: '/my-plan' },
-];
 
 export default function Sidebar() {
   const pathname = usePathname();
-   const { logout } = useAuth();
+  const { logout, empresa } = useAuth();
+
+  const menuItems = [
+    { label: empresa?.nome ?? 'Meu Negócio', icon: 'home.svg', path: '/my-business' },
+    { label: 'Atendimentos', icon: 'date-fill.svg', path: '/home' },
+    { label: 'Serviços', icon: 'service.svg', path: '/services' },
+    { label: 'Combos', icon: 'package-open.svg', path: '/combos' },
+    { label: 'Clientes', icon: 'users-solid.svg', path: '/customers' },
+    { label: 'Colaboradores', icon: 'users-config.svg', path: '/collaborators' },
+    { label: 'Fluxo de caixa', icon: 'payment.svg', path: '/cash-flow' },
+    { label: 'Meu Plano', icon: 'wallet-money.svg', path: '/my-plan' },
+  ];
 
   const { isCollapsed, toggleSidebar } = useSidebar();
 
@@ -49,22 +49,21 @@ export default function Sidebar() {
         )}
       >
         <div>
-          <div className="px-6 py-5 flex items-center justify-between">
+          <div className="px-7 py-5 flex items-center justify-between">
             {isCollapsed ? (
               <button
                 onClick={toggleSidebar}
-                className="text-2xl font-bold text-[#034D82]"
+                className="text-2xl font-bold text-[#5c5c5c]"
               >
-                <HiMenu color='#034D82'/>
+                <HiMenu color='#034D82' />
               </button>
             ) : (
               <div className="flex items-center justify-between w-full">
-               <h1 className="text-2xl font-bold">
-                <span className="text-[#034D82]">Cliq</span>
-                <span className="text-[#00AEEF]">Agenda</span>
-              </h1>
+                <h1 className="text-2xl font-bold">
+                  <span className="text-[#034D82]">Cliq</span>
+                  <span className="text-[#1195FF]">Agenda</span>
+                </h1>
 
-                {/* Ícone para fechar no desktop */}
                 <button
                   onClick={toggleSidebar}
                   className="text-[#034D82] text-xl md:block hidden"
@@ -72,22 +71,22 @@ export default function Sidebar() {
                   <HiChevronLeft color='#034D82' />
                 </button>
 
-                {/* Ícone para abrir/fechar no mobile */}
                 <button
                   onClick={toggleSidebar}
                   className="absolute right-4 text-[#034D82] text-xl md:hidden block"
                 >
                   {isCollapsed ? <HiChevronRight color='#034D82' /> : <HiChevronLeft color='#034D82' />}
                 </button>
-
               </div>
             )}
           </div>
-          {/* Menu */}
+
           <nav className="flex flex-col gap-1">
             {menuItems.map(({ label, icon, path }) => {
               const isActive = pathname === path;
-
+              const iconPath = isActive
+                ? icon.replace('.svg', '-ative.svg')
+                : icon;
               return (
                 <Link
                   key={path}
@@ -95,7 +94,7 @@ export default function Sidebar() {
                   className={clsx(
                     'flex items-center px-6 py-3 text-sm font-medium transition-all gap-3',
                     {
-                      'bg-[#EFFBFF] border-r-4 border-[#00AEEF] text-[#00AEEF]': isActive,
+                      'bg-[#E9F5FE] border-r-4 border-[#1195FF] text-[#1195FF]': isActive,
                       'text-gray-800 hover:bg-gray-50': !isActive,
                       'justify-center': isCollapsed,
                       'justify-start': !isCollapsed,
@@ -105,17 +104,43 @@ export default function Sidebar() {
                     if (window.innerWidth < 768) toggleSidebar();
                   }}
                 >
-                 <Image src={icon} alt={label} width={24} height={24} />
+               <img
+                  src={`/${isActive ? icon.replace('.svg', '-ative.svg') : icon}`}
+                  alt={label}
+                  width={24}
+                  height={24}
+                />
 
-                  {!isCollapsed && (
-                  <span className="text-base text-[#034D82] font-medium whitespace-nowrap">{label}</span>
+
+                      {!isCollapsed && (
+                   <span
+                      className={clsx(
+                        'text-sm font-medium whitespace-nowrap',
+                        isActive ? 'text-[#1195FF]' : 'text-[#034D82]'
+                      )}
+                    >
+                      {label}
+                    </span>
                   )}
-          
                 </Link>
               );
             })}
-              <button onClick={logout}>Sair</button>
           </nav>
+        </div>
+
+        <div className="p-4">
+          <button
+            onClick={logout}
+            className={clsx(
+              'flex items-center gap-2 text-sm font-medium text-[#034D82] hover:text-red-500',
+              {
+                'justify-center w-full': isCollapsed,
+              }
+            )}
+          >
+            <HiLogout size={24} />
+            {!isCollapsed && <span>Sair</span>}
+          </button>
         </div>
       </div>
     </>

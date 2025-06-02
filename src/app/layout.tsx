@@ -1,33 +1,14 @@
-'use client';
-
-import { CollaboratorProvider } from '@/context/CollaboratorContext';
-import { CustomerProvider } from '@/context/CustomersContext';
-import { ServiceProvider } from '@/context/ServiceContext';
-import { AuthProvider } from '@/context/AuthContext';
+import { AppProviders } from '@/context/AppProviders';
 import './globals.css';
-import { ComboProvider } from '@/context/ComboContext';
-import { HorariosProvider } from '@/context/HoursProvider';
-import { AppointmentsProvider } from '@/context/AppointmentsProvider';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="h-full">
       <body className="h-full overflow-hidden">
-        <AuthProvider>
-          <AppointmentsProvider>
-          <HorariosProvider>
-          <ServiceProvider>
-            <CustomerProvider>
-              <ComboProvider>
-              <CollaboratorProvider>
-                {children}
-              </CollaboratorProvider>
-              </ComboProvider>
-            </CustomerProvider>
-          </ServiceProvider>
-          </HorariosProvider>
-          </AppointmentsProvider>
-        </AuthProvider>
+        <AppProviders>{children}</AppProviders>
+        <ToastContainer position="top-right" autoClose={3000} />
       </body>
     </html>
   );

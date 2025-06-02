@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation';
 import Button from "@/componentes/Button";
 import Input from "@/componentes/Input";
 import { useCombos } from '@/context/ComboContext';
-import { useServices } from '@/context/ServiceContext';
-import { useCollaborators } from '@/context/CollaboratorContext';
 import { v4 } from 'uuid';
 import { HiArrowLeft } from 'react-icons/hi';
+import { useCollaborator } from '@/context/CollaboratorContext';
+import { useService } from '@/context/ServiceContext';
 
 export default function NewCombo() {
   const { addCombo } = useCombos();
-  const { services: availableServices } = useServices();
-  const { collaborators } = useCollaborators();
+  const { services: availableServices } = useService();
+  const { collaborators } = useCollaborator();
   const router = useRouter();
 
   const [name, setName] = useState('');
@@ -42,8 +42,8 @@ export default function NewCombo() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-white">
-      <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
+     <div className="flex justify-center items-start min-h-screen bg-white py-10">
+      <div className="w-full max-w-2xl px-6 py-8 bg-white rounded-xl shadow-md border border-gray-200">
         <div className="flex justify-between items-center mb-8">
           <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />
@@ -87,7 +87,7 @@ export default function NewCombo() {
               </option>
               {availableServices.map((service) => (
                 <option key={service.id} value={service.id}>
-                  {service.name}
+                  {service.nome}
                 </option>
               ))}
             </select>
@@ -130,7 +130,7 @@ export default function NewCombo() {
               </option>
               {collaborators.map((colab) => (
                 <option key={colab.id} value={colab.id}>
-                  {colab.name}
+                  {colab.nome}
                 </option>
               ))}
             </select>
@@ -142,7 +142,7 @@ export default function NewCombo() {
         <div className="flex justify-end gap-4">
           <button
             onClick={() => router.push('/combos')}
-            className="text-gray-600 font-medium hover:underline"
+            className="text-gray-600 font-medium text-sm hover:underline"
           >
             Cancelar
           </button>

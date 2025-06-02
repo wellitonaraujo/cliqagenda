@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -31,7 +32,7 @@ export default function Login() {
     } catch (err: any) {
       const message =
         err?.response?.data?.message || 'Email ou senha inválidos';
-      alert(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -39,7 +40,7 @@ export default function Login() {
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <div className="w-full max-w-sm space-y-6">
+      <div className="w-full max-w-sm space-y-6 bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div>
           <h1 className="text-3xl font-bold mb-4 text-center">
             <span className="text-primary">CliqAgenda</span>

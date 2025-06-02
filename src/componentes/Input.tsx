@@ -5,36 +5,60 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 type InputProps = {
+  name?: string;
   label?: string;
   type?: string;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   hasError?: boolean;
-  value?: string;
+  value?: string | number;
 };
 
-export default function Input({ label, type = 'text', placeholder, onChange, hasError, value }: InputProps) {
+export default function Input({ 
+  name,
+  label, 
+  type = 'text', 
+  placeholder, 
+  onChange, 
+  onBlur,
+  onFocus,
+  hasError, 
+  value 
+}: InputProps) {
   const isPassword = type === 'password';
   const { visible, toggle } = usePasswordToggle();
   const [isFocused, setIsFocused] = useState(false);
 
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    setIsFocused(true);
+    if (onFocus) onFocus(e);
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setIsFocused(false);
+    if (onBlur) onBlur(e);
+  };
+
   return (
     <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
+      {label && <label className="block mb-1 text-sm font-medium text-[#252525]">{label}</label>}
       <div className="relative">
         <input
+          name={name}
           type={isPassword ? (visible ? 'text' : 'password') : type}
           placeholder={placeholder}
           onChange={onChange}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           {...(value !== undefined && { value })}
-          className={`w-full border rounded-md px-3 py-3 ${
+          className={`w-full border rounded-md px-3 py-3 text-[#252525] ${
             isPassword ? 'pr-10' : ''
-          } focus:outline-none focus:ring-2 ${
+          } focus:outline-none focus:ring-1 ${
             hasError && !isFocused
               ? 'border-red-500 focus:ring-red-500'
-              : 'border-gray-400 focus:ring-primary'
+              : 'border-gray-300 focus:border-[#1195FF] focus:ring-[#1195FF]'
           }`}
         />
         {isPassword && (

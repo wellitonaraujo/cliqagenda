@@ -25,3 +25,23 @@ body {
   color: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Estilizando o scroll da lista */
+.custom-select__menu-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Scrollbar para navegadores WebKit */
+.custom-select__menu-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-select__menu-list::-webkit-scrollbar-thumb {
+  background-color: #00AEEF;
+  border-radius: 4px;
+}
+
+.custom-select__menu-list::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+}

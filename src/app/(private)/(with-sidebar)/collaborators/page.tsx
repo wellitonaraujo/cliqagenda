@@ -1,28 +1,33 @@
 'use client';
 
-import { useCollaborators } from '@/context/CollaboratorContext';
 import { useRouter } from 'next/navigation';
 import Button from '@/componentes/Button';
 import Header from '@/componentes/Header';
-import { useEffect } from 'react';
 import Image from 'next/image';
+import { useCollaborator } from '@/context/CollaboratorContext';
+import Spinner from '@/componentes/Spinner';
+import EmptyState from '@/componentes/EmptyState';
+import { useEffect } from 'react';
+import { formatTelefone } from '../../../../../utils/formatPhone';
 
 export default function Collaborators() {
   const router = useRouter();
-  const { collaborators, fetchCollaborators, loading } = useCollaborators();
+  const { collaborators, loading, setLoading, fetchCollaborators } = useCollaborator();
 
-  useEffect(() => {
-    fetchCollaborators();
-  }, []);
+   useEffect(() => {
+      const fetchData = async () => {
+        setLoading(true);
+        await fetchCollaborators();
+        setLoading(false);
+      };
+      fetchData();
+    }, []);
+  
 
   if (loading) {
-    return (
-      <div className="flex flex-col h-screen bg-white justify-center items-center">
-        <p className="text-lg font-semibold text-gray-700">Carregando colaboradores...</p>
-      </div>
-    );
+    return <Spinner message="Carregando colaboradores..." />;
   }
-  
+
   return (
     <div className="flex flex-col h-screen bg-white">
       <div className="flex items-center gap-2">
@@ -30,30 +35,31 @@ export default function Collaborators() {
       </div>
 
       {collaborators.length === 0 ? (
-        <div className="flex flex-col justify-center items-center flex-1 text-center">
-          <p className="text-lg font-semibold text-gray-700">Sem colaboradores cadastrados</p>
-          <p className="mt-2 text-md text-gray-500">Cadastre um novo colaborador</p>
-        </div>
+        <EmptyState
+          title="Sem colaboradores cadastrados"
+          subtitle="Cadastre um novo colaborador"
+        />
       ) : (
         <div className="flex flex-col gap-4 p-4 flex-1 overflow-y-auto w-full max-w-xl mx-auto">
           {collaborators.map((colab) => (
             <div
+            onClick={() => router.push(`/collaborator-profile/${colab.id}`)}
+
               key={colab.id}
               className="flex items-center gap-4 p-4 rounded-lg bg-white border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer"
             >
-              <div className="flex items-center justify-center w-16 h-16 border-1 border-[#DEDEDE] rounded-full">
+              <div className="flex items-center justify-center w-14 h-14 border-1 border-[#DEDEDE] rounded-full">
                 <Image
                   src="/user-default.svg"
                   alt="Foto"
-                  width={38}
-                  height={38}
+                  width={30}
+                  height={30}
                   className="rounded-full"
                 />
               </div>
               <div>
-                <p className="font-semibold text-md">{colab.nome}</p>
-                <p className="text-md text-gray-600">{colab.telefone}</p>
-                <p className="text-md text-gray-600">{colab.role}</p>
+                <p className="text-base text-gray-700 font-semibold">{colab.nome}</p>
+                <p className="text-base text-gray-600">{formatTelefone(colab.telefone)}</p>
               </div>
             </div>
           ))}

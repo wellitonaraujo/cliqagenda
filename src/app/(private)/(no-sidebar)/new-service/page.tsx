@@ -1,137 +1,117 @@
-'use client'
+'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Input from '@/componentes/Input';
+import HeaderWithBackButton from '@/componentes/HeaderWithBackButton';
+import { useNewServiceForm } from './hooks/useNewServiceForm';
+import { SelectField } from '@/componentes/SelectField';
 import Button from '@/componentes/Button';
-import { useCollaborators } from '@/context/CollaboratorContext';
-import { useServices } from '@/context/ServiceContext';
-import { v4 as uuidv4 } from 'uuid';
-import { HiArrowLeft } from 'react-icons/hi';
-import { formatCurrency } from '../../../../../utils/formatCurrency';
-import { generateDurations } from '../../../../../utils/generateDurations';
+import Input from '@/componentes/Input';
 import Select from 'react-select';
-import { customSelectStyles } from '../../../../../utils/customSelectStyles';
+import React from 'react';
 
 export default function NewService() {
-  const router = useRouter();
-  const { collaborators } = useCollaborators();
-  const { addService } = useServices();
-
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [duration, setDuration] = useState('');
-  const [selectedCollaboratorIds, setSelectedCollaboratorIds] = useState<string[]>([]);
-
-  const durations = generateDurations();
-
-  const collaboratorOptions = collaborators.map((c) => ({
-    value: c.id,
-    label: c.name,
-  }));
-
-  const durationOptions = durations.map((d) => ({
-    value: d,
-    label: d,
-  }));
-
-  const handleSave = () => {
-    if (!name || !price || !duration || selectedCollaboratorIds.length === 0) {
-      alert('Preencha todos os campos');
-      return;
-    }
-
-    const newService = {
-      id: uuidv4(),
-      name,
-      price,
-      duration,
-      collaboratorIds: selectedCollaboratorIds,
-    };
-
-    console.log('Serviço criado:', newService);
-
-    addService(newService);
-    router.push('/services');
-  };
-
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value;
-    const numeric = rawValue.replace(/\D/g, '');
-    setPrice(formatCurrency(numeric));
-  };
-
-  const handleCollaboratorChange = (selectedOptions: any) => {
-    if (!selectedOptions) return;
-    
-    // Quando 'isMulti' está ativo, selectedOptions será um array de objetos
-    const selectedValues = selectedOptions.map((opt: any) => opt.value);
-    console.log("Selected collaborators:", selectedValues); // Log para depurar
-
-    setSelectedCollaboratorIds(selectedValues); // Atualiza o estado com os IDs selecionados
-  };
+  const {
+    nome, setNome,
+    descricao, setDescricao,
+    preco, handlePriceChange,
+    durationOptions, duracaoMin,
+    collaboratorOptions, colaboradoresIds,
+    handleDurationChange,
+    handleCollaboratorChange,
+    handleSubmit,
+    router,
+    isSubmitting
+  } = useNewServiceForm();
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-white">
-      <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
-        <div className="flex justify-between items-center mb-8">
-          <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
-            <HiArrowLeft size={24} />
-          </button>
-          <h1 className="text-xl font-semibold mx-auto">Novo serviço</h1>
-        </div>
-
-        <div className="mb-4">
+     <div className="flex justify-center items-start min-h-screen bg-white py-10">
+      <div className="w-full max-w-2xl px-6 py-8 bg-white rounded-xl shadow-md border border-gray-200">
+       <HeaderWithBackButton title="Novo serviço" />
+        <form onSubmit={handleSubmit} className="space-y-6">
           <Input
+            label="Nome*"
             placeholder="Nome do serviço"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
           />
-        </div>
 
-        <div className="mb-4">
-          <Input
-            placeholder="Valor"
-            value={price}
-            onChange={handlePriceChange}
-          />
-        </div>
-
-        <div className="mb-4">
-          <Select
-            options={durationOptions}
-            value={durationOptions.find((opt) => opt.value === duration) || null}
-            onChange={(selectedOption) => setDuration(selectedOption?.value ?? '')}
-            placeholder="Selecione a duração"
-            classNames={customSelectStyles.classNames}
-          />
-        </div>
-
-        <div className="mb-6">
-          <Select
-            isMulti
-            options={collaboratorOptions}
-            value={collaboratorOptions.filter((opt) =>
-              selectedCollaboratorIds.includes(opt.value)
-            )}
-            onChange={handleCollaboratorChange}
-            placeholder="Selecione os colaboradores"
-            classNames={customSelectStyles.classNames}
-          />
-          <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
-        </div>
-
-        <div className="flex justify-end gap-4 mt-auto mb-20">
-          <button
-            onClick={() => router.back()}
-            className="text-gray-700 font-medium hover:underline"
-          >
-            Cancelar
-          </button>
-          <div onClick={handleSave}>
-            <Button>Salvar</Button>
+          <div>
+            <label className="block text-gray-700 text-sm mb-1">Descrição</label>
+            <textarea
+              className="w-full border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-1 focus:ring-[#00AEEF] focus:border-[#00AEEF]"
+              rows={4}
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              placeholder="Descrição do serviço"
+            />
           </div>
-        </div>
+
+          <div className="flex flex-row gap-4 w-full">
+           <div className="flex-1">
+              <SelectField
+                label="Duração*"
+                options={durationOptions}
+                value={durationOptions.find(opt => opt.value === duracaoMin) || null}
+                onChange={handleDurationChange}
+                placeholder="Selecione a duração"
+                noOptionsMessage={() => 'Nenhuma duração encontrada'}
+              />
+            </div>
+
+            <div className="flex-1">
+              <Input
+                label="Preço*"
+                type="text"
+                value={preco}
+                onChange={handlePriceChange}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-1">Colaboradores*</label>
+            <Select
+              classNamePrefix="custom-select"
+              options={collaboratorOptions}
+              value={collaboratorOptions.filter(opt => colaboradoresIds.includes(opt.value as number))}
+              onChange={handleCollaboratorChange}
+              placeholder="Selecione os colaboradores"
+              noOptionsMessage={() => 'Nenhum colaborador encontrado'}
+              isMulti
+              closeMenuOnSelect={false}
+              styles={{
+                control: (base, state) => ({
+                  ...base,
+                  minHeight: 50,
+                  borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                  boxShadow: state.isFocused ? '0 0 0 1px #00AEEF' : base.boxShadow,
+                  '&:hover': {
+                    borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                  },
+                }),
+                valueContainer: (base) => ({
+                  ...base,
+                  paddingTop: 4,
+                  paddingBottom: 4,
+                }),
+              }}
+            />
+
+            <p className="text-sm text-gray-500 mt-1">Profissionais que realizam esse serviço</p>
+          </div>
+
+          <div className="flex justify-end gap-4 mt-6">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="text-gray-700 text-sm font-medium hover:underline"
+            >
+              Cancelar
+            </button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Salvando...' : 'Criar Serviço'}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

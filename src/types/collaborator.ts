@@ -1,15 +1,20 @@
-export type TimeRange = {
-  start: string;
-  end: string;
+export type Horario = {
+  diaSemana: string;
+  horaInicio: string;
+  horaFim: string;
+  ativo: boolean;
 };
 
-export type DaySchedule = {
-  open: boolean;
-  ranges: TimeRange[];
-};
-
-export type Schedule = {
-  [day: string]: DaySchedule;
+export type CollaboratorInput = {
+  nome: string;
+  email: string;
+  telefone: string;
+  rua: string;
+  numero: string;
+  bairro: string;
+  cidade: string;
+  horarios: Horario[];
+  role?: "COLLABORATOR"
 };
 
 export type Collaborator = {
@@ -17,7 +22,10 @@ export type Collaborator = {
   nome: string;
   email: string;
   telefone: string;
-  endereco: string;
-  createdAt: string;
+  rua: string;
+  numero: string;
+  bairro: string;
+  cidade: string;
   role: string;
+  empresaId: number;
 };
