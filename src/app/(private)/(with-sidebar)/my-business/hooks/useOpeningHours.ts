@@ -1,10 +1,18 @@
-'use client';
-
 import { Horario, useBusiness } from '@/context/BusinessContext';
 import { useAuth } from '@/context/AuthContext';
 import { DiaSemana } from '@/types/DiaSemana';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+
+const orderDiaSemana: DiaSemana[] = [
+  'SEGUNDA',
+  'TERCA',
+  'QUARTA',
+  'QUINTA',
+  'SEXTA',
+  'SABADO',
+  'DOMINGO',
+];
 
 export function useOpeningHours() {
   const { user } = useAuth();
@@ -19,7 +27,12 @@ export function useOpeningHours() {
 
   useEffect(() => {
     if (horarios) {
-      setEditableHorarios(horarios);
+      // Ordena aqui antes de setar
+      const horariosOrdenados = [...horarios].sort(
+        (a, b) =>
+          orderDiaSemana.indexOf(a.diaSemana) - orderDiaSemana.indexOf(b.diaSemana)
+      );
+      setEditableHorarios(horariosOrdenados);
     }
   }, [horarios]);
 

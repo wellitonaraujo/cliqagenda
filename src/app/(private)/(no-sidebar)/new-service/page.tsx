@@ -23,8 +23,8 @@ export default function NewService() {
   } = useNewServiceForm();
 
   return (
-   <div className="flex items-center justify-center min-h-screen bg-white">
-      <div className="w-full max-w-xl bg-white p-6 rounded border border-gray-100 shadow-xs">
+     <div className="flex justify-center items-start min-h-screen bg-white py-10">
+      <div className="w-full max-w-2xl px-6 py-8 bg-white rounded-xl shadow-md border border-gray-200">
        <HeaderWithBackButton title="Novo serviço" />
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input

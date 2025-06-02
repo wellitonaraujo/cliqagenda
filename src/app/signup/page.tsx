@@ -82,8 +82,8 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <div className="w-full max-w-sm space-y-6">
+     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
+      <div className="w-full max-w-sm space-y-6 bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div>
           <h1 className="text-3xl font-bold mb-4 text-center">
             <span className="text-primary">Criar conta</span>

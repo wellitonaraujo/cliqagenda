@@ -1,4 +1,3 @@
-
 import { useCollaboratorStore } from '@/app/store/useCollaboratorStore';
 import { useBusiness } from '@/context/BusinessContext';
 import { DiaSemana, Horario } from '@/types/DiaSemana';
@@ -15,6 +14,17 @@ const diaSemanaMap: Record<DiaSemana, string> = {
   DOMINGO: 'Domingo',
 };
 
+// Array para ordenação consistente
+const orderDiaSemana: DiaSemana[] = [
+  'SEGUNDA',
+  'TERCA',
+  'QUARTA',
+  'QUINTA',
+  'SEXTA',
+  'SABADO',
+  'DOMINGO',
+];
+
 export function useNewCollaborator() {
   const { createCollaborator, loading } = useCollaboratorStore();
   const { horarios: empresaHorarios } = useBusiness();
@@ -30,6 +40,13 @@ export function useNewCollaborator() {
   const [horarios, setHorarios] = useState<Horario[]>([]);
   const [localLoading, setLocalLoading] = useState(false);
 
+  function ordenarHorarios(horariosToSort: Horario[]) {
+    return [...horariosToSort].sort(
+      (a, b) =>
+        orderDiaSemana.indexOf(a.diaSemana) - orderDiaSemana.indexOf(b.diaSemana)
+    );
+  }
+
   useEffect(() => {
     if (empresaHorarios) {
       const converted = empresaHorarios.map(h => ({
@@ -38,7 +55,7 @@ export function useNewCollaborator() {
         horaFim: h.horaFechamento || '',
         ativo: h.aberto,
       }));
-      setHorarios(converted);
+      setHorarios(ordenarHorarios(converted));
     }
   }, [empresaHorarios]);
 
@@ -96,12 +113,13 @@ export function useNewCollaborator() {
 
   function loadHorariosFromEmpresa() {
     if (!empresaHorarios) return [];
-    return empresaHorarios.map(h => ({
+    const converted = empresaHorarios.map(h => ({
       diaSemana: h.diaSemana,
       horaInicio: h.horaAbertura || '',
       horaFim: h.horaFechamento || '',
       ativo: h.aberto,
     }));
+    return ordenarHorarios(converted);
   }
 
   useEffect(() => {

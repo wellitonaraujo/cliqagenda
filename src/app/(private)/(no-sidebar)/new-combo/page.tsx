@@ -42,8 +42,8 @@ export default function NewCombo() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-white">
-      <div className="w-full max-w-2xl bg-white rounded-lg p-6 relative">
+     <div className="flex justify-center items-start min-h-screen bg-white py-10">
+      <div className="w-full max-w-2xl px-6 py-8 bg-white rounded-xl shadow-md border border-gray-200">
         <div className="flex justify-between items-center mb-8">
           <button onClick={() => router.back()} className="text-gray-600 hover:text-gray-800">
             <HiArrowLeft size={24} />

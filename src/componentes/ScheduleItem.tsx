@@ -32,7 +32,7 @@ export default function HorarioItem({
               } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
             />
           </Switch>
-          <span className="text-base whitespace-nowrap">{diaSemana}</span>
+          <span className="text-sm whitespace-nowrap">{diaSemana}</span>
         </div>
 
         <div className="flex items-center gap-2 justify-end w-full">
@@ -42,15 +42,15 @@ export default function HorarioItem({
                 type="time"
                 value={horaInicio}
                 onChange={(e) => onChange('horaInicio', e.target.value)}
-                className="border border-gray-300 rounded px-2 py-2 text-md w-24"
+                className="border border-gray-300 rounded px-1 py-1 text-md w-22"
                 required
               />
-              <span className="text-sm">às</span>
+              <span className="text-[14px]">às</span>
               <input
                 type="time"
                 value={horaFim}
                 onChange={(e) => onChange('horaFim', e.target.value)}
-                className="border border-gray-300 rounded px-2 py-2 text-md w-24"
+                className="border border-gray-300 rounded px-1 py-1 text-md w-22"
                 required
               />
             </>
