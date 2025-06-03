@@ -1,8 +1,9 @@
 'use client';
 
 import { createContext, useContext, ReactNode, useState } from 'react';
-import api from '@/services/api';
+import { usePlanStore } from '@/app/store/usePlanStore';
 import { toast } from 'react-toastify';
+import api from '@/services/api';
 
 interface CardDetails {
   last4: string;
@@ -13,7 +14,6 @@ interface CardDetails {
 interface PaymentIntent {
   id: number;
   status: string;
-  // Adicione outros campos que precisar do PaymentIntent aqui
 }
 
 interface PaymentData {
@@ -32,7 +32,7 @@ interface PaymentContextData {
 
 const PaymentContext = createContext({} as PaymentContextData);
 
-export const PaymentProvider = ({ children }: { children: ReactNode }) => {
+export const PaymentProvider = ({ children }: { children: ReactNode }) => {  
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState(0);
   const [cardDetails, setCardDetails] = useState<CardDetails | null>(null);
@@ -47,13 +47,20 @@ export const PaymentProvider = ({ children }: { children: ReactNode }) => {
         paymentMethodId,
       });
 
-      console.log('Resposta do pagamento:', response.status, response.data);
-
       if (response.status === 200 || response.status === 201) {
         const { cardDetails: card, paymentIntent: intent } = response.data;
 
         setCardDetails(card);
         setPaymentIntent(intent);
+
+        usePlanStore.getState().setCardInfo({
+          number: card.last4,
+          name: '',
+          validity: `${card.expMonth.toString().padStart(2, '0')}/${card.expYear.toString().slice(-2)}`,
+          cvv: '',
+          document: '',
+          email: '',
+        });
 
         toast.success('Pagamento realizado com sucesso!');
         return true;

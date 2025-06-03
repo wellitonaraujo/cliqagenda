@@ -1,86 +1,32 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import { AnimatePresence, motion } from 'framer-motion';
-
-import { usePlanStore } from '@/app/store/usePlanStore';
-import { useCardForm } from './hooks/useCardForm';
-import { usePayment } from '@/context/PaymentContext';
-
+import { useElements, useStripe } from '@stripe/react-stripe-js';
 import PaymentMethodSelector from './ui/PaymentMethodSelector';
-import CardForm from './ui/CardForm';
+import { useHandlePayment } from './hooks/useHandlePayment';
+import { usePlanStore } from '@/app/store/usePlanStore';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useCardForm } from './hooks/useCardForm';
 import PixPayment from './ui/PixPayment';
+import CardForm from './ui/CardForm';
+import { useState } from 'react';
 import Header from './ui/Header';
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
 export default function Payment() {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
   const { cardData, handleChange, errors } = useCardForm();
-  const { createPayment, setAmount } = usePayment();
-  const { setHasSubscribed, setCardInfo } = usePlanStore();
-  const router = useRouter();
-  
+
   const planPrice = usePlanStore((state) => state.getPlanPrice());
 
   const stripe = useStripe();
   const elements = useElements();
 
-  const setPlan = usePlanStore((state) => state.setPlan);
-
-  useEffect(() => {
-    setPlan('business');
-  }, [setPlan]);
-
-  useEffect(() => {
-    if (planPrice) {
-      setAmount(planPrice);
-    }
-  }, [planPrice, setAmount]);
-
-  async function handlePayment(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const hasErrors = Object.values(errors).some((error) => error);
-    if (hasErrors) {
-      toast.warning('Por favor, corrija os erros antes de continuar.');
-      return;
-    }
-
-    if (!stripe || !elements) {
-      toast.error('Stripe não está carregado ainda.');
-      return;
-    }
-
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) {
-      toast.error('Erro ao obter dados do cartão.');
-      return;
-    }
-
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card',
-      card: cardElement,
-      billing_details: {
-        name: cardData.name,
-        email: cardData.email,
-      },
-    });
-
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    
-    const success = await createPayment({ amount: planPrice, paymentMethodId: paymentMethod.id });
-
-    if (success) {
-      setCardInfo(cardData);
-      setHasSubscribed(true);
-      router.push('/my-plan');
-    }
-  }
+  const { handlePayment } = useHandlePayment({
+    stripe,
+    elements,
+    cardData,
+    errors,
+    planPrice,
+  });
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-white py-10">

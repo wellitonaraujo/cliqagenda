@@ -11,7 +11,12 @@ import PlanCard from './ui/PlanCard';
 
 export default function MyPlan() {
   const router = useRouter();
-  const { plan, hasSubscribed, cardInfo, setPlan } = usePlanStore();
+  const { plan, hasSubscribed, setPlan } = usePlanStore();
+
+const cardInfo = usePlanStore((state) => state.cardInfo);
+
+console.log('cardInfo no MyPlan:', cardInfo);
+
 
   if (plan === 'business' && hasSubscribed) {
     return (

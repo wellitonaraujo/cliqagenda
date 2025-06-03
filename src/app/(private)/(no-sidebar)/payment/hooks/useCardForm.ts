@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { isValidCPF } from '../../../../../../utils/isValidCPF';
 import { isValidCNPJ } from '../../../../../../utils/isValidCNPJ';
+import { isValidCPF } from '../../../../../../utils/isValidCPF';
+import { useState } from 'react';
 
 export function useCardForm() {
   const [errors, setErrors] = useState<{ validity?: string; document?: string }>({});
