@@ -8,14 +8,16 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useCardForm } from './hooks/useCardForm';
 import PixPayment from './ui/PixPayment';
 import CardForm from './ui/CardForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './ui/Header';
+import { usePayment } from '@/context/PaymentContext';
 
 export default function Payment() {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
   const { cardData, handleChange, errors } = useCardForm();
 
   const planPrice = usePlanStore((state) => state.getPlanPrice());
+  const { setAmount } = usePayment();
 
   const stripe = useStripe();
   const elements = useElements();
@@ -27,6 +29,12 @@ export default function Payment() {
     errors,
     planPrice,
   });
+
+  useEffect(() => {
+    if (planPrice > 0) {
+      setAmount(planPrice);
+    }
+  }, [planPrice, setAmount]);
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-white py-10">

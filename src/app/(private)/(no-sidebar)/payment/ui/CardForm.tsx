@@ -4,6 +4,7 @@ import { CardElement } from '@stripe/react-stripe-js';
 import { useEffect, useState } from 'react';
 import { useFormatCurrency } from '@/hooks/useFormatCurrency';
 import { InputField } from '@/componentes/InputField';
+import { usePlanStore } from '@/app/store/usePlanStore';
 
 type Props = {
   cardData: {
@@ -21,10 +22,18 @@ export default function CardForm({ cardData, errors, onChange, onSubmit, amount 
   const [hasMounted, setHasMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formatCurrency = useFormatCurrency();
+    const {
+    setPlan,
+  } = usePlanStore();
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+
+      useEffect(() => {
+    setPlan('business');
+  }, [setPlan]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

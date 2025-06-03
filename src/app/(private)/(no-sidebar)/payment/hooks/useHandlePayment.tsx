@@ -1,3 +1,4 @@
+
 import type { Stripe, StripeElements } from '@stripe/stripe-js';
 import { usePlanStore } from '@/app/store/usePlanStore';
 import { usePayment } from '@/context/PaymentContext';
@@ -69,7 +70,9 @@ export function useHandlePayment({
       ? `${paymentMethod.card.exp_month.toString().padStart(2, '0')}/${paymentMethod.card.exp_year.toString().slice(-2)}`
       : '';
 
-    const success = await createPayment({ amount: planPrice, paymentMethodId: paymentMethod.id });
+    // Corrigido: enviar valor em centavos para o backend
+    const amountInCents = Math.round(planPrice * 100);
+    const success = await createPayment({ amount: amountInCents, paymentMethodId: paymentMethod.id });
 
     if (success) {
       setCardInfo({
