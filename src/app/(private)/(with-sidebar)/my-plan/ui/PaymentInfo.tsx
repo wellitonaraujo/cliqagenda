@@ -1,19 +1,17 @@
 type Props = {
   number: string;
   validity: string;
-  paymentDate: string;
+  paymentDate: string | number;
 };
 
 export default function PaymentInfo({ number, validity, paymentDate }: Props) {
-  const formatNextChargeDate = (rawDate: string) => {
-    const date = new Date(rawDate);
+  const formatNextChargeDate = (rawDate: string | number) => {
+    const date = typeof rawDate === 'number' ? new Date(rawDate * 1000) : new Date(rawDate);
 
     if (isNaN(date.getTime())) return 'Data inválida';
 
-    // Soma 30 dias
     date.setDate(date.getDate() + 30);
 
-    // Formata como dd/mm/yyyy
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();

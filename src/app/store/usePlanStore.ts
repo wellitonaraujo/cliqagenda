@@ -18,11 +18,12 @@ interface PlanState {
   setHasSubscribed: (status: boolean) => void
   setCardInfo: (info: CardInfo) => void
   reset: () => void
+  getPlanPrice: () => number
 }
 
 export const usePlanStore = create<PlanState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       plan: 'trial',
       hasSubscribed: false,
       cardInfo: null,
@@ -35,6 +36,16 @@ export const usePlanStore = create<PlanState>()(
           hasSubscribed: false,
           cardInfo: null,
         }),
+      getPlanPrice: () => {
+        const plan = get().plan
+        switch (plan) {
+          case 'business':
+            return 3990
+          case 'trial':
+          default:
+            return 0
+        }
+      },
     }),
     {
       name: 'plan-storage-5',
