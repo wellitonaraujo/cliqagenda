@@ -11,8 +11,9 @@ import { PaymentProvider } from '@/context/PaymentContext';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe('pk_test_51RVcOEB9iO9BmXUum1s8XnwFiyKcbjYSwqD1cpr3P9vZlBEXbKX1Y2rIvDdKHVRWywHwSOWmZviGPHKGnaTDqNXl00XKA9nwsB');
-
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string
+);
 
 export const AppProviders = ({ children }: { children: React.ReactNode }) => {
   return (
