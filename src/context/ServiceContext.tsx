@@ -83,7 +83,7 @@ export const ServiceProvider = ({ children }: { children: ReactNode }) => {
 export const useService = () => {
   const context = useContext(ServiceContext);
   if (!context) {
-    throw new Error('useService deve ser usado dentro de ServiceProvider...');
+    throw new Error('useService deve ser usado dentro de ServiceProvider');
   }
   return context;
 };
