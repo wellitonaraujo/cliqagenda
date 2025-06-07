@@ -2,7 +2,6 @@ export interface Collaborator {
   id: number;
   nome: string;
 }
-
 export interface Appointment {
   id: number;
   cliente: { nome: string };
