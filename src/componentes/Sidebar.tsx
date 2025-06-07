@@ -7,6 +7,7 @@ import { HiChevronLeft } from 'react-icons/hi';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
+import Image from 'next/image';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -103,15 +104,14 @@ export default function Sidebar() {
                     if (window.innerWidth < 768) toggleSidebar();
                   }}
                 >
-               <img
+                <Image
                   src={`/${isActive ? icon.replace('.svg', '-ative.svg') : icon}`}
                   alt={label}
                   width={24}
                   height={24}
                 />
 
-
-                      {!isCollapsed && (
+                  {!isCollapsed && (
                    <span
                       className={clsx(
                         'text-sm font-medium whitespace-nowrap',

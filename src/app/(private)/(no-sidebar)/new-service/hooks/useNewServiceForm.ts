@@ -73,7 +73,7 @@ export function useNewServiceForm() {
       setDuracaoMin(60);
       setPreco(formatCurrency(0));
       setColaboradoresIds([]);
-    } catch (err) {
+    } catch {
       toast.error('Erro ao criar serviço');
     } finally {
       setIsSubmitting(false);

@@ -66,7 +66,7 @@ export function useHomePage() {
         setStatus(newStatus);
         handleModalClose();
           await fetchAppointments();
-      } catch (err) {
+      } catch {
         toast.error("Erro ao atualizar status:");
       }
     }
