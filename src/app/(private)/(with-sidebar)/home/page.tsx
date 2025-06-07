@@ -7,9 +7,7 @@ import { AppointmentModal } from "./ui/AppointmentModal";
 import TimeSlotsColumn from "./ui/TimeSlotsColumn";
 import { useHomePage } from "./hooks/useHomePage";
 import { EmptyColumns } from "./ui/EmptyColumns";
-import HomeHeader from "./ui/Header";
-import { useEffect } from "react";
-import NowLine from "./ui/NowLine";
+import HomeHeader from "./ui/Header";;
 
 export default function Home() {
   const {
@@ -30,7 +28,6 @@ export default function Home() {
     openModal,
     goToNewAppointment,
     loading,
-    horarioDoDia
   } = useHomePage();
   
 console.log(appointmentsOfTheDay   )

@@ -26,7 +26,7 @@ export function useHomePage() {
 
   const COL_WIDTH = 180;
 
-  const [status, setStatus] = useState<string | null>(null);
+  const [, setStatus] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: number; timeSlotIndex: number } | null>(null);
@@ -42,7 +42,7 @@ export function useHomePage() {
     updateMinCols();
     window.addEventListener("resize", updateMinCols);
     return () => window.removeEventListener("resize", updateMinCols);
-  }, []);
+  }, [setMinCols]);
  
   useEffect(() => {
     async function load() {
@@ -51,7 +51,7 @@ export function useHomePage() {
       setLoading(false);
     }
     load();
-  }, []);
+  }, [fetchAppointments]);
 
   const handleModalClose = () => {
     setModalOpen(false);

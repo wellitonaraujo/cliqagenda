@@ -38,7 +38,7 @@ export function useScheduleLogic() {
     const [endHour, endMinute] = horario.horaFechamento.split(':').map(Number);
 
     const slots = [];
-    let current = new Date(0, 0, 0, startHour, startMinute);
+    const current = new Date(0, 0, 0, startHour, startMinute);
     const end = new Date(0, 0, 0, endHour, endMinute);
 
     while (current <= end) {
@@ -81,9 +81,8 @@ export function useScheduleLogic() {
       fetchAppointments();
       resetRefetch();
     }
-  }, [shouldRefetch]);
-  
-  
+  }, [shouldRefetch, fetchAppointments, resetRefetch]);
+
   return {
     selectedDate,
     setSelectedDate,

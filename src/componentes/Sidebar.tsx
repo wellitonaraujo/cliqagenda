@@ -5,7 +5,6 @@ import { useSidebar } from '@/context/SidebarContext';
 import { useAuth } from '@/context/AuthContext';
 import { HiChevronLeft } from 'react-icons/hi';
 import { usePathname } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
 
@@ -84,7 +83,7 @@ export default function Sidebar() {
           <nav className="flex flex-col gap-1">
             {menuItems.map(({ label, icon, path }) => {
               const isActive = pathname === path;
-              const iconPath = isActive
+              isActive
                 ? icon.replace('.svg', '-ative.svg')
                 : icon;
               return (

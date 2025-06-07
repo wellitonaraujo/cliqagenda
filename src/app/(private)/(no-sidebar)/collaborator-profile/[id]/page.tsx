@@ -38,6 +38,7 @@ export default function CollaboratorProfile() {
 
   useEffect(() => {
     const fetchCollaborator = async () => {
+      setLoading(true);
       try {
         const response = await api.get(`/collaborators/${id}`);
         setCollaborator({
@@ -52,7 +53,8 @@ export default function CollaboratorProfile() {
     };
 
     fetchCollaborator();
-  }, [id]);
+}, [id]);
+
 
   const handleDelete = async () => {
     if (!id) return;
