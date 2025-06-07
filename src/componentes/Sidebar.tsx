@@ -105,7 +105,10 @@ export default function Sidebar() {
                   }}
                 >
                 <Image
-                  src={`/${isActive ? icon.replace('.svg', '-ative.svg') : icon}`}
+                  src={`/${isActive
+                    ? icon.replace('.svg', '-ative.svg')
+                    : icon
+                  }`}
                   alt={label}
                   width={24}
                   height={24}

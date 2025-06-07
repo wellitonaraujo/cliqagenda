@@ -23,7 +23,7 @@ export function useOpeningHours() {
     if (user?.empresaId) {
       fetchSchedules(user.empresaId);
     }
-  }, [user?.empresaId]);
+  }, [user?.empresaId, fetchSchedules]);
 
   useEffect(() => {
     if (horarios) {
@@ -62,7 +62,7 @@ export function useOpeningHours() {
     try {
       await updateSchedules(user.empresaId, { horarios: editableHorarios });
       toast.success('Horários atualizados com sucesso!');
-    } catch (error) {
+    } catch {
       toast.error('Erro ao atualizar horários');
     }
   };
