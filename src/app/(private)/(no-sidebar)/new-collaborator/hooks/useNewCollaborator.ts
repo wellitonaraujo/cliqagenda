@@ -59,7 +59,7 @@ export function useNewCollaborator() {
     }
   }, [empresaHorarios]);
 
-  function handleHorarioChange(index: number, field: keyof Horario, value: any) {
+  function handleHorarioChange(index: number, field: keyof Horario, value: Horario) {
     const newHorarios = [...horarios];
     newHorarios[index] = { ...newHorarios[index], [field]: value };
     setHorarios(newHorarios);
@@ -104,10 +104,12 @@ export function useNewCollaborator() {
 
       toast.success('Colaborador criado com sucesso!');
       resetForm();
-    } catch (err: any) {
-      setError(err?.message || 'Erro ao criar colaborador');
-    } finally {
-      setLocalLoading(false);
+      } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Erro ao criar colaborador');
+      }
     }
   }
 

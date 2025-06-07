@@ -42,14 +42,24 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  interface ApiError {
+    response?: {
+      data?: {
+        message?: string;
+      };
+    };
+    message?: string;
+  }
+
   const fetchSchedules = async (empresaId: number) => {
     setLoading(true);
     setError(null);
     try {
       const response = await api.get<Horario[]>(`/empresa/${empresaId}/horarios`);
       setHorarios(response.data);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || 'Erro ao buscar horários');
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      setError(error?.response?.data?.message || error.message || 'Erro ao buscar horários');
     } finally {
       setLoading(false);
     }
@@ -61,13 +71,15 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
     try {
       await api.patch(`/empresa/${empresaId}/horarios`, dto);
       await fetchSchedules(empresaId);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err.message || 'Erro ao atualizar horários');
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      setError(error?.response?.data?.message || error.message || 'Erro ao atualizar horários');
       throw err;
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     if (user?.empresaId) {

@@ -38,6 +38,14 @@ export const PaymentProvider = ({ children }: { children: ReactNode }) => {
   const [cardDetails, setCardDetails] = useState<CardDetails | null>(null);
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntent | null>(null);
 
+  interface ApiError {
+    response?: {
+      data?: {
+        message?: string;
+      };
+    };
+    message?: string;
+  }
   const createPayment = async ({ paymentMethodId }: { paymentMethodId: string }) => {
     setIsLoading(true);
 
@@ -69,13 +77,9 @@ export const PaymentProvider = ({ children }: { children: ReactNode }) => {
         toast.error(response.data?.message || 'Erro inesperado ao processar o pagamento.');
         return false;
       }
-    } catch (error: any) {
-      const message =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Erro inesperado no pagamento.';
-
-      console.error('Erro no try/catch:', error);
+   } catch (error: unknown) {
+    const err = error as ApiError;
+      const message = err.response?.data?.message || err.message || 'Erro inesperado no pagamento.';
       toast.error(message);
       return false;
     } finally {

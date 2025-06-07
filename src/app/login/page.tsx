@@ -5,6 +5,7 @@ import Checkbox from "@/componentes/Checkbox";
 import ErrorMessage from "@/componentes/ErrorMessage";
 import Input from "@/componentes/Input";
 import { useAuth } from "@/context/AuthContext";
+import { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -29,10 +30,15 @@ export default function Login() {
     try {
       await login(email, senha);
       router.push('/home');
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message || 'Email ou senha inválidos';
-      toast.error(message);
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as AxiosError<{ message?: string }>;
+        const message =
+          axiosError.response?.data?.message || 'Email ou senha inválidos';
+        toast.error(message);
+      } else {
+        toast.error('Ocorreu um erro desconhecido.');
+      }
     } finally {
       setLoading(false);
     }

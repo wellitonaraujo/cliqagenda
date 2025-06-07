@@ -10,6 +10,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import api from "@/services/api";
 import { usePlanStore } from "../store/usePlanStore";
+import { AxiosError } from "axios";
 
 export default function Signup() {
   const [nome, setNome] = useState("");
@@ -72,9 +73,10 @@ export default function Signup() {
       toast.success("Conta criada com sucesso!");
       usePlanStore.getState().reset(); 
       router.push("/login");
-    } catch (error: any) {
-      if (error.response) {
-        toast.error(error.response.data?.message || "Erro ao criar conta");
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as AxiosError<{ message?: string }>;
+        toast.error(axiosError.response?.data?.message || "Erro ao criar conta");
       } else {
         toast.error("Erro ao conectar com o servidor.");
       }

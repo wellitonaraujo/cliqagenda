@@ -56,15 +56,22 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
 
   const { isAuthenticated, isLoading: authLoading } = useAuth();
+  interface ApiError {
+    response?: {
+      status?: number;
+    };
+    message?: string;
+  }
 
   const fetchCollaborators = async () => {
     setLoading(true);
     try {
       const response = await api.get<Collaborator[]>('/collaborators');
       setCollaborators(response.data);
-    } catch (error) {
+    } catch (error: unknown) {
       toast.error('Erro ao buscar colaboradores');
-      if ((error as any)?.response?.status === 401) {
+      const err = error as ApiError;
+      if (err.response?.status === 401) {
         window.dispatchEvent(new Event('unauthorized'));
       }
     } finally {
@@ -77,13 +84,13 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
     try {
       await api.post('/collaborators', data);
       await fetchCollaborators();
-    } catch (error: any) {
-      if (error.response?.status === 409) {
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      if (err.response?.status === 409) {
         toast.error('Já existe um colaborador com este e-mail.');
       }
       throw error;
     }
-    
   };
 
  useEffect(() => {

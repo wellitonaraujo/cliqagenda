@@ -38,13 +38,21 @@ export const CustomerProvider = ({ children }: { children: React.ReactNode }) =>
   const [customers, setCustomers] = useState<Customer[]>([]);
   const { isAuthenticated, isLoading: authLoading } = useAuth();
 
+  interface ApiError {
+    response?: {
+      status?: number;
+    };
+    message?: string;
+  }
+
   const fetchCustomers = async () => {
     try {
       const res = await api.get('/customers');
       setCustomers(res.data);
-    } catch (error: any) {
-      console.error('Erro ao buscar clientes:', error);
-      if (error.response?.status === 401) {
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      console.error('Erro ao buscar clientes:', err);
+      if (err.response?.status === 401) {
         window.dispatchEvent(new Event('unauthorized'));
       } else {
         toast.error('Erro ao buscar clientes.');
@@ -56,8 +64,9 @@ export const CustomerProvider = ({ children }: { children: React.ReactNode }) =>
     try {
       await api.post('/customers', data);
       await fetchCustomers();
-    } catch (error: any) {
-      if (error.response?.status === 409) {
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      if (err.response?.status === 409) {
         toast.error('Cliente já cadastrado com esse CPF ou dados duplicados.');
       } else {
         toast.error('Erro ao cadastrar cliente.');

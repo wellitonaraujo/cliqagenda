@@ -1,5 +1,12 @@
-export const selectStyles = {
-  control: (base: any, state: any) => ({
+import type { StylesConfig, ControlProps, GroupBase } from 'react-select';
+
+interface Option {
+  value: string | number;
+  label: string;
+}
+
+export const selectStyles: StylesConfig<Option, false, GroupBase<Option>> = {
+  control: (base, state: ControlProps<Option, false>) => ({
     ...base,
     minHeight: 50,
     borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
@@ -8,7 +15,7 @@ export const selectStyles = {
       borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
     },
   }),
-  valueContainer: (base: any) => ({
+  valueContainer: (base) => ({
     ...base,
     paddingTop: 4,
     paddingBottom: 4,

@@ -23,6 +23,11 @@ interface FormState {
   preco: string;
 }
 
+interface Pessoa {
+  id: string;
+  nome: string;
+}
+
 export function useAppointmentForm() {
   const router = useRouter();
   const { services } = useService();
@@ -57,8 +62,8 @@ export function useAppointmentForm() {
           api.get('/collaborators'),
         ]);
 
-        setClientes(resClientes.data.map((c: any) => ({ value: c.id, label: c.nome })));
-        setColaboradores(resColaboradores.data.map((c: any) => ({ value: c.id, label: c.nome })));
+        setClientes(resClientes.data.map((c: Pessoa) => ({ value: c.id, label: c.nome })));
+        setColaboradores(resColaboradores.data.map((c: Pessoa) => ({ value: c.id, label: c.nome })));
       } catch {
         toast.error('Erro ao carregar dados');
       }

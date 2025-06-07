@@ -26,10 +26,6 @@ interface AppointmentContextType {
   error: string | null;
 }
 
-interface ApiError {
-  response?: { data?: { message?: string } };
-}
-
 const AppointmentContext = createContext<AppointmentContextType | undefined>(undefined);
 
 export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
@@ -38,6 +34,13 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   const cacheRef = useRef<Record<string, Appointment[]>>({});
+  interface ApiError {
+    response?: {
+      data?: {
+        message?: string;
+      };
+    };
+  }
 
   const fetchAppointments = async (filters = {}) => {
     const cacheKey = JSON.stringify(filters);
@@ -54,8 +57,9 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
       setAppointments(data);
       cacheRef.current[cacheKey] = data;
       setError(null);
-    } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'Erro ao buscar agendamentos');
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      setError(error?.response?.data?.message ?? 'Erro ao buscar agendamentos');
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import api from '@/services/api';
 import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 type DiaSemana = 'DOMINGO' | 'SEGUNDA' | 'TERCA' | 'QUARTA' | 'QUINTA' | 'SEXTA' | 'SABADO';
 
@@ -51,9 +52,14 @@ export const useCollaboratorStore = create<CollaboratorState>((set, get) => ({
     try {
       const response = await api.get('/collaborators');
       set({ collaborators: response.data });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error('Erro ao buscar colaboradores');
-      if (error?.response?.status === 401) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'response' in error &&
+        (error as AxiosError).response?.status === 401
+      ) {
         window.dispatchEvent(new Event('unauthorized'));
       }
     } finally {
@@ -61,18 +67,23 @@ export const useCollaboratorStore = create<CollaboratorState>((set, get) => ({
     }
   },
 
-  createCollaborator: async (data) => {
-    set({ loading: true });
-    try {
-      await api.post('/collaborators', data);
-      await get().fetchCollaborators();
-    } catch (error: any) {
-      if (error.response?.status === 409) {
-        toast.error('Já existe um colaborador com este e-mail.');
+  createCollaborator: async (data: Partial<Collaborator>) => {
+      set({ loading: true });
+      try {
+        await api.post('/collaborators', data);
+        await get().fetchCollaborators();
+      } catch (error: unknown) {
+        if (
+          error &&
+          typeof error === 'object' &&
+          'response' in error &&
+          (error as AxiosError).response?.status === 409
+        ) {
+          toast.error('Já existe um colaborador com este e-mail.');
+        }
+        throw error;
+      } finally {
+        set({ loading: false });
       }
-      throw error;
-    } finally {
-      set({ loading: false });
-    }
-  },
+   },
 }));
