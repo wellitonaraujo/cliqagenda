@@ -59,12 +59,11 @@ export function useNewCollaborator() {
     }
   }, [empresaHorarios]);
 
-    function handleHorarioChange<K extends keyof Horario>(index: number, field: K, value: Horario[K]) {
-      const newHorarios = [...horarios];
-      newHorarios[index] = { ...newHorarios[index], [field]: value };
-      setHorarios(newHorarios);
-    }
-
+  function handleHorarioChange<K extends keyof Horario>(index: number, field: K, value: Horario[K]) {
+    const newHorarios = [...horarios];
+    newHorarios[index] = { ...newHorarios[index], [field]: value };
+    setHorarios(newHorarios);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -105,12 +104,14 @@ export function useNewCollaborator() {
 
       toast.success('Colaborador criado com sucesso!');
       resetForm();
-      } catch (err: unknown) {
+    } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('Erro ao criar colaborador');
       }
+    } finally {
+      setLocalLoading(false);
     }
   }
 

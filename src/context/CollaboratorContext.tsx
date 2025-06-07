@@ -83,13 +83,16 @@ export const CollaboratorProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       await api.post('/collaborators', data);
-      await fetchCollaborators();
+      fetchCollaborators(); // async mas não precisa bloquear
     } catch (error: unknown) {
       const err = error as ApiError;
       if (err.response?.status === 409) {
         toast.error('Já existe um colaborador com este e-mail.');
+      } else {
+        throw error;
       }
-      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
