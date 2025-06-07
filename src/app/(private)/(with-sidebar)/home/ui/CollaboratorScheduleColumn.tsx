@@ -40,7 +40,7 @@ interface CollaboratorScheduleColumnProps {
                   ? setSelectedSlot(null)
                   : setSelectedSlot({ collaboratorId: collaborator.id, timeSlotIndex: index })
               }
-              className={`h-[60px] border-b border-gray-200 group flex items-center justify-center cursor-pointer ${
+              className={`h-[50px] border-b border-gray-200 group flex items-center justify-center cursor-pointer ${
                 isSelected ? 'bg-[#EFFBFF]' : ''
               }`}
             >

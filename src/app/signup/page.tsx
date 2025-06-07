@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import api from "@/services/api";
+import { usePlanStore } from "../store/usePlanStore";
 
 export default function Signup() {
   const [nome, setNome] = useState("");
@@ -69,6 +70,7 @@ export default function Signup() {
     try {
       await api.post("/auth/signup", payload);
       toast.success("Conta criada com sucesso!");
+      usePlanStore.getState().reset(); 
       router.push("/login");
     } catch (error: any) {
       if (error.response) {

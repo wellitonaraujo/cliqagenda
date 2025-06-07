@@ -1,47 +1,47 @@
 'use client';
 
+import { useElements, useStripe } from '@stripe/react-stripe-js';
 import PaymentMethodSelector from './ui/PaymentMethodSelector';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useHandlePayment } from './hooks/useHandlePayment';
 import { usePlanStore } from '@/app/store/usePlanStore';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useCardForm } from './hooks/useCardForm';
-import { useRouter } from 'next/navigation';
 import PixPayment from './ui/PixPayment';
-import { toast } from 'react-toastify';
 import CardForm from './ui/CardForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './ui/Header';
+import { usePayment } from '@/context/PaymentContext';
 
 export default function Payment() {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
   const { cardData, handleChange, errors } = useCardForm();
-  const { setHasSubscribed, setCardInfo } = usePlanStore();
-  const router = useRouter();
 
-  function handlePayment(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const planPrice = usePlanStore((state) => state.getPlanPrice());
+  const { setAmount } = usePayment();
 
-    const hasErrors = Object.values(errors).some((error) => error);
-    if (hasErrors) {
-      toast.warning('Por favor, corrija os erros antes de continuar.');
-      return;
+  const stripe = useStripe();
+  const elements = useElements();
+
+  const { handlePayment } = useHandlePayment({
+    stripe,
+    elements,
+    cardData,
+    errors,
+    planPrice,
+  });
+
+  useEffect(() => {
+    if (planPrice > 0) {
+      setAmount(planPrice);
     }
-
-    setCardInfo(cardData);
-    toast.success('Pagamento realizado com sucesso!');
-    setHasSubscribed(true);
-    router.push('/my-plan');
-  }
+  }, [planPrice, setAmount]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white">
-      <div className="w-full max-w-xl bg-white p-6 rounded border border-gray-100 shadow-xs relative overflow-hidden">
+    <div className="flex justify-center items-start min-h-screen bg-white py-10">
+      <div className="w-full max-w-2xl px-6 py-8 bg-white rounded-xl shadow-md border border-gray-200">
         <Header />
-        <PaymentMethodSelector
-          selected={paymentMethod}
-          onSelect={setPaymentMethod}
-        />
+        <PaymentMethodSelector selected={paymentMethod} onSelect={setPaymentMethod} />
 
-        {/* Animação entre layouts */}
         <div className="relative min-h-[600px]">
           <AnimatePresence mode="wait">
             {paymentMethod === 'card' ? (
@@ -58,6 +58,7 @@ export default function Payment() {
                   errors={errors}
                   onChange={handleChange}
                   onSubmit={handlePayment}
+                  amount={planPrice}
                 />
               </motion.div>
             ) : (

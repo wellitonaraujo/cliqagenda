@@ -24,7 +24,7 @@ export function EmptyColumns({ count, timeSlotsLength }: EmptyColumnsProps) {
             {Array(timeSlotsLength)
               .fill(0)
               .map((_, index) => (
-                <div key={index} className="h-10 border-b border-gray-200" />
+                <div key={index} className="h-[50px] border-b border-gray-200" />
               ))}
           </div>
         ))}
