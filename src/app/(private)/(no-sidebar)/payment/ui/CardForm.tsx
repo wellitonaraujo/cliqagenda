@@ -31,7 +31,7 @@ export default function CardForm({ cardData, errors, onChange, onSubmit, amount 
   }, []);
 
 
-      useEffect(() => {
+  useEffect(() => {
     setPlan('business');
   }, [setPlan]);
 

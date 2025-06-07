@@ -54,12 +54,12 @@ console.log(appointmentsOfTheDay   )
               minCols={minCols}
              isLoadingCounts={loading}
             />
-             <NowLine 
+             {/* <NowLine 
               timeSlots={timeSlots} 
               startTime={horarioDoDia?.horaAbertura ?? "00:00"} 
               endTime={horarioDoDia?.horaFechamento ?? "23:59"} 
               offsetTop={20}
-            />
+            /> */}
 
             <div className="flex w-full min-w-full">
               {collaborators.map((collab, index) => (

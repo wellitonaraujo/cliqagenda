@@ -29,7 +29,12 @@ export const usePlanStore = create<PlanState>()(
       cardInfo: null,
       setPlan: (plan) => set({ plan }),
       setHasSubscribed: (status) => set({ hasSubscribed: status }),
-      setCardInfo: (info) => set({ cardInfo: info }),
+      setCardInfo: (info) => {
+      if (get().hasSubscribed) {
+        set({ cardInfo: info });
+      }
+    },
+
       reset: () =>
         set({
           plan: 'trial',

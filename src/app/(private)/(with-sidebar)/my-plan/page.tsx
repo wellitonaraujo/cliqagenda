@@ -15,8 +15,8 @@ export default function MyPlan() {
 
 const cardInfo = usePlanStore((state) => state.cardInfo);
 
-console.log('cardInfo no MyPlan:', cardInfo);
-
+const storedPlan = localStorage.getItem('plan-storage-5');
+console.log(storedPlan)
 
   if (plan === 'business' && hasSubscribed) {
     return (
@@ -28,15 +28,14 @@ console.log('cardInfo no MyPlan:', cardInfo);
         <div className="px-6 py-4 overflow-auto flex-1 w-full max-w-xl mx-auto">
           <CurrentPlanCard />
 
-          {cardInfo && (
+          {plan === 'business' && hasSubscribed && cardInfo && (
             <>
               <PaymentInfo
                 number={cardInfo.number}
                 validity={cardInfo.validity}
                 paymentDate={new Date().toISOString()}
               />
-             <ChangePaymentButton onClick={() => router.push('/payment')} />
-
+              <ChangePaymentButton onClick={() => router.push('/payment')} />
             </>
           )}
         </div>
