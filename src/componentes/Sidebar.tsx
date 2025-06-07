@@ -80,49 +80,50 @@ export default function Sidebar() {
               </div>
             )}
           </div>
-
-          <nav className="flex flex-col gap-1">
-           {menuItems.map(({ label, icon, path }) => {
+        <nav className="flex flex-col gap-1">
+          {menuItems.map(({ label, icon, path }) => {
             const isActive = pathname === path;
             const iconPath = isActive ? icon.replace('.svg', '-ative.svg') : icon;
 
-              return (
-                <Link
-                  key={path}
-                  href={path}
-                  className={clsx(
-                    'flex items-center px-6 py-3 text-sm font-medium transition-all gap-3',
-                    {
-                      'bg-[#E9F5FE] border-r-4 border-[#1195FF] text-[#1195FF]': isActive,
-                      'text-gray-800 hover:bg-gray-50': !isActive,
-                      'justify-center': isCollapsed,
-                      'justify-start': !isCollapsed,
-                    }
-                  )}
-                  onClick={() => {
-                    if (window.innerWidth < 768) toggleSidebar();
-                  }}
-                >
-               <Image
+            // usando retorno implícito (sem chaves)
+            return (
+              <Link
+                key={path}
+                href={path}
+                className={clsx(
+                  'flex items-center px-6 py-3 text-sm font-medium transition-all gap-3',
+                  {
+                    'bg-[#E9F5FE] border-r-4 border-[#1195FF] text-[#1195FF]': isActive,
+                    'text-gray-800 hover:bg-gray-50': !isActive,
+                    'justify-center': isCollapsed,
+                    'justify-start': !isCollapsed,
+                  }
+                )}
+                onClick={() => {
+                  if (window.innerWidth < 768) toggleSidebar();
+                }}
+              >
+                <Image
                   src={`/${iconPath}`}
                   alt={label}
                   width={24}
                   height={24}
                 />
-                  {!isCollapsed && (
-                   <span
-                      className={clsx(
-                        'text-sm font-medium whitespace-nowrap',
-                        isActive ? 'text-[#1195FF]' : 'text-[#034D82]'
-                      )}
-                    >
-                      {label}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
+                {!isCollapsed && (
+                  <span
+                    className={clsx(
+                      'text-sm font-medium whitespace-nowrap',
+                      isActive ? 'text-[#1195FF]' : 'text-[#034D82]'
+                    )}
+                  >
+                    {label}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
         </div>
 
         <div className="p-4">
