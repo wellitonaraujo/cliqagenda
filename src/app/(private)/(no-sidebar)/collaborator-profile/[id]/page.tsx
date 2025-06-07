@@ -63,7 +63,7 @@ export default function CollaboratorProfile() {
       router.back();
       window.location.href = '/collaborators';
       toast.success('Colaborador deletado com sucesso!');
-    } catch (error) {
+    } catch {
       toast.error('Erro ao deletar colaborador');
     } finally {
       setIsDeleting(false);
