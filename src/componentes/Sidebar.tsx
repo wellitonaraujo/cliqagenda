@@ -82,11 +82,10 @@ export default function Sidebar() {
           </div>
 
           <nav className="flex flex-col gap-1">
-            {menuItems.map(({ label, icon, path }) => {
-              const isActive = pathname === path;
-              isActive
-                ? icon.replace('.svg', '-ative.svg')
-                : icon;
+           {menuItems.map(({ label, icon, path }) => {
+            const isActive = pathname === path;
+            const iconPath = isActive ? icon.replace('.svg', '-ative.svg') : icon;
+
               return (
                 <Link
                   key={path}
@@ -104,16 +103,12 @@ export default function Sidebar() {
                     if (window.innerWidth < 768) toggleSidebar();
                   }}
                 >
-                <Image
-                  src={`/${isActive
-                    ? icon.replace('.svg', '-ative.svg')
-                    : icon
-                  }`}
+               <Image
+                  src={`/${iconPath}`}
                   alt={label}
                   width={24}
                   height={24}
                 />
-
                   {!isCollapsed && (
                    <span
                       className={clsx(
