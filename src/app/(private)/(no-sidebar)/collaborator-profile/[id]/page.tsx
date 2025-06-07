@@ -45,8 +45,7 @@ export default function CollaboratorProfile() {
           ...response.data,
           horarios: response.data.horariosDisponiveis ?? [],
         });
-      } catch (err) {
-        console.error('Erro ao carregar colaborador', err);
+      } catch {
       } finally {
         setLoading(false);
       }
@@ -145,7 +144,7 @@ export default function CollaboratorProfile() {
                   ativo={h.ativo}
                   horaInicio={h.horaInicio}
                   horaFim={h.horaFim}
-                  onChange={() => {}}
+                  onChange={() => {console.log("Ciclou")}}
                 />
               ))}
             </div>
