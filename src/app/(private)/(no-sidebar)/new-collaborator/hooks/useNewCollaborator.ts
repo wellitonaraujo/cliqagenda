@@ -59,11 +59,12 @@ export function useNewCollaborator() {
     }
   }, [empresaHorarios]);
 
-  function handleHorarioChange(index: number, field: keyof Horario, value: Horario) {
-    const newHorarios = [...horarios];
-    newHorarios[index] = { ...newHorarios[index], [field]: value };
-    setHorarios(newHorarios);
-  }
+    function handleHorarioChange<K extends keyof Horario>(index: number, field: K, value: Horario[K]) {
+      const newHorarios = [...horarios];
+      newHorarios[index] = { ...newHorarios[index], [field]: value };
+      setHorarios(newHorarios);
+    }
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
