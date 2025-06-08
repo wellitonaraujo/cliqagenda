@@ -1,7 +1,6 @@
 'use client';
 
 import Button from "@/componentes/Button";
-import Checkbox from "@/componentes/Checkbox";
 import ErrorMessage from "@/componentes/ErrorMessage";
 import Input from "@/componentes/Input";
 import { useAuth } from "@/context/AuthContext";
@@ -80,7 +79,7 @@ export default function Login() {
           </div>
 
           <div className="flex items-center justify-between text-sm font-medium">
-            <Link href="#" className="text-gray-700">Esqueci a senha</Link>
+            <Link href="#" className="text-[#034D82]">Esqueci a senha</Link>
           </div>
 
           <div className="pt-5">
