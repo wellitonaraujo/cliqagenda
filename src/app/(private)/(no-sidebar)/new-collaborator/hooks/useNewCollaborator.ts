@@ -1,6 +1,7 @@
 import { useCollaboratorStore } from '@/app/store/useCollaboratorStore';
 import { useBusiness } from '@/context/BusinessContext';
 import { DiaSemana, Horario } from '@/types/DiaSemana';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -28,6 +29,7 @@ const orderDiaSemana: DiaSemana[] = [
 export function useNewCollaborator() {
   const { createCollaborator, loading } = useCollaboratorStore();
   const { horarios: empresaHorarios } = useBusiness();
+  const router = useRouter();
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -103,6 +105,7 @@ export function useNewCollaborator() {
       });
 
       toast.success('Colaborador criado com sucesso!');
+      router.push('/collaborator');
       resetForm();
     } catch (err: unknown) {
       if (err instanceof Error) {

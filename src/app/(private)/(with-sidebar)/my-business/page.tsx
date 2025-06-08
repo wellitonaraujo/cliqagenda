@@ -25,9 +25,7 @@ export default function MeuNegocioPage() {
           onToggleDay={toggleDay}
           onTimeChange={handleTimeChange}
         />
-       <Button onClick={() => {
-          saveSchedules();
-        }}>
+        <Button onClick={saveSchedules}>
           Atualizar horários
         </Button>
 
