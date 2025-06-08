@@ -111,11 +111,11 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <div className="w-full max-w-sm space-y-6 bg-white rounded-xl shadow-md border border-gray-200 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#034D82] p-4">
+      <div className="w-full max-w-[95vw] md:max-w-sm space-y-6 bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div>
           <h1 className="text-3xl font-bold mb-4 text-center">
-            <span className="text-primary">Criar conta</span>
+            <span className="text-[#034D82]">Criar conta</span>
           </h1>
           <p className="text-gray-500 text-center">
             {step === 1
@@ -136,7 +136,7 @@ export default function Signup() {
 
             <div className="mb-4">
               <Input
-                placeholder="Telefone (opcional)"
+                placeholder="Telefone"
                 onChange={(e) => setTelefone(e.target.value)}
               />
             </div>
@@ -193,7 +193,7 @@ export default function Signup() {
                 )}
             </div>
 
-            <div className="pt-14">
+            <div className="pt-10">
             <Button type="submit" full disabled={!isStep1Valid || loading}>
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
@@ -279,7 +279,7 @@ export default function Signup() {
 
         <p className="text-center text-md text-gray-500">
           Já tem uma conta?{" "}
-          <Link href="/login" className="text-[#00AEEF] font-bold">
+          <Link href="/login" className="text-[#034D82] font-bold">
             Entrar
           </Link>
         </p>

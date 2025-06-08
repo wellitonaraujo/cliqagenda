@@ -33,7 +33,7 @@ export default function OpeningHourItem({ horario, onToggleDay, onTimeChange }: 
             checked={horario.aberto}
             onChange={() => onToggleDay(horario.diaSemana)}
             className={`${
-              horario.aberto ? 'bg-[#00AEEF]' : 'bg-gray-300'
+              horario.aberto ? 'bg-[#1195FF]' : 'bg-gray-300'
             } relative inline-flex h-5 w-10 items-center rounded-full`}
           >
             <span

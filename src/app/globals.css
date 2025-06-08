@@ -4,7 +4,7 @@
   --background: #ffffff;
   --foreground: #DEDEDE;
 
-  --primary: #00AEEF;
+  --primary: #1195FF;
 
 
   --color-background: var(--background);
@@ -38,7 +38,7 @@ body {
 }
 
 .custom-select__menu-list::-webkit-scrollbar-thumb {
-  background-color: #00AEEF;
+  background-color: #1195FF;
   border-radius: 4px;
 }
 

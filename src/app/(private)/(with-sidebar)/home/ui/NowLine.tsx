@@ -80,7 +80,7 @@ export default function NowLine({
           top: nowPosition,
           left: 0,
           right: 0,
-          borderTop: "2px dashed #00AEEF",
+          borderTop: "2px dashed #1195FF",
           zIndex: 10,
         }}
       />
@@ -90,11 +90,11 @@ export default function NowLine({
           position: "absolute",
           top: nowPosition - 10,
           left: 4,
-          backgroundColor: "#00AEEF",
+          backgroundColor: "#1195FF",
           color: "#FFF",
           fontSize: "10px",
           fontWeight: "bold",
-          border: "1px solid #00AEEF",
+          border: "1px solid #1195FF",
           borderRadius: 4,
           padding: "4px 8px",
           zIndex: 11,

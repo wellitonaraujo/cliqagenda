@@ -20,7 +20,7 @@ export default function NewCustomer() {
         </div>
 
         <div className="flex justify-end mb-4">
-          <button className="bg-[#00AEEF] p-2 rounded-full text-white">
+          <button className="bg-[#1195FF] p-2 rounded-full text-white">
             <HiCamera size={20} />
           </button>
         </div>

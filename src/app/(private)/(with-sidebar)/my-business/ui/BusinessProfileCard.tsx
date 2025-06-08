@@ -11,7 +11,7 @@ export default function BusinessProfileCard({ nomeEmpresa }: BusinessProfileCard
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="relative">
-        <div className="w-25 h-25 rounded-full overflow-hidden border-3 border-[#00AEEF]">
+        <div className="w-25 h-25 rounded-full overflow-hidden border-3 border-[#1195FF]">
           <Image
             src="/profile.png"
             alt="foto de perfil"

@@ -37,7 +37,7 @@ export default function NewService() {
           <div>
             <label className="block text-gray-700 text-sm mb-1">Descrição</label>
             <textarea
-              className="w-full border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-1 focus:ring-[#00AEEF] focus:border-[#00AEEF]"
+              className="w-full border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-1 focus:ring-[#1195FF] focus:border-[#1195FF]"
               rows={4}
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
@@ -82,10 +82,10 @@ export default function NewService() {
                 control: (base, state) => ({
                   ...base,
                   minHeight: 50,
-                  borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
-                  boxShadow: state.isFocused ? '0 0 0 1px #00AEEF' : base.boxShadow,
+                  borderColor: state.isFocused ? '#1195FF' : base.borderColor,
+                  boxShadow: state.isFocused ? '0 0 0 1px #1195FF' : base.boxShadow,
                   '&:hover': {
-                    borderColor: state.isFocused ? '#00AEEF' : base.borderColor,
+                    borderColor: state.isFocused ? '#1195FF' : base.borderColor,
                   },
                 }),
                 valueContainer: (base) => ({

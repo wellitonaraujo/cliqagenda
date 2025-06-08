@@ -15,7 +15,7 @@ export default function OnlineBookingLinkCard({ nomeEmpresa }: OnlineBookingLink
     <div>
       <label className="text-md text-gray-700 font-medium">Agendamento online</label>
       <div className="mt-1 flex items-center justify-between border border-[#DEDEDE] px-3 py-2 rounded-md">
-        <span className="text-sm text-[#00AEEF] font-medium">{link}</span>
+        <span className="text-sm text-[#1195FF] font-medium">{link}</span>
         <FiLink />
       </div>
     </div>

@@ -72,7 +72,7 @@ export default function NewCollaborator() {
             type="submit"
             disabled={loading}
             className={`mt-6 w-full py-3 text-white font-semibold rounded ${
-              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00AEEF] hover:bg-[#00AEEF]'
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1195FF] hover:bg-[#00AEEF]'
             }`}
           >
             {loading ? 'Salvando...' : 'Criar Colaborador'}

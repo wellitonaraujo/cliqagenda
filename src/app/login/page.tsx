@@ -45,12 +45,13 @@ export default function Login() {
   };
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <div className="w-full max-w-sm space-y-6 bg-white rounded-xl shadow-md border border-gray-200 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#034D82] p-4">
+      <div className="w-full max-w-[95vw] md:max-w-sm space-y-9 bg-white rounded-xl shadow-md border border-gray-200 p-6">
         <div>
-          <h1 className="text-3xl font-bold mb-4 text-center">
-            <span className="text-primary">CliqAgenda</span>
-          </h1>
+            <h1 className="text-3xl font-bold text-center mb-3">
+              <span className="text-[#034D82]">Cliq</span>
+              <span className="text-[#1195FF]">Agenda</span>
+            </h1>
           <p className="text-gray-500 text-center">Entre com seu email e senha</p>
         </div>
 
@@ -78,9 +79,8 @@ export default function Login() {
             />
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <Checkbox label="Lembrar senha" />
-            <Link href="#" className="text-primary">Esqueci a senha</Link>
+          <div className="flex items-center justify-between text-sm font-medium">
+            <Link href="#" className="text-gray-700">Esqueci a senha</Link>
           </div>
 
           <div className="pt-5">
@@ -92,7 +92,7 @@ export default function Login() {
 
         <p className="text-center text-md text-gray-500">
           Não possui uma conta?{" "}
-          <Link href="/signup" className="text-[#00AEEF] font-bold">Criar conta</Link>
+          <Link href="/signup" className="text-[#034D82] font-bold">Criar conta</Link>
         </p>
       </div>
     </div>

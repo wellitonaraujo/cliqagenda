@@ -18,13 +18,12 @@ export default function Button({
   variant = 'primary',
 }: ButtonProps) {
   const baseClasses =
-    'font-medium text-sm px-4 py-2 rounded-md transition w-fit';
+    'font-medium text-sm px-4 py-4 rounded-md transition w-fit md:py-3';
   const fullClass = full ? 'w-full' : '';
   
-  // Define as classes/estilos conforme a variant
   const variantClasses =
     variant === 'primary'
-      ? 'bg-[#1195FF] text-white hover:opacity-90 disabled:opacity-50'
+      ? 'bg-[#034D82] text-white hover:opacity-90 disabled:opacity-50'
       : 'bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50';
 
   return (

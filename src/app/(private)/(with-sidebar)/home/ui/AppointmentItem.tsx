@@ -36,7 +36,7 @@ return (
     style={{
       top,
       height: displayHeight,
-      borderLeftColor: '#00AEEF',
+      borderLeftColor: '#1195FF',
     }}
     onClick={() => {
       if (!isShort) return;
@@ -65,7 +65,7 @@ return (
 
       {appointment.status && (
         <div>
-          <p className="text-xs text-[#00AEEF] mb-1">{appointment.status}</p>
+          <p className="text-xs text-[#1195FF] mb-1">{appointment.status}</p>
         </div>
       )}
     </div>
