@@ -23,11 +23,10 @@ export function useOpeningHours() {
     if (user?.empresaId) {
       fetchSchedules(user.empresaId);
     }
-  }, [user?.empresaId, fetchSchedules]);
+  }, [user?.empresaId]);
 
   useEffect(() => {
     if (horarios) {
-      // Ordena aqui antes de setar
       const horariosOrdenados = [...horarios].sort(
         (a, b) =>
           orderDiaSemana.indexOf(a.diaSemana) - orderDiaSemana.indexOf(b.diaSemana)
