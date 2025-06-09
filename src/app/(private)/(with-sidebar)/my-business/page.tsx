@@ -7,7 +7,6 @@ import { useOpeningHours } from './hooks/useOpeningHours';
 import { useAuth } from '@/context/AuthContext';
 import OpeningHours from './ui/OpeningHours';
 import Header from '@/componentes/Header';
-import Button from '@/componentes/Button';
 
 export default function MeuNegocioPage() {
   const { empresa } = useAuth();
