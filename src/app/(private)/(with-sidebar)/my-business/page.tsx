@@ -11,7 +11,7 @@ import Button from '@/componentes/Button';
 
 export default function MeuNegocioPage() {
   const { empresa } = useAuth();
-  const { editableHorarios, toggleDay, handleTimeChange, saveSchedules } = useOpeningHours();
+  const { editableHorarios, toggleDay, handleTimeChange, saveSchedules, loading } = useOpeningHours();
 
   return (
     <div className="bg-white min-h-screen">
@@ -25,8 +25,8 @@ export default function MeuNegocioPage() {
           onToggleDay={toggleDay}
           onTimeChange={handleTimeChange}
         />
-        <Button onClick={saveSchedules}>
-          Atualizar horários
+        <Button onClick={() => saveSchedules()} disabled={loading}>
+          {loading ? 'Salvando...' : 'Atualizar horários'}
         </Button>
 
       </div>

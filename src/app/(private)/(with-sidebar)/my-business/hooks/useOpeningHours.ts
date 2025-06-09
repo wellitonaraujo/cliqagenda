@@ -4,7 +4,7 @@ import { DiaSemana } from '@/types/DiaSemana';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-const orderDiaSemana: DiaSemana[] = [
+const allDays: DiaSemana[] = [
   'SEGUNDA',
   'TERCA',
   'QUARTA',
@@ -18,6 +18,7 @@ export function useOpeningHours() {
   const { user } = useAuth();
   const { horarios, fetchSchedules, updateSchedules } = useBusiness();
   const [editableHorarios, setEditableHorarios] = useState<Horario[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user?.empresaId) {
@@ -26,13 +27,19 @@ export function useOpeningHours() {
   }, [user?.empresaId]);
 
   useEffect(() => {
-    if (horarios) {
-      const horariosOrdenados = [...horarios].sort(
-        (a, b) =>
-          orderDiaSemana.indexOf(a.diaSemana) - orderDiaSemana.indexOf(b.diaSemana)
-      );
-      setEditableHorarios(horariosOrdenados);
-    }
+    if (!horarios) return;
+
+    const merged = allDays.map((dia) => {
+      const existente = horarios.find((h) => h.diaSemana === dia);
+      return existente ?? {
+        diaSemana: dia,
+        aberto: false,
+        horaAbertura: '00:00',
+        horaFechamento: '0:00',
+      };
+    });
+
+    setEditableHorarios(merged as Horario[]);
   }, [horarios]);
 
   const toggleDay = (diaSemana: DiaSemana) => {
@@ -58,11 +65,22 @@ export function useOpeningHours() {
   const saveSchedules = async () => {
     if (!user?.empresaId) return;
 
+    setLoading(true);
     try {
-      await updateSchedules(user.empresaId, { horarios: editableHorarios });
+      const horariosOrdenados = editableHorarios
+        .map(h => ({
+          ...h,
+          horaAbertura: h.aberto ? h.horaAbertura || '08:00' : '',
+          horaFechamento: h.aberto ? h.horaFechamento || '18:00' : '',
+        }))
+        .sort((a, b) => allDays.indexOf(a.diaSemana) - allDays.indexOf(b.diaSemana));
+
+      await updateSchedules(user.empresaId, { horarios: horariosOrdenados });
       toast.success('Horários atualizados com sucesso!');
-    } catch {
+    } catch (e) {
       toast.error('Erro ao atualizar horários');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,5 +89,6 @@ export function useOpeningHours() {
     toggleDay,
     handleTimeChange,
     saveSchedules,
+    loading,
   };
 }
