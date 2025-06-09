@@ -19,6 +19,8 @@ export function useOpeningHours() {
   const { horarios, fetchSchedules, updateSchedules } = useBusiness();
   const [editableHorarios, setEditableHorarios] = useState<Horario[]>([]);
   const [inputErrors, setInputErrors] = useState<Record<DiaSemana, boolean>>({} as Record<DiaSemana, boolean>);
+  const hasChanges = JSON.stringify(horarios) !== JSON.stringify(editableHorarios);
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -123,6 +125,7 @@ export function useOpeningHours() {
     handleTimeChange,
     saveSchedules,
     loading,
-    inputErrors
+    inputErrors,
+    hasChanges
   };
 }
