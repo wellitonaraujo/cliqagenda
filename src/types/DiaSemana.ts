@@ -2,7 +2,7 @@ export type DiaSemana =  'SEGUNDA' | 'TERCA' | 'QUARTA' | 'QUINTA' | 'SEXTA' | '
 
 export interface Horario {
   diaSemana: DiaSemana;
-  horaInicio: string;
-  horaFim: string;
-  ativo: boolean;
+  horaAbertura: string;
+  horaFechamento: string;
+  aberto: boolean;
 }

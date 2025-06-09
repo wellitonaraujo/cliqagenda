@@ -1,17 +1,17 @@
-import { Horario, useBusiness } from '@/context/BusinessContext';
+import { useBusiness, DiaSemana, Horario } from '@/context/BusinessContext';
+
 import { useAuth } from '@/context/AuthContext';
-import { DiaSemana } from '@/types/DiaSemana';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 const allDays: DiaSemana[] = [
-  'SEGUNDA',
-  'TERCA',
-  'QUARTA',
-  'QUINTA',
-  'SEXTA',
-  'SABADO',
-  'DOMINGO',
+  DiaSemana.SEGUNDA,
+  DiaSemana.TERCA,
+  DiaSemana.QUARTA,
+  DiaSemana.QUINTA,
+  DiaSemana.SEXTA,
+  DiaSemana.SABADO,
+  DiaSemana.DOMINGO,
 ];
 
 export function useOpeningHours() {
@@ -19,7 +19,16 @@ export function useOpeningHours() {
   const { horarios, fetchSchedules, updateSchedules } = useBusiness();
   const [editableHorarios, setEditableHorarios] = useState<Horario[]>([]);
   const [inputErrors, setInputErrors] = useState<Record<DiaSemana, boolean>>({} as Record<DiaSemana, boolean>);
-  const hasChanges = JSON.stringify(horarios) !== JSON.stringify(editableHorarios);
+
+  const hasChanges = !editableHorarios.every((editable, i) => {
+  const original = horarios?.find(h => h.diaSemana === editable.diaSemana);
+    return (
+      editable.aberto === original?.aberto &&
+      editable.horaAbertura === original?.horaAbertura &&
+      editable.horaFechamento === original?.horaFechamento
+    );
+  });
+
   const [schedulesLoaded, setSchedulesLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -79,26 +88,23 @@ export function useOpeningHours() {
   const saveSchedules = async () => {
     if (!user?.empresaId) return;
 
-    const errors: Record<DiaSemana, boolean> = allDays.reduce((acc, dia) => {
-      acc[dia] = false;
-      return acc;
-    }, {} as Record<DiaSemana, boolean>);
+    const errors: Record<DiaSemana, boolean> = getEmptyErrors();
 
+    // Valida os horários obrigatórios
     for (const h of editableHorarios) {
       if (h.aberto) {
         const aberturaInvalida = !h.horaAbertura?.trim();
         const fechamentoInvalido = !h.horaFechamento?.trim();
-
         if (aberturaInvalida || fechamentoInvalido) {
           errors[h.diaSemana] = true;
         }
       }
     }
 
-    const hasErrors = Object.values(errors).some((v) => v);
+    const hasErrors = Object.values(errors).some(Boolean);
     if (hasErrors) {
       setInputErrors(errors);
-      toast.error('Preencha os horários obrigatórios');
+      toast.error('Preencha todos os horários obrigatórios');
       return;
     }
 
@@ -106,19 +112,21 @@ export function useOpeningHours() {
     setLoading(true);
 
     try {
-      const horariosOrdenados = editableHorarios
-        .map(h => ({
-          ...h,
-          horaAbertura: h.aberto ? h.horaAbertura : '',
-          horaFechamento: h.aberto ? h.horaFechamento : '',
-        }))
-        .sort((a, b) => allDays.indexOf(a.diaSemana) - allDays.indexOf(b.diaSemana));
+      const horariosOrdenados: Horario[] = allDays.map((dia) => {
+        const diaEditado = editableHorarios.find((h) => h.diaSemana === dia);
+        return {
+          diaSemana: dia,
+          aberto: diaEditado?.aberto ?? false,
+          horaAbertura: diaEditado?.aberto ? diaEditado.horaAbertura?.trim() ?? '' : '',
+          horaFechamento: diaEditado?.aberto ? diaEditado.horaFechamento?.trim() ?? '' : '',
+        };
+      });
 
       await updateSchedules(user.empresaId, { horarios: horariosOrdenados });
-      await fetchSchedules(user.empresaId); 
       toast.success('Horários atualizados com sucesso!');
-    } catch {
-      toast.error('Erro ao atualizar horários');
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? err.message ?? 'Erro desconhecido';
+      toast.error(`Erro ao atualizar horários: ${msg}`);
     } finally {
       setLoading(false);
     }
