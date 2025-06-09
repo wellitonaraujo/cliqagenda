@@ -20,17 +20,22 @@ export function useOpeningHours() {
   const [editableHorarios, setEditableHorarios] = useState<Horario[]>([]);
   const [inputErrors, setInputErrors] = useState<Record<DiaSemana, boolean>>({} as Record<DiaSemana, boolean>);
   const hasChanges = JSON.stringify(horarios) !== JSON.stringify(editableHorarios);
-
+  const [schedulesLoaded, setSchedulesLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user?.empresaId) {
-      fetchSchedules(user.empresaId);
-    }
+    const load = async () => {
+      if (user?.empresaId) {
+        await fetchSchedules(user.empresaId);
+        setSchedulesLoaded(true);
+      }
+    };
+
+    load();
   }, [user?.empresaId]);
 
   useEffect(() => {
-    if (!horarios) return;
+    if (!schedulesLoaded || !horarios) return;
 
     const merged = allDays.map((dia) => {
       const existente = horarios.find((h) => h.diaSemana === dia);
@@ -43,7 +48,7 @@ export function useOpeningHours() {
     });
 
     setEditableHorarios(merged as Horario[]);
-  }, [horarios]);
+  }, [schedulesLoaded, horarios]);
 
   const toggleDay = (diaSemana: DiaSemana) => {
     setEditableHorarios((prev) =>
@@ -70,7 +75,6 @@ export function useOpeningHours() {
       acc[dia] = false;
       return acc;
   }, {} as Record<DiaSemana, boolean>);
-
 
   const saveSchedules = async () => {
     if (!user?.empresaId) return;
@@ -111,6 +115,7 @@ export function useOpeningHours() {
         .sort((a, b) => allDays.indexOf(a.diaSemana) - allDays.indexOf(b.diaSemana));
 
       await updateSchedules(user.empresaId, { horarios: horariosOrdenados });
+      await fetchSchedules(user.empresaId); 
       toast.success('Horários atualizados com sucesso!');
     } catch {
       toast.error('Erro ao atualizar horários');
