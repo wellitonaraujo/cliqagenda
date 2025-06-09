@@ -18,6 +18,7 @@ export function useOpeningHours() {
   const { user } = useAuth();
   const { horarios, fetchSchedules, updateSchedules } = useBusiness();
   const [editableHorarios, setEditableHorarios] = useState<Horario[]>([]);
+  const [inputErrors, setInputErrors] = useState<Record<DiaSemana, boolean>>({} as Record<DiaSemana, boolean>);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -65,24 +66,49 @@ export function useOpeningHours() {
   const saveSchedules = async () => {
     if (!user?.empresaId) return;
 
+    const errors: Record<DiaSemana, boolean> = allDays.reduce((acc, dia) => {
+      acc[dia] = false;
+      return acc;
+    }, {} as Record<DiaSemana, boolean>);
+
+    for (const h of editableHorarios) {
+      if (h.aberto) {
+        const aberturaInvalida = !h.horaAbertura?.trim();
+        const fechamentoInvalido = !h.horaFechamento?.trim();
+
+        if (aberturaInvalida || fechamentoInvalido) {
+          errors[h.diaSemana] = true;
+        }
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setInputErrors(errors);
+      toast.error('Preencha os horários obrigatórios');
+      return;
+    }
+
+    setInputErrors({} as Record<DiaSemana, boolean>);
     setLoading(true);
+
     try {
       const horariosOrdenados = editableHorarios
         .map(h => ({
           ...h,
-          horaAbertura: h.aberto ? h.horaAbertura || '08:00' : '',
-          horaFechamento: h.aberto ? h.horaFechamento || '18:00' : '',
+          horaAbertura: h.aberto ? h.horaAbertura : '',
+          horaFechamento: h.aberto ? h.horaFechamento : '',
         }))
         .sort((a, b) => allDays.indexOf(a.diaSemana) - allDays.indexOf(b.diaSemana));
 
       await updateSchedules(user.empresaId, { horarios: horariosOrdenados });
       toast.success('Horários atualizados com sucesso!');
-    } catch (e) {
+    } catch {
       toast.error('Erro ao atualizar horários');
     } finally {
       setLoading(false);
     }
   };
+
 
   return {
     editableHorarios,
@@ -90,5 +116,6 @@ export function useOpeningHours() {
     handleTimeChange,
     saveSchedules,
     loading,
+    inputErrors
   };
 }

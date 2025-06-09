@@ -12,6 +12,7 @@ interface Props {
     field: 'horaAbertura' | 'horaFechamento',
     value: string
   ) => void;
+  hasError?: boolean;
 }
 
 const dayLabels: Record<DiaSemana, string> = {
@@ -24,7 +25,7 @@ const dayLabels: Record<DiaSemana, string> = {
   DOMINGO: 'Domingo',
 };
 
-export default function OpeningHourItem({ horario, onToggleDay, onTimeChange }: Props) {
+export default function OpeningHourItem({ horario, onToggleDay, onTimeChange, hasError }: Props) {
   return (
     <div className="border-t border-gray-200 pt-4 mb-4">
       <div className="flex items-center justify-between mb-2">
@@ -53,17 +54,21 @@ export default function OpeningHourItem({ horario, onToggleDay, onTimeChange }: 
               onChange={(e) =>
                 onTimeChange(horario.diaSemana, 'horaAbertura', e.target.value)
               }
-              className="border border-gray-300 rounded px-2 py-2 text-md w-24"
+              className={`border rounded px-2 py-2 text-md w-24 ${
+                hasError && !horario.horaAbertura ? 'border-red-500' : 'border-gray-300'
+              }`}
             />
             <span className="text-sm">às</span>
-            <input
-              type="time"
-              value={horario.horaFechamento || ''}
-              onChange={(e) =>
-                onTimeChange(horario.diaSemana, 'horaFechamento', e.target.value)
-              }
-              className="border border-gray-300 rounded px-2 py-2 text-md w-24"
-            />
+              <input
+                type="time"
+                value={horario.horaFechamento || ''}
+                onChange={(e) =>
+                  onTimeChange(horario.diaSemana, 'horaFechamento', e.target.value)
+                }
+                className={`border rounded px-2 py-2 text-md w-24 ${
+                  hasError && !horario.horaFechamento ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
           </div>
         ) : (
           <span className="text-sm text-gray-400">Fechado</span>
