@@ -21,7 +21,7 @@ export function useOpeningHours() {
   const [editableHorarios, setEditableHorarios] = useState<Horario[]>([]);
   const [inputErrors, setInputErrors] = useState<Record<DiaSemana, boolean>>({} as Record<DiaSemana, boolean>);
 
-  const hasChanges = !editableHorarios.every((editable, i) => {
+  const hasChanges = !editableHorarios.every((editable) => {
   const original = horarios?.find(h => h.diaSemana === editable.diaSemana);
     return (
       editable.aberto === original?.aberto &&
@@ -42,7 +42,7 @@ export function useOpeningHours() {
     };
 
     load();
-  }, [user?.empresaId]);
+}, [user?.empresaId, fetchSchedules]);
 
   useEffect(() => {
     if (!schedulesLoaded || !horarios) return;
