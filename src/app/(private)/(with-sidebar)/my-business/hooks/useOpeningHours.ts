@@ -3,6 +3,7 @@ import { DiaSemana, Horario } from '@/types/DiaSemana';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const allDays: DiaSemana[] = [
   DiaSemana.SEGUNDA,
@@ -122,15 +123,22 @@ export function useOpeningHours() {
         };
       });
 
-      await updateSchedules(user.empresaId, { horarios: horariosOrdenados });
+    await updateSchedules(user.empresaId, { horarios: horariosOrdenados });
       toast.success('Horários atualizados com sucesso!');
-    } catch (err: any) {
-      const msg = err?.response?.data?.message ?? err.message ?? 'Erro desconhecido';
-      toast.error(`Erro ao atualizar horários: ${msg}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+      } catch (err) {
+        let msg = 'Erro desconhecido';
+
+        if (axios.isAxiosError(err)) {
+          msg = err.response?.data?.message ?? err.message;
+        } else if (err instanceof Error) {
+          msg = err.message;
+        }
+
+        toast.error(`Erro ao atualizar horários: ${msg}`);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return {
     editableHorarios,
