@@ -1,7 +1,6 @@
 'use client';
 
-import { Horario } from '@/context/BusinessContext';
-import { DiaSemana } from '@/types/DiaSemana';
+import { DiaSemana, Horario } from '@/types/DiaSemana';
 import { Switch } from '@headlessui/react';
 
 interface Props {

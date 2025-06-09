@@ -1,30 +1,34 @@
 import { useCollaboratorStore } from '@/app/store/useCollaboratorStore';
+import { Horario as HorarioColaborador } from '@/types/collaborator';
 import { useBusiness } from '@/context/BusinessContext';
-import { DiaSemana, Horario } from '@/types/DiaSemana';
+import { DiaSemana } from '@/types/DiaSemana';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
+const orderDiaSemana: DiaSemana[] = [
+  DiaSemana.SEGUNDA,
+  DiaSemana.TERCA,
+  DiaSemana.QUARTA,
+  DiaSemana.QUINTA,
+  DiaSemana.SEXTA,
+  DiaSemana.SABADO,
+  DiaSemana.DOMINGO,
+];
+
 const diaSemanaMap: Record<DiaSemana, string> = {
-  SEGUNDA: 'Segunda-feira',
-  TERCA: 'Terça-feira',
-  QUARTA: 'Quarta-feira',
-  QUINTA: 'Quinta-feira',
-  SEXTA: 'Sexta-feira',
-  SABADO: 'Sábado',
-  DOMINGO: 'Domingo',
+  [DiaSemana.SEGUNDA]: 'Segunda-feira',
+  [DiaSemana.TERCA]: 'Terça-feira',
+  [DiaSemana.QUARTA]: 'Quarta-feira',
+  [DiaSemana.QUINTA]: 'Quinta-feira',
+  [DiaSemana.SEXTA]: 'Sexta-feira',
+  [DiaSemana.SABADO]: 'Sábado',
+  [DiaSemana.DOMINGO]: 'Domingo',
 };
 
-// Array para ordenação consistente
-const orderDiaSemana: DiaSemana[] = [
-  'SEGUNDA',
-  'TERCA',
-  'QUARTA',
-  'QUINTA',
-  'SEXTA',
-  'SABADO',
-  'DOMINGO',
-];
+function isDiaSemana(value: string): value is DiaSemana {
+  return Object.values(DiaSemana).includes(value as DiaSemana);
+}
 
 export function useNewCollaborator() {
   const { createCollaborator, loading } = useCollaboratorStore();
@@ -39,29 +43,37 @@ export function useNewCollaborator() {
   const [bairro, setBairro] = useState('');
   const [cidade, setCidade] = useState('');
   const [error, setError] = useState('');
-  const [horarios, setHorarios] = useState<Horario[]>([]);
+  const [horarios, setHorarios] = useState<HorarioColaborador[]>([]);
   const [localLoading, setLocalLoading] = useState(false);
 
-  function ordenarHorarios(horariosToSort: Horario[]) {
+  function ordenarHorarios(horariosToSort: HorarioColaborador[]) {
     return [...horariosToSort].sort(
       (a, b) =>
-        orderDiaSemana.indexOf(a.diaSemana) - orderDiaSemana.indexOf(b.diaSemana)
+        orderDiaSemana.indexOf(a.diaSemana as DiaSemana) -
+        orderDiaSemana.indexOf(b.diaSemana as DiaSemana)
     );
   }
 
+  function loadHorariosFromEmpresa() {
+    if (!empresaHorarios) return [];
+    const converted = empresaHorarios.map(h => ({
+      diaSemana: String(h.diaSemana),
+      horaInicio: h.horaAbertura || '',
+      horaFim: h.horaFechamento || '',
+      ativo: h.aberto,
+    }));
+    return ordenarHorarios(converted);
+  }
+
   useEffect(() => {
-    if (empresaHorarios) {
-      const converted = empresaHorarios.map(h => ({
-        diaSemana: h.diaSemana,
-        horaInicio: h.horaAbertura || '',
-        horaFim: h.horaFechamento || '',
-        ativo: h.aberto,
-      }));
-      setHorarios(ordenarHorarios(converted));
-    }
+    setHorarios(loadHorariosFromEmpresa());
   }, [empresaHorarios]);
 
-  function handleHorarioChange<K extends keyof Horario>(index: number, field: K, value: Horario[K]) {
+  function handleHorarioChange<K extends keyof HorarioColaborador>(
+    index: number,
+    field: K,
+    value: HorarioColaborador[K]
+  ) {
     const newHorarios = [...horarios];
     newHorarios[index] = { ...newHorarios[index], [field]: value };
     setHorarios(newHorarios);
@@ -101,7 +113,16 @@ export function useNewCollaborator() {
         numero,
         bairro,
         cidade,
-        horarios,
+        horarios: horarios.map(h => {
+          if (!isDiaSemana(h.diaSemana)) {
+            throw new Error(`Dia da semana inválido: ${h.diaSemana}`);
+          }
+
+          return {
+            ...h,
+            diaSemana: h.diaSemana as DiaSemana,
+          };
+        }),
       });
 
       toast.success('Colaborador criado com sucesso!');
@@ -117,21 +138,6 @@ export function useNewCollaborator() {
       setLocalLoading(false);
     }
   }
-
-  function loadHorariosFromEmpresa() {
-    if (!empresaHorarios) return [];
-    const converted = empresaHorarios.map(h => ({
-      diaSemana: h.diaSemana,
-      horaInicio: h.horaAbertura || '',
-      horaFim: h.horaFechamento || '',
-      ativo: h.aberto,
-    }));
-    return ordenarHorarios(converted);
-  }
-
-  useEffect(() => {
-    setHorarios(loadHorariosFromEmpresa());
-  }, [empresaHorarios]);
 
   function resetForm() {
     setNome('');

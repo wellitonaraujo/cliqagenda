@@ -58,9 +58,9 @@ export default function NewCollaborator() {
             ))
           ) : (
             horarios.map((h, idx) => (
-           <HorarioItem
+            <HorarioItem
               key={idx}
-              diaSemana={diaSemanaMap[h.diaSemana]}
+              diaSemana={diaSemanaMap[h.diaSemana as keyof typeof diaSemanaMap]}
               ativo={h.ativo}
               horaInicio={h.horaInicio}
               horaFim={h.horaFim}
@@ -72,7 +72,7 @@ export default function NewCollaborator() {
             type="submit"
             disabled={loading}
             className={`mt-6 w-full py-3 text-white font-semibold rounded ${
-              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1195FF] hover:bg-[#00AEEF]'
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00AEEF] hover:bg-[#00AEEF]'
             }`}
           >
             {loading ? 'Salvando...' : 'Criar Colaborador'}

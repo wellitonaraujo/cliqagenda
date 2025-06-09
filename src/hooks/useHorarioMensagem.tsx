@@ -1,4 +1,5 @@
-import { DiaSemana, useBusiness } from "@/context/BusinessContext";
+import { useBusiness } from "@/context/BusinessContext";
+import { DiaSemana } from "@/types/DiaSemana";
 
 export const useHorarioMensagem = (data?: string) => {
   const { horarios } = useBusiness();

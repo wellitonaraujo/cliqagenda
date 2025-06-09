@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { format, getDay } from 'date-fns';
-import { DiaSemana, useBusiness } from '../context/BusinessContext';
+import { useBusiness } from '../context/BusinessContext';
+import { DiaSemana } from '@/types/DiaSemana';
 
 export function useAvailableHours(selectedDate: string) {
   const { horarios } = useBusiness();

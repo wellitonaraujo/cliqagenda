@@ -1,4 +1,5 @@
-import { useBusiness, DiaSemana } from '@/context/BusinessContext';
+import { useBusiness } from '@/context/BusinessContext';
+import { DiaSemana } from '@/types/DiaSemana';
 import { useMemo } from 'react';
 
 function getDiaSemanaAtual(): DiaSemana {

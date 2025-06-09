@@ -1,7 +1,8 @@
-import { DiaSemana, Horario, useBusiness } from '@/context/BusinessContext';
+import { useBusiness } from '@/context/BusinessContext';
 import { useAppointmentStore } from '@/app/store/useAppointmentStore';
 import { useAppointments } from '@/context/AppointmentsProvider';
 import { useEffect, useState } from 'react';
+import { DiaSemana, Horario } from '@/types/DiaSemana';
 
 export function useScheduleLogic() {
   const { horarios } = useBusiness();
