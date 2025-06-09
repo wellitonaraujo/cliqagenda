@@ -36,7 +36,7 @@ export function useOpeningHours() {
         diaSemana: dia,
         aberto: false,
         horaAbertura: '00:00',
-        horaFechamento: '0:00',
+        horaFechamento: '00:00',
       };
     });
 
@@ -63,6 +63,13 @@ export function useOpeningHours() {
     );
   };
 
+  const getEmptyErrors = (): Record<DiaSemana, boolean> =>
+    allDays.reduce((acc, dia) => {
+      acc[dia] = false;
+      return acc;
+  }, {} as Record<DiaSemana, boolean>);
+
+
   const saveSchedules = async () => {
     if (!user?.empresaId) return;
 
@@ -82,13 +89,14 @@ export function useOpeningHours() {
       }
     }
 
-    if (Object.keys(errors).length > 0) {
+    const hasErrors = Object.values(errors).some((v) => v);
+    if (hasErrors) {
       setInputErrors(errors);
       toast.error('Preencha os horários obrigatórios');
       return;
     }
 
-    setInputErrors({} as Record<DiaSemana, boolean>);
+    setInputErrors(getEmptyErrors());
     setLoading(true);
 
     try {
@@ -108,7 +116,6 @@ export function useOpeningHours() {
       setLoading(false);
     }
   };
-
 
   return {
     editableHorarios,
