@@ -1,5 +1,5 @@
-import { useBusiness, DiaSemana, Horario } from '@/context/BusinessContext';
-
+import { useBusiness } from '@/context/BusinessContext';
+import { DiaSemana, Horario } from '@/types/DiaSemana';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -51,8 +51,8 @@ export function useOpeningHours() {
       return existente ?? {
         diaSemana: dia,
         aberto: false,
-        horaAbertura: '00:00',
-        horaFechamento: '00:00',
+        horaAbertura: '',
+        horaFechamento: '',
       };
     });
 

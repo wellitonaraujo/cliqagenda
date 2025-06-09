@@ -1,25 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { Horario } from '@/types/DiaSemana';
 import { useAuth } from './AuthContext';
 import api from '@/services/api';
-
-export enum DiaSemana {
-  SEGUNDA = 'SEGUNDA',
-  TERCA = 'TERCA',
-  QUARTA = 'QUARTA',
-  QUINTA = 'QUINTA',
-  SEXTA = 'SEXTA',
-  SABADO = 'SABADO',
-  DOMINGO = 'DOMINGO',
-}
-
-export interface Horario {
-  diaSemana: DiaSemana;
-  aberto: boolean;
-  horaAbertura?: string;
-  horaFechamento?: string;
-}
 
 export interface UpdateHorarioDto {
   horarios: Horario[];

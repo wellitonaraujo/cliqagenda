@@ -1,8 +1,16 @@
-export type DiaSemana =  'SEGUNDA' | 'TERCA' | 'QUARTA' | 'QUINTA' | 'SEXTA' | 'SABADO' | 'DOMINGO';
+export enum DiaSemana {
+  SEGUNDA = 'SEGUNDA',
+  TERCA = 'TERCA',
+  QUARTA = 'QUARTA',
+  QUINTA = 'QUINTA',
+  SEXTA = 'SEXTA',
+  SABADO = 'SABADO',
+  DOMINGO = 'DOMINGO',
+}
 
 export interface Horario {
   diaSemana: DiaSemana;
-  horaAbertura: string;
-  horaFechamento: string;
   aberto: boolean;
+  horaAbertura?: string;
+  horaFechamento?: string;
 }

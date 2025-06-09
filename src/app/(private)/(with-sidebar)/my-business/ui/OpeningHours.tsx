@@ -1,8 +1,7 @@
 'use client';
 
-import { Horario } from '@/context/BusinessContext';
+import { DiaSemana, Horario } from '@/types/DiaSemana';
 import OpeningHourItem from './OpeningHourItem';
-import { DiaSemana } from '@/types/DiaSemana';
 
 interface Props {
   horarios: Horario[];
