@@ -108,7 +108,7 @@ export default function NewService() {
               Cancelar
             </button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Salvando...' : 'Criar Serviço'}
+              {isSubmitting ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
         </form>

@@ -5,10 +5,14 @@ import { useNewCollaborator } from './hooks/useNewCollaborator';
 import PersonalInfoSection from './ui/PersonalInfoSection';
 import HorarioItem from '@/componentes/ScheduleItem';
 import AddressSection from './ui/AddressSection';
+import { useRouter } from 'next/navigation';
+import Button from '@/componentes/Button';
 import Skeleton from './ui/Skeleton';
 import React from 'react';
 
 export default function NewCollaborator() {
+  const router = useRouter();
+
   const {
     nome, email, telefone, rua, numero, bairro, cidade, horarios,
     setNome, setEmail, setTelefone, setRua, setNumero, setBairro, setCidade,
@@ -68,15 +72,22 @@ export default function NewCollaborator() {
             />
            ))
           )}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`mt-6 w-full py-3 text-white font-semibold rounded ${
-              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#00AEEF] hover:bg-[#00AEEF]'
-            }`}
-          >
-            {loading ? 'Salvando...' : 'Criar Colaborador'}
-          </button>
+          <div className="flex justify-end gap-4 mt-10">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="text-gray-700 text-sm font-medium hover:underline"
+            >
+              Cancelar
+            </button>
+
+            <Button
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Salvando...' : 'Salvar'}
+            </Button>
+          </div>
         </form>
       </div>
     </div>

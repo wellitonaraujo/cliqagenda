@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-//http://localhost:3001/
+// https://cliqagenda-api-production.up.railway.app
+// http://localhost:3001
 const api = axios.create({
-  baseURL: 'https://cliqagenda-api-production.up.railway.app',
+  baseURL: 'http://localhost:3001',
   withCredentials: true, 
 });
 
