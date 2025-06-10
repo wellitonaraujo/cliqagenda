@@ -30,35 +30,33 @@ export function useOpeningHours() {
     );
   });
 
-  const [schedulesLoaded, setSchedulesLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       if (user?.empresaId) {
         await fetchSchedules(user.empresaId);
-        setSchedulesLoaded(true);
       }
     };
 
     load();
-}, [user?.empresaId, fetchSchedules]);
+  }, [user?.empresaId, fetchSchedules]);
 
   useEffect(() => {
-    if (!schedulesLoaded || !horarios) return;
+    if (horarios && editableHorarios.length === 0) {
+      const merged = allDays.map((dia) => {
+        const existente = horarios.find((h) => h.diaSemana === dia);
+        return existente ?? {
+          diaSemana: dia,
+          aberto: false,
+          horaAbertura: '',
+          horaFechamento: '',
+        };
+      });
 
-    const merged = allDays.map((dia) => {
-      const existente = horarios.find((h) => h.diaSemana === dia);
-      return existente ?? {
-        diaSemana: dia,
-        aberto: false,
-        horaAbertura: '',
-        horaFechamento: '',
-      };
-    });
-
-    setEditableHorarios(merged as Horario[]);
-  }, [schedulesLoaded, horarios]);
+      setEditableHorarios(merged as Horario[]);
+    }
+  }, [horarios, editableHorarios]);
 
   const toggleDay = (diaSemana: DiaSemana) => {
     setEditableHorarios((prev) =>
