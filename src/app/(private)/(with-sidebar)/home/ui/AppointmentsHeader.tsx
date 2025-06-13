@@ -67,7 +67,7 @@ export default function AppointmentsHeader({
 
             <button
               onClick={() => onDateChange(1)}
-              className="h-12 w-12 flex items-center justify-center border-2 border-[#F5F6F7] text-gray-400 bg-[#fafafa] rounded-3xl"
+              className="h-12 w-12 flex items-center justify-center border-2 border-[#F5F6F7]  text-gray-400 bg-[#fafafa] rounded-3xl"
               aria-label="Próximo dia"
             >
               <FiChevronRight size={22} color='#C3CAD9'/>
