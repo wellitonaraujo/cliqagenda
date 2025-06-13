@@ -126,7 +126,7 @@ export function useNewCollaborator() {
       });
 
       toast.success('Colaborador criado com sucesso!');
-      router.push('/collaborator');
+      router.push('/collaborators');
       resetForm();
     } catch (err: unknown) {
       if (err instanceof Error) {

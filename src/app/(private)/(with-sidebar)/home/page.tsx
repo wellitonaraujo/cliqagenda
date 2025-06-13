@@ -28,9 +28,9 @@ export default function Home() {
     openModal,
     goToNewAppointment,
     loading,
+    reloadAppointments
   } = useHomePage();
   
-console.log(appointmentsOfTheDay   )
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <HomeHeader />
@@ -39,6 +39,7 @@ console.log(appointmentsOfTheDay   )
         onDateChange={handleDayChange}
         appointmentsCount={appointmentsOfTheDay.length}
         onNewAppointment={goToNewAppointment}
+        onRefresh={reloadAppointments}
         loading={loading}
       />
       <div className="flex-1 overflow-y-auto pt-3 pr-0 pb-6 pl-6">

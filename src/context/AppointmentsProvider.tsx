@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode, useRef } from 'react';
+import { createContext, useContext, useState, ReactNode, useRef, useCallback } from 'react';
 import { Appointment } from '@/types/Appointment';
 import { toast } from 'react-toastify';
 import api from '@/services/api';
@@ -42,7 +42,7 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
     };
   }
 
-  const fetchAppointments = async (filters = {}) => {
+  const fetchAppointments = useCallback(async (filters = {}) => {
     const cacheKey = JSON.stringify(filters);
 
     if (cacheRef.current[cacheKey]) {
@@ -63,7 +63,7 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const createAppointment = async (payload: CreateAppointmentPayload) => {
     setLoading(true);
@@ -98,7 +98,7 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
 
       setAppointments(prev => {
         const updated = prev.map(appointment => (appointment.id === id ? { ...appointment, ...data } : appointment));
-        cacheRef.current = {}; // limpa cache
+        cacheRef.current = {};
         return updated;
       });
 
@@ -121,7 +121,7 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
 
       setAppointments(prev => {
         const updated = prev.map(app => (app.id === id ? { ...app, ...data } : app));
-        cacheRef.current = {}; // limpa cache
+        cacheRef.current = {};
         return updated;
       });
 
@@ -144,7 +144,7 @@ export const AppointmentProvider = ({ children }: { children: ReactNode }) => {
 
       setAppointments(prev => {
         const updated = prev.filter(appointment => appointment.id !== id);
-        cacheRef.current = {}; // limpa cache
+        cacheRef.current = {};
         return updated;
       });
 

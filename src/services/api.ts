@@ -3,7 +3,7 @@ import axios from 'axios';
 // https://cliqagenda-api-production.up.railway.app
 // http://localhost:3001
 const api = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'https://cliqagenda-api-production.up.railway.app',
   withCredentials: true, 
 });
 
