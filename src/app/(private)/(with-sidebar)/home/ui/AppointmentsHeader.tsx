@@ -74,7 +74,7 @@ export default function AppointmentsHeader({
             </button>
           </div>
 
-          <div className="flex items-center gap-2 text-[#1195FF] font-semibold pt-4 md:pt-0 min-w-[120px]">
+          <div className="flex items-center gap-2 text-[#1195FF] font-semibold pt-4 md:pt-0 min-w-[120px] ml-11">
             {loading ? <Skeleton width={100} height={20} /> : getAppointmentsLabel()}
             <button
               onClick={onRefresh}
