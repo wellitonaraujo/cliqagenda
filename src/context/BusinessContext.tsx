@@ -5,6 +5,15 @@ import { Horario } from '@/types/DiaSemana';
 import { useAuth } from './AuthContext';
 import api from '@/services/api';
 
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
+}
+
 export interface UpdateHorarioDto {
   horarios: Horario[];
 }
@@ -15,6 +24,7 @@ interface BusinessContextData {
   error: string | null;
   fetchSchedules: (empresaId: number) => Promise<void>;
   updateSchedules: (empresaId: number, dto: UpdateHorarioDto) => Promise<void>;
+  version: number;
 }
 
 const BusinessContext = createContext<BusinessContextData | undefined>(undefined);
@@ -25,15 +35,7 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
   const [horarios, setHorarios] = useState<Horario[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  interface ApiError {
-    response?: {
-      data?: {
-        message?: string;
-      };
-    };
-    message?: string;
-  }
+  const [version, setVersion] = useState(0);
 
   const fetchSchedules = async (empresaId: number) => {
     setLoading(true);
@@ -41,6 +43,7 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await api.get<Horario[]>(`/empresa/${empresaId}/horarios`);
       setHorarios(response.data);
+      setVersion(v => v + 1); 
     } catch (err: unknown) {
       const error = err as ApiError;
       setError(error?.response?.data?.message || error.message || 'Erro ao buscar horários');
@@ -79,6 +82,7 @@ export const BusinessProvider = ({ children }: { children: ReactNode }) => {
         error,
         fetchSchedules,
         updateSchedules,
+        version
       }}
     >
       {children}

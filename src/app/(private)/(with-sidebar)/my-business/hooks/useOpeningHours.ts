@@ -17,9 +17,10 @@ const allDays: DiaSemana[] = [
 
 export function useOpeningHours() {
   const { user } = useAuth();
-  const { horarios, fetchSchedules, updateSchedules } = useBusiness();
+  const { horarios, updateSchedules, version } = useBusiness();
   const [editableHorarios, setEditableHorarios] = useState<Horario[]>([]);
   const [inputErrors, setInputErrors] = useState<Record<DiaSemana, boolean>>({} as Record<DiaSemana, boolean>);
+  const [loading, setLoading] = useState(false);
 
   const hasChanges = !editableHorarios.every((editable) => {
   const original = horarios?.find(h => h.diaSemana === editable.diaSemana);
@@ -30,20 +31,8 @@ export function useOpeningHours() {
     );
   });
 
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    const load = async () => {
-      if (user?.empresaId) {
-        await fetchSchedules(user.empresaId);
-      }
-    };
-
-    load();
-  }, [user?.empresaId, fetchSchedules]);
-
-  useEffect(() => {
-    if (horarios && editableHorarios.length === 0) {
+    if (horarios) {
       const merged = allDays.map((dia) => {
         const existente = horarios.find((h) => h.diaSemana === dia);
         return existente ?? {
@@ -54,9 +43,9 @@ export function useOpeningHours() {
         };
       });
 
-      setEditableHorarios(merged as Horario[]);
+    setEditableHorarios(merged);
     }
-  }, [horarios, editableHorarios]);
+  }, [version]);
 
   const toggleDay = (diaSemana: DiaSemana) => {
     setEditableHorarios((prev) =>
@@ -88,8 +77,8 @@ export function useOpeningHours() {
     if (!user?.empresaId) return;
 
     const errors: Record<DiaSemana, boolean> = getEmptyErrors();
+    const hasErrors = Object.values(errors).some(Boolean);
 
-    // Valida os horários obrigatórios
     for (const h of editableHorarios) {
       if (h.aberto) {
         const aberturaInvalida = !h.horaAbertura?.trim();
@@ -100,7 +89,6 @@ export function useOpeningHours() {
       }
     }
 
-    const hasErrors = Object.values(errors).some(Boolean);
     if (hasErrors) {
       setInputErrors(errors);
       toast.error('Preencha todos os horários obrigatórios');
