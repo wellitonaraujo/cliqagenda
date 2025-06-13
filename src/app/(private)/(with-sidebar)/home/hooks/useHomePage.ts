@@ -31,7 +31,7 @@ export function useHomePage() {
   const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<{ collaboratorId: number; timeSlotIndex: number } | null>(null);
   const [expandedId, setExpandedId] = useState<string | number | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   useEffect(() => {
     function updateMinCols() {
@@ -44,15 +44,6 @@ export function useHomePage() {
     return () => window.removeEventListener("resize", updateMinCols);
   }, [setMinCols]);
  
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      await fetchAppointments();
-      setLoading(false);
-    }
-    load();
-  }, [fetchAppointments]);
-
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedAppointment(null);
@@ -65,7 +56,7 @@ export function useHomePage() {
         await updateAppointmentStatus(selectedAppointment.id, newStatus);
         setStatus(newStatus);
         handleModalClose();
-          await fetchAppointments();
+        await fetchAppointments();
       } catch {
         toast.error("Erro ao atualizar status:");
       }
@@ -95,6 +86,14 @@ export function useHomePage() {
     });
   }, [appointments, selectedDate]);
 
+  useEffect(() => {
+    fetchAppointments();
+  }, [fetchAppointments]);
+
+  const reloadAppointments = () => {
+    window.location.reload();
+  };
+
   return {
     selectedDate,
     handleDayChange,
@@ -113,6 +112,7 @@ export function useHomePage() {
     openModal,
     goToNewAppointment,
     loading,
-    horarioDoDia
+    horarioDoDia,
+    reloadAppointments
   };
 }

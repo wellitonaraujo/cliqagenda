@@ -1,6 +1,6 @@
 'use client';
 
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiRefreshCw } from 'react-icons/fi';
 import Button from '@/componentes/Button';
 
 interface AppointmentsHeaderProps {
@@ -8,6 +8,7 @@ interface AppointmentsHeaderProps {
   onDateChange: (days: number) => void;
   appointmentsCount: number;
   onNewAppointment: () => void;
+  onRefresh: () => void;
   loading?: boolean;
 }
 
@@ -26,10 +27,19 @@ export default function AppointmentsHeader({
   onDateChange,
   appointmentsCount,
   onNewAppointment,
+  onRefresh,
   loading = false,
 }: AppointmentsHeaderProps) {
+
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('pt-BR');
+    return new Intl.DateTimeFormat('pt-BR', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+})
+  .format(date)
+  .replace('.', '');
+
   };
 
   const getAppointmentsLabel = () => {
@@ -45,33 +55,44 @@ export default function AppointmentsHeader({
           <div className="flex items-center gap-2 text-primary font-medium">
             <button
               onClick={() => onDateChange(-1)}
-              className="h-10 w-10 flex items-center justify-center text-gray-400 bg-[#fafafa] rounded-md"
+              className="h-12 w-12 flex items-center border-2 border-[#F5F6F7] justify-center text-gray-400 bg-[#fafafa] rounded-3xl"
               aria-label="Dia anterior"
             >
-              <FiChevronLeft size={20} />
+              <FiChevronLeft size={22} color='#C3CAD9'/>
             </button>
 
-            <span className="h-10 flex text-[#5C5C5C] items-center justify-center  bg-gray-50 px-4 rounded-md text-sm font-medium">
+            <span className="flex text-[#4D5E80] items-center justify-center text-md font-bold">
               {formatDate(selectedDate)}
             </span>
 
             <button
               onClick={() => onDateChange(1)}
-              className="h-10 w-10 flex items-center justify-center text-gray-400 bg-[#fafafa] rounded-md"
+              className="h-12 w-12 flex items-center justify-center border-2 border-[#F5F6F7] text-gray-400 bg-[#fafafa] rounded-3xl"
               aria-label="Próximo dia"
             >
-              <FiChevronRight size={20} />
+              <FiChevronRight size={22} color='#C3CAD9'/>
             </button>
           </div>
 
-          <span className="text-sl text-[#1195FF] text-center font-semibold md:text-left pt-4 md:pt-0 min-w-[120px]">
+          <div className="flex items-center gap-2 text-[#1195FF] font-semibold pt-4 md:pt-0 min-w-[120px]">
             {loading ? <Skeleton width={100} height={20} /> : getAppointmentsLabel()}
-          </span>
+            <button
+              onClick={onRefresh}
+              aria-label="Atualizar agendamentos"
+              disabled={loading}
+              className={`p-1 rounded-md hover:bg-gray-200 transition ${
+                loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+              }`}
+            >
+              <FiRefreshCw size={22} />
+            </button>
+          </div>
+          
         </div>
       </div>
 
       <div className="ml-auto" onClick={onNewAppointment}>
-        <Button>Novo agendamento</Button>
+        <Button>Agendar</Button>
       </div>
     </div>
   );

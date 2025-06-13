@@ -84,8 +84,6 @@ export default function Sidebar() {
           {menuItems.map(({ label, icon, path }) => {
             const isActive = pathname === path;
             const iconPath = isActive ? icon.replace('.svg', '-ative.svg') : icon;
-
-            // usando retorno implícito (sem chaves)
             return (
               <Link
                 key={path}
