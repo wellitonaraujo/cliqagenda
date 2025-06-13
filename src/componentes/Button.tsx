@@ -18,7 +18,7 @@ export default function Button({
   variant = 'primary',
 }: ButtonProps) {
   const baseClasses =
-    'font-medium text-sm px-4 py-4 rounded-md transition w-fit md:py-3';
+    'font-medium text-sm px-4 py-3 rounded-md transition w-fit md:py-3';
   const fullClass = full ? 'w-full' : '';
   
   const variantClasses =
